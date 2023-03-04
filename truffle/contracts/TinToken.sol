@@ -46,12 +46,15 @@ contract TinToken is ERC20 {
     }
 
     function makePayment(address buyer , uint amount) public {
-
-        transfer(address(this) , amount);
+        transferFrom(buyer,address(this), amount);
     }
 
     function _approve(address ) public {
 
+    }
+
+    function getTokenAddress() public view returns(address){
+        return address(this);
     }
 
 
