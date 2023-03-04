@@ -9,7 +9,7 @@ event PaymentDone(address payer, uint amount, uint paymentId,uint date);
 TinToken public Tin ;
 address public TinTokenAddress;
 
-constructor (address TinTokenAddress_ ) public {
+constructor(address TinTokenAddress_ ) public {
     TinTokenAddress = TinTokenAddress_;
     Tin = TinToken(TinTokenAddress_);
 

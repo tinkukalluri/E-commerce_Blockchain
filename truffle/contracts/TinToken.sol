@@ -20,13 +20,13 @@ contract TinToken is ERC20 {
 
 // assuming we are using wei units for prizing i.e 1 eth = 10^18 wei units
     function setTokenPrize(uint newTokenPrize) payable external{
-        if(msg.sender== address(0x6533c493606BD41DC4C8B6Cd6F1C5C2e34200345)){
+        if(msg.sender== address(0xDFeb088754c16A2657ee3a78F702016eBB5d1C15)){
             tokenPrize = newTokenPrize;
         }
     }
 
     function addNewTokens(uint newTokenToAdd) payable external {
-        if(msg.sender== address(0x6533c493606BD41DC4C8B6Cd6F1C5C2e34200345)){
+        if(msg.sender== address(0xDFeb088754c16A2657ee3a78F702016eBB5d1C15)){
             _mint(address(this), newTokenToAdd);
         }
     }

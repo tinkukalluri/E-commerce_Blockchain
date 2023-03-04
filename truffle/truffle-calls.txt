@@ -4,3 +4,8 @@ var value = (await TinTokenInstance.balanceOf(TinToken.networks[5777].address)).
 
  const PaymentProcessorInstance = await PaymentProcessor.deployed();
  PaymentProcessorInstance.pay(2 , 123)
+
+ TinTokenInstance.approve(PaymentProcessor.networks[5777].address)
+
+ // buy some money
+  TinTokenInstance.buy({value:4000})
