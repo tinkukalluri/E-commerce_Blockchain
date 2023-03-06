@@ -7,12 +7,11 @@ contract PaymentProcessor {
 
 event PaymentDone(address payer, uint amount, uint paymentId,uint date);
 TinToken public Tin ;
-address public TinTokenAddress;
+address payable public TinTokenAddress;
 
-constructor(address TinTokenAddress_ ) public {
+constructor(address payable TinTokenAddress_ ) public {
     TinTokenAddress = TinTokenAddress_;
     Tin = TinToken(TinTokenAddress_);
-
 }
 
 function pay (uint amount, uint paymendId) external {

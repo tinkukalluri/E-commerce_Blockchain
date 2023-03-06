@@ -4,11 +4,13 @@ const EslintWebpackPlugin = require("eslint-webpack-plugin");
 
 const extensions = [".js", ".jsx"];
 
+console.log(path.resolve(__dirname, "../backend/E_commerce_BC/frontend/static/frontend"))
+
 module.exports = {
   mode: process.env.NODE_ENV === "production" ? "production" : "development",
   entry: "./src/index.jsx",
   output: {
-    path: path.resolve(__dirname, "build"),
+    path: path.resolve(__dirname, "../backend/E_commerce_BC/frontend/static/frontend"),
   },
   resolve: { extensions },
   devServer: {
