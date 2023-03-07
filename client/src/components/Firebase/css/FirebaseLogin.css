@@ -19,11 +19,21 @@ dialog {
 }
 
 .login-container {
-  padding: 50px;
-  background: var(--sp-grey);
-  border: 7px solid black;
-  border-radius: 33px;
-  width: 66%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30vh;
+}
+
+#login_mot {
+  width: 100%;
+  height: 100%;
+  border: 2px bold black;
+  background-color: rgba(
+    var(--bs-primary-rgb),
+    var(--bs-bg-opacity)
+  ) !important;
 }
 
 .app-name {

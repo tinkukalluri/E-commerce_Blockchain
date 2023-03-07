@@ -24,7 +24,7 @@ class Users(models.Model):
     password=models.CharField(max_length=255 , null=True)
     photoURL=models.CharField(max_length=1000 , null=True)
     role = models.BooleanField(default=False , null=True)
-    phone =  models.IntegerField()
+    phone =  models.CharField(max_length=25 , null=True)
     
 #           shirt
 #           /   \
@@ -41,6 +41,16 @@ class Product(models.Model):
     description = models.TextField()
     # this a generall image
     product_image= models.URLField()
+    added_on = models.DateTimeField(null=True)
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        # converting utc to itc , the gap is 5.5 hours
+        self.added_on=timezone.now() + timezone.timedelta(hours=5.5)
+        #print("timezome.now()::", self.send_on)
+        #     self.created = timezone.now()
+        # self.modified = timezone.now()
+        return super(Product , self).save(*args, **kwargs)
 
 
 # SKU stands for Stock Keeping Unit, which is a unique identifier used in retail and manufacturing to keep track of inventory. It is a number or code that is associated with a particular product or item in order to help identify and track it.
@@ -50,8 +60,19 @@ class ProductItem(models.Model):
     qty_in_stock = models.IntegerField(null=True)
     # this img represents a particular variation of product of image
     product_image = models.URLField(null=True)
-    IPFS_hash = models.URLField()
+    IPFS_hash = models.URLField(null= True)
+    img_url = models.URLField(null=True)
     prize = models.IntegerField()
+    added_on = models.DateTimeField(null=True)
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        # converting utc to itc , the gap is 5.5 hours
+        self.added_on=timezone.now() + timezone.timedelta(hours=5.5)
+        #print("timezome.now()::", self.send_on)
+        #     self.created = timezone.now()
+        # self.modified = timezone.now()
+        return super(Product , self).save(*args, **kwargs)
 
 # this will give all the variations possible in product like mobile will have variation like storage , color
 class Variation(models.Model):

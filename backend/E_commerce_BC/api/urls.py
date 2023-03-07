@@ -5,5 +5,5 @@ from . import views
 
 
 urlpatterns = [
-    path('' , views.index)
+    path('get_new_products' , views.getNewProducts.as_view())
 ]

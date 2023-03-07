@@ -6,6 +6,8 @@ from . import views
 
 urlpatterns = [
     path('' , views.index),
-    path('home/' , views.index),
-    path('firebase/' , views.index)
+    path('login/' , views.index),
+    path('cart/' , views.index),
+    path('checkout/' , views.index),
+    path('add_product/' , views.index),
 ]

@@ -14,8 +14,10 @@ import { Typography } from '@mui/material';
 import '@fontsource/roboto/300.css';
 
 import firebase from 'firebase/compat/app';
-import { firebaseConfig } from "../../js/firebase_"
+import { firebaseConfig } from "../Firebase/firebase_config"
 import { redirect_url } from '../Firebase/credentials';
+import Header from "../Header";
+import Footer from "../footer";
 
 
 
@@ -73,10 +75,10 @@ export default function Login(props) {
         }).then(data => {
             if (data.result) {
                 //console.log("logged in successfully")
-                window.location.replace('/home')
+                window.location.replace('/')
             } else {
                 //console.log("opps something when wrong")
-                props.history.push('/')
+                props.history.push('/login')
             }
         })
     }
@@ -148,12 +150,16 @@ export default function Login(props) {
 
     return (
         <>
+            <Header />
             <div className="login-container" >
-                <Typography className="app-name" variant="h3" compact="h3">
-                    Group Listen-V2
-                </Typography>
+                <div id='login_mot'>
+                    welcome to the future
+                    <br />
+                    of Online Shopping
+                </div>
                 <div id="firebaseui-auth-container"></div>
             </div>
+            <Footer />
         </>
     )
 
