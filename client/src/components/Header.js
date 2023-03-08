@@ -1,7 +1,7 @@
-import React from 'react'
+import React , {useEffect , useState} from 'react'
 
 
-export function jumbotron_maintop() {
+export function jumbotron_maintop(logoutPressed , authResult) {
     return (
         <>
             {/* Jumbotron */}
@@ -35,11 +35,15 @@ export function jumbotron_maintop() {
                         {/* Right elements */}
                         <div className="order-lg-last col-lg-5 col-sm-8 col-8">
                             <div className="d-flex float-end">
-                                <a href="https://github.com/mdbootstrap/bootstrap-material-design"
+                                    {authResult ? (<a href="" onClick={logoutPressed}
                                     className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" target="_blank"> <i
                                         className="fas fa-user-alt m-1 me-md-2"></i>
-                                    <p className="d-none d-md-block mb-0">Sign in</p>
-                                </a>
+                                        <p className="d-none d-md-block mb-0">Sign out</p>
+                                </a>) : (<a href="/" 
+                                    className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" target="_blank"> <i
+                                        className="fas fa-user-alt m-1 me-md-2"></i>
+                                        <p className="d-none d-md-block mb-0">Sign in</p>
+                                </a>) }
                                 <a href="https://github.com/mdbootstrap/bootstrap-material-design"
                                     className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" target="_blank"> <i
                                         className="fas fa-heart m-1 me-md-2"></i>
@@ -228,10 +232,59 @@ export function navbar(props) {
 
 
 export default function Header(props) {
+    const [authResult, setAuthResult] = useState(false)
+
+    function authenticateUser() {
+        const requestOptions = {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+
+            }),
+        }
+        fetch('/api/authenticate', requestOptions).then(function (response) {
+            return response.json()
+        }).then((data) => {
+            if (data.result) {
+                console.log("user successfully authenticated", data.result);
+                setAuthResult(data.result)
+            } else {
+                window.location.replace('/')
+                console.log("user not authenticated")
+            }
+        })
+    };
+
+
+    function logoutPressed(e) {
+        const requestOptions = {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({})
+        }
+        fetch("/api/logout", requestOptions).then((response) => {
+            return response.json()
+        }).then(data => {
+            if (data.status) {
+                console.log("logged out", data)
+                // window.location.replace('/')
+            } else {
+                console.log("looks like something went wrong")
+            }
+            authenticateUser()
+        })
+    }
+
+
+
+    // component did mount
+    useEffect(() => {
+        authenticateUser()
+    }, [])
     console.log(props)
     return (
         < header >
-            {jumbotron_maintop()}
+            {jumbotron_maintop(logoutPressed , authResult)}
             {props.navbar ? navbar(props) : null}
             {props.homepage ? jumbotron_home_container() : null}
         </header >
