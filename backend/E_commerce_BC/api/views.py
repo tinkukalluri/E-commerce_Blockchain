@@ -58,7 +58,7 @@ def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=10):
 def getProductsWithSimilarNames(query_list):
     ob_list = ProductItem.objects.get(reduce(lambda x, y: x | y, [Q(name__contains=word) for word in query_list]))
     print(ob_list)
-    
+
 
 class getNewProducts(APIView):
     def get(self, request, format=None):
@@ -69,14 +69,15 @@ class getNewProducts(APIView):
         return Response(products_,status=status.HTTP_200_OK)
 
 def getQueryWords(value):
-  words = value.split(' ')
-  words = [word.strip() for word in words]
-  print('words' , words)
-  return words
+    words = value.split(' ')
+    words = [word.strip() for word in words]
+    print('words' , words)
+    return words
 
-class SearchProduct(APIView):
+class ProductSearch(APIView):
     def get(self , request , format=None):
-        query_list=
+        query_list= getQueryWords(request.GET.get('q'))
+        print(query_list)
         ob_list = ProductItem.objects.filter(reduce(lambda x, y: x | y, [Q(name__contains=word) for word in query_list]))
 
     

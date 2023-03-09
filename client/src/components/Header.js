@@ -9,7 +9,7 @@ export default function Header(props) {
     const [authResult, setAuthResult] = useState(false)
     const history = useHistory()
     const [search, setSearch] = useState('')
-
+    console.log('Header rerendered')
 
     function handleSearch(e) {
         setSearch(e.target.value)
@@ -129,6 +129,7 @@ export default function Header(props) {
 
     // component did mount
     useEffect(() => {
+        console.log('Header component did mount')
         authenticateUser()
     }, [])
 

@@ -21,8 +21,10 @@ function App(props) {
   return (
     <>
       <EthProvider>
-        <Header />
         <Router>
+          <Switch>
+            <Header />
+          </Switch>
           <Switch>
             <Route exact path="/">
               <HomePage  {...props} />

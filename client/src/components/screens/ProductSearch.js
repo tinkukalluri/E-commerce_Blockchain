@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Navigator from "../Navigator";
 import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
 var qs = require('qs');
@@ -426,8 +426,31 @@ function getQueryWords(value) {
   return words;
 }
 
+function fetchProducts() {
+  const requestOptions = {
+    method: 'get',
+    headers: { "Content-Type": "application/json" },
+  }
+  let path = `/api/product_search?q=${getSearchParams().q}`
+  fetch(path, requestOptions).then(function (response) {
+    return response.json()
+  }).then((data) => {
+    console.log(data);
+    setNewProducts(data);
+
+  })
+}
+
+
+
+
 
 export default function (props) {
+
+  useEffect(() => {
+    console.log('Product Search component did mount')
+    fetchProducts()
+  }, [])
 
   return (
     <>
