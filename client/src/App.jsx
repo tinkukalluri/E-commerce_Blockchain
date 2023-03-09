@@ -14,6 +14,7 @@ import AddProduct from './components/screens/AddProduct';
 import ProductSearch from './components/screens/ProductSearch';
 import ProductPage from './components/screens/ProductPage';
 import Header from './components/Header';
+import Footer from './components/footer';
 // const bootstrap = require("bootstrap");
 
 function App(props) {
@@ -45,6 +46,7 @@ function App(props) {
               component={ProductPage}/>
           </Switch>
         </Router>
+        <Footer/>
       </EthProvider>
     </>
   );

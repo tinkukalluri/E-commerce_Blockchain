@@ -250,12 +250,12 @@ function body() {
     )
 }
 
-export default function Checkout() {
+export default function Checkout(props) {
     return (
         <>
             <Navigator navbar checkout page="checkout" />
             {body()}
-            <Footer />
+            {/* <Footer /> */}
         </>
     )
 }

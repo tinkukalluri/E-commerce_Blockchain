@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useEth } from '../../contexts/EthContext'
 import Footer from '../footer';
-import Header from '../Header';
 import Navigator from '../Navigator';
 
 export default function HomePage() {
@@ -44,10 +43,10 @@ export default function HomePage() {
             NewProducts.forEach(product => {
                 li.push(<div className="col-lg-3 col-md-6 col-sm-6 d-flex">
                     <div className="card w-100 my-2 shadow-2-strong">
-                        <img src={product.product_image} className="card-img-top"
+                        <img src={product.product_image_item} className="card-img-top"
                             style={{ 'aspectRation': '1 / 1' }} />
                         <div className="card-body d-flex flex-column">
-                            <h5 className="card-title">{product.product_id}</h5>
+                            <h5 className="card-title">{product.name}</h5>
                             <p className="card-text">rs{product.prize}</p>
                             <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
                                 <a href="#!" className="btn btn-primary shadow-0 me-1">Add to cart</a>
@@ -205,7 +204,7 @@ export default function HomePage() {
             {/* Products */}
 
             {/* footer */}
-            <Footer grey />
+            {/* <Footer grey /> */}
 
 
             {/* footer-end */}

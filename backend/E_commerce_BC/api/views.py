@@ -1,3 +1,4 @@
+from functools import reduce
 from django.shortcuts import render , redirect
 from rest_framework import generics, status
 # Create your views here.from django.shortcuts import render
@@ -6,6 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response    
 from .models import ProductItem , Product , Users
 from .serializer import ProductItemSerializer , ProductSerializer;
+import collections
+from django.db.models import Q
 
 # Create your views here.
 
@@ -15,14 +18,47 @@ def index(request, *args, **kwargs):
 
 class getNewProducts(APIView):
     def get(self, request, format=None):
-        offset = int(request.GET.get('offset'))
-        limit = int(request.GET.get('limit'))
-        querySet = ProductItem.objects.all().order_by('-added_on')[offset:limit]
-        products_list= []
-        for row in querySet:
-            serializer_data = ProductItemSerializer(row)
-            products_list.append(serializer_data.data)
-        return Response(products_list,status=status.HTTP_200_OK)
+        offset = int(request.GET.get('offset'))-1 if request.GET.get('offset') else 0
+        limit = int(request.GET.get('limit')) if request.GET.get('limit') else 10
+        product_hash= collections.defaultdict(lambda : None)
+        products_=[]
+        querySet_items = ProductItem.objects.all().order_by('-added_on')[offset:limit]
+        print(len(querySet_items))
+        for row in querySet_items:
+            temp_productItem = ProductItemSerializer(row).data
+            productID= int(row.product_id.id)
+            print('-------------productID-------------------')
+            print(productID)
+            print(type(productID))
+            if(product_hash[productID]):
+                temp_product = ProductSerializer(product_hash[productID]).data
+            else:
+                product_details = Product.objects.filter(id = productID)[0]
+                product_hash[productID]=product_details
+                print(product_details)
+                print(type(product_details))
+                temp_product = ProductSerializer(product_details).data
+            #  we are doing this to avoid the id id , added_on-added_on coliision when peprforming dict spread operator
+            temp_productItem['added_on_item']=temp_productItem['added_on']
+            temp_productItem['product_image_item']=temp_productItem['product_image']
+            temp_productItem['id_item']=temp_productItem['id']
+            temp_product_= { **temp_productItem , **temp_product   }
+            print(temp_product_['product_id'])
+            products_.append(temp_product_)
+            print(type(products_))
+            print(products_)
+        print('for loop exit')
+        return Response(products_,status=status.HTTP_200_OK)
+    
+
+class SearchProduct(APIView):
+    def get(self , request , format=None):
+        query_list=list(request.GET.values())
+        ob_list = ProductItem.objects.filter(reduce(lambda x, y: x | y, [Q(name__contains=word) for word in query_list]))
+    
+    
+    
+    
     
 class LoginWithGoogle(APIView):
     def post(self, request, format=None):
