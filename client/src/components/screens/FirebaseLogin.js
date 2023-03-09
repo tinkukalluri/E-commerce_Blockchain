@@ -7,6 +7,7 @@ import {
     Route,
     Link,
     Redirect,
+    useHistory
 } from "react-router-dom";
 // import { Grid, Button, ButtonGroup, Typography } from "@material-ui/core";
 import { Typography } from '@mui/material';
@@ -28,6 +29,7 @@ var firebaseui = require('firebaseui');
 export default function Login(props) {
     const [authResult, setAuthResult] = useState('')
     const [parsedAuthResult, setParsedAuthResult] = useState('')
+    const history = useHistory()
 
     function parseAuth(auth_result) {
         return {
@@ -75,10 +77,11 @@ export default function Login(props) {
         }).then(data => {
             if (data.result) {
                 //console.log("logged in successfully")
-                window.location.replace('/')
+                console.log(props.history)
+                history.push('/')
             } else {
                 //console.log("opps something when wrong")
-                props.history.push('/login')
+                history.push('/login')
             }
         })
     }

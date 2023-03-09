@@ -21,7 +21,7 @@ function App(props) {
   return (
     <>
       <EthProvider>
-      <Header/>
+        <Header />
         <Router>
           <Switch>
             <Route exact path="/">
@@ -43,10 +43,10 @@ function App(props) {
               <ProductSearch  {...props} />
             </Route>
             <Route exact path="/product/:productID"
-              component={ProductPage}/>
+              component={ProductPage} />
           </Switch>
         </Router>
-        <Footer/>
+        <Footer />
       </EthProvider>
     </>
   );
