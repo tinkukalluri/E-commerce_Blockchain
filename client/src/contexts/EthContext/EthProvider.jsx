@@ -5,12 +5,13 @@ import { reducer, actions, initialState } from "./state";
 
 function EthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [artifact, setArtifact] = useState('')
 
   const init = useCallback(
     async artifact => {
       console.log('init function called')
       if (artifact) {
-        const web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
+        const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
         const accounts = await web3.eth.requestAccounts();
         const networkID = await web3.eth.net.getId();
         const { abi } = artifact;
@@ -43,6 +44,10 @@ function EthProvider({ children }) {
   }, [init]);
 
   useEffect(() => {
+    init(artifact);
+  }, [artifact])
+
+  useEffect(() => {
     const events = ["chainChanged", "accountsChanged"];
     const handleChange = () => {
       init(state.artifact);
@@ -57,7 +62,8 @@ function EthProvider({ children }) {
   return (
     <EthContext.Provider value={{
       state,
-      dispatch
+      dispatch,
+      setArtifact
     }}>
       {children}
     </EthContext.Provider>

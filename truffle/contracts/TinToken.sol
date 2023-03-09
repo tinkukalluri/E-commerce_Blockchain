@@ -12,13 +12,29 @@ contract TinToken is ERC20 {
     uint private tokenPrize = 200;
     mapping(address => uint[]) private EthereumSendersList;
     address[] addressIndices ;
+    
+    // struct 
+    struct order_struct{
+        uint orderID ;
+        address from ;
+        address to ;
+        string IPFS_Hash ;
+        string Storage_link ;
+        string transaction_hash;
+        uint amount;
+    }
 
+    order_struct[] orders;
+    uint[] ordersIndices;  // will have orderID
 
     // enents
     event Bought(uint256 amount , address receiver);
     event Sold(uint256 amount);
     event PaymentDone(address payer, uint amount, uint paymentId,uint date);
     event PaymentFailed(address payer, uint amount, uint paymentId,uint date);
+    event PaymentDoneToSeller(uint orderID , address from , address to_ , string IPFS_Hash ,string Storage_link , string transaction_hash , uint amount);
+    event PaymentFailedToSeller(uint orderID , address from , address to_ , string IPFS_Hash ,string Storage_link , string transaction_hash , uint amount);
+
 
 
     // constructor
@@ -94,6 +110,32 @@ contract TinToken is ERC20 {
 
     }
 
+    function payToSeller(uint orderID_ , address from_ , address to_ , string memory IPFS_Hash_ ,string memory Storage_link_ , string memory transaction_hash_ , uint amount_) public returns(order_struct memory) {
+        // uint index = ordersIndices.length;
+        order_struct memory order;
+        // order.orderID = orderID_;
+        order.orderID = orderID_;
+        order.from = from_;
+        order.to = to_;
+        order.IPFS_Hash=IPFS_Hash_;
+        order.Storage_link =Storage_link_;
+        order.transaction_hash =transaction_hash_;
+        order.amount =amount_;
+        orders.push(order);
+
+        ordersIndices.push(orderID_);
+        if(transfer(to_, amount_)){
+            emit PaymentDoneToSeller(orderID_ , from_ , to_ ,IPFS_Hash_ ,Storage_link_ , transaction_hash_ , amount_);
+            return order;
+        }
+        emit PaymentFailedToSeller(orderID_ , from_ , to_ ,IPFS_Hash_ ,Storage_link_ , transaction_hash_ , amount_);
+        return order;
+    }
+
+    function getorders() public view returns(order_struct[] memory){
+        return orders;
+    }
+
 
     // total ether send by user
     function totalEtherSendByUser() view external returns(uint){
@@ -118,5 +160,5 @@ contract TinToken is ERC20 {
         EthereumSendersList[msg.sender].push(msg.value);
     }
 
-
+    
 }

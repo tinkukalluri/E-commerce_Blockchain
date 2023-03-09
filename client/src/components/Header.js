@@ -1,7 +1,7 @@
-import React , {useEffect , useState} from 'react'
+import React, { useEffect, useState } from 'react'
 
 
-export function jumbotron_maintop(logoutPressed , authResult) {
+export function jumbotron_maintop(logoutPressed, authResult) {
     return (
         <>
             {/* Jumbotron */}
@@ -35,22 +35,22 @@ export function jumbotron_maintop(logoutPressed , authResult) {
                         {/* Right elements */}
                         <div className="order-lg-last col-lg-5 col-sm-8 col-8">
                             <div className="d-flex float-end">
-                                    {authResult ? (<a href="" onClick={logoutPressed}
-                                    className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" target="_blank"> <i
+                                {authResult ? (<a href="/login" onClick={logoutPressed}
+                                    className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center"> <i
                                         className="fas fa-user-alt m-1 me-md-2"></i>
-                                        <p className="d-none d-md-block mb-0">Sign out</p>
-                                </a>) : (<a href="/" 
-                                    className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" target="_blank"> <i
+                                    <p className="d-none d-md-block mb-0">Sign out</p>
+                                </a>) : (<a href="/login"
+                                    className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
                                         className="fas fa-user-alt m-1 me-md-2"></i>
-                                        <p className="d-none d-md-block mb-0">Sign in</p>
-                                </a>) }
+                                    <p className="d-none d-md-block mb-0">Sign in</p>
+                                </a>)}
                                 <a href="https://github.com/mdbootstrap/bootstrap-material-design"
-                                    className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" target="_blank"> <i
+                                    className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
                                         className="fas fa-heart m-1 me-md-2"></i>
                                     <p className="d-none d-md-block mb-0">Wishlist</p>
                                 </a>
                                 <a href="https://github.com/mdbootstrap/bootstrap-material-design"
-                                    className="border rounded py-1 px-3 nav-link d-flex align-items-center" target="_blank"> <i
+                                    className="border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
                                         className="fas fa-shopping-cart m-1 me-md-2"></i>
                                     <p className="d-none d-md-block mb-0">My cart</p>
                                 </a>
@@ -249,7 +249,7 @@ export default function Header(props) {
                 console.log("user successfully authenticated", data.result);
                 setAuthResult(data.result)
             } else {
-                window.location.replace('/')
+                // window.location.replace('/login')
                 console.log("user not authenticated")
             }
         })
@@ -281,10 +281,12 @@ export default function Header(props) {
     useEffect(() => {
         authenticateUser()
     }, [])
+
+
     console.log(props)
     return (
         < header >
-            {jumbotron_maintop(logoutPressed , authResult)}
+            {jumbotron_maintop(logoutPressed, authResult)}
             {props.navbar ? navbar(props) : null}
             {props.homepage ? jumbotron_home_container() : null}
         </header >

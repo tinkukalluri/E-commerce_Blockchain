@@ -12,10 +12,10 @@ export default function HomePage() {
     function handleBuy(e) {
         console.log(e.target.value)
     }
-
+    console.log(state)
     useEffect(() => {
         console.log('component Did mount')
-        console.log(state)
+
         get_new_products()
     }, [])
 

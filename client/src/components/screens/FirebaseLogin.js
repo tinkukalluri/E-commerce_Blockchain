@@ -152,11 +152,14 @@ export default function Login(props) {
         <>
             <Header />
             <div className="login-container" >
-                <div id='login_mot'>
+                <Typography>
+                    Please Login...
+                </Typography>
+                {/* <div id='login_mot'>
                     welcome to the future
                     <br />
                     of Online Shopping
-                </div>
+                </div> */}
                 <div id="firebaseui-auth-container"></div>
             </div>
             <Footer />

@@ -27,6 +27,7 @@ class getNewProducts(APIView):
 class LoginWithGoogle(APIView):
     def post(self, request, format=None):
         post_data = dict(request.data)
+        print(post_data)
         #print("type" , type(post_data))
         #print("post_data====" , post_data)
         # user.multiFactor.user.uid
@@ -43,13 +44,13 @@ class LoginWithGoogle(APIView):
         queryset=Users.objects.filter(google_uid=uid)
         if queryset.exists():
             self.user=queryset[0]
-            self.request.session.create()
+            self.request.session.create()       
             self.request.session["key"]=self.request.session.session_key
             self.request.session["user_id"]=self.user.id
             return Response({"result":True} , status=status.HTTP_200_OK)
             # return redirect('frontend:homepage')
         else:
-            self.user=Users(google_uid=uid , email_uid=email , username="" , password="" , photoURL=photoURL)
+            self.user=Users(google_uid=uid , email_uid=email , username=displayName , password="" , photoURL=photoURL)
             self.user.save()
             self.request.session.create()
             self.request.session["key"]=self.request.session.session_key
