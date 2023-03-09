@@ -1,6 +1,6 @@
 import React from 'react'
 import Footer from '../footer'
-import Header from '../Header'
+import Navigator from "../Navigator";
 
 
 function body() {
@@ -253,7 +253,7 @@ function body() {
 export default function Checkout() {
     return (
         <>
-            <Header navbar checkout page="checkout" />
+            <Navigator navbar checkout page="checkout" />
             {body()}
             <Footer />
         </>

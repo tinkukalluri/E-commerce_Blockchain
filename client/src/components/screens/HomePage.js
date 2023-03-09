@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useEth } from '../../contexts/EthContext'
 import Footer from '../footer';
 import Header from '../Header';
+import Navigator from '../Navigator';
 
 export default function HomePage() {
 
@@ -66,7 +67,7 @@ export default function HomePage() {
     return (
         <>
             {/*Main Navigation*/}
-            <Header navbar page="homepage" homepage />
+            <Navigator navbar page="homepage" homepage/>
 
             {/* Products */}
 

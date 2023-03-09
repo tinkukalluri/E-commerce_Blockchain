@@ -11,12 +11,16 @@ import {
 import Cart from './components/screens/Cart';
 import Checkout from './components/screens/Checkout';
 import AddProduct from './components/screens/AddProduct';
+import ProductSearch from './components/screens/ProductSearch';
+import ProductPage from './components/screens/ProductPage';
+import Header from './components/Header';
 // const bootstrap = require("bootstrap");
 
 function App(props) {
   return (
     <>
       <EthProvider>
+      <Header/>
         <Router>
           <Switch>
             <Route exact path="/">
@@ -34,6 +38,11 @@ function App(props) {
             <Route exact path="/add_product">
               <AddProduct  {...props} />
             </Route>
+            <Route exact path="/product_search">
+              <ProductSearch  {...props} />
+            </Route>
+            <Route exact path="/product/:productID"
+              component={ProductPage}/>
           </Switch>
         </Router>
       </EthProvider>

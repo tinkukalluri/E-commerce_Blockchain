@@ -1,11 +1,11 @@
 import React from 'react'
 import Footer from '../footer'
-import Header from '../Header'
+import Navigator from "../Navigator";
 
 export default function () {
     return (
         <>
-            <Header navbar cart page='cart' />
+            <Navigator navbar cart page='cart' />
             {/* <!-- cart + summary --> */}
             <div className="bg-light my-5">
                 <div className="container">
@@ -36,12 +36,12 @@ export default function () {
                                                     <option>3</option>
                                                     <option>4</option>
                                                 </select>
-                                            </div >
+                                            </div>
                                             <div className="">
                                                 <p className="h6">$1156.00</p> <br />
                                                 <small className="p-muted p-nowrap"> $460.00 / per item </small>
                                             </div>
-                                        </div >
+                                        </div>
                                         <div
                                             className="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
                                             <div className="float-md-end">
@@ -50,7 +50,7 @@ export default function () {
                                                 <a href="#" className="btn btn-light border p-danger icon-hover-danger"> Remove</a>
                                             </div>
                                         </div>
-                                    </div >
+                                    </div>
 
                                     <div className="row gy-3 mb-4">
                                         <div className="col-lg-5">
@@ -125,7 +125,7 @@ export default function () {
                                             </div>
                                         </div>
                                     </div>
-                                </div >
+                                </div>
 
                                 <div className="border-top pt-4 mx-4 mb-4">
                                     <p><i className="fas fa-truck p-muted fa-lg"></i> Free Delivery within 1-2 weeks</p>
@@ -135,8 +135,8 @@ export default function () {
                                         aliquip
                                     </p>
                                 </div>
-                            </div >
-                        </div >
+                            </div>
+                        </div>
                         {/* <!-- cart -->
                         <!-- summary --> */}
                         < div className="col-lg-3" >
@@ -179,11 +179,11 @@ export default function () {
                                     </div>
                                 </div>
                             </div>
-                        </div >
+                        </div>
                         {/* <!-- summary --> */}
-                    </div >
-                </div >
-            </div >
+                    </div>
+                </div>
+            </div>
             {/* <!-- cart + summary --> */}
             < Footer />
         </>

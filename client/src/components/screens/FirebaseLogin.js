@@ -16,7 +16,7 @@ import '@fontsource/roboto/300.css';
 import firebase from 'firebase/compat/app';
 import { firebaseConfig } from "../Firebase/firebase_config"
 import { redirect_url } from '../Firebase/credentials';
-import Header from "../Header";
+import Navigator from "../Navigator";
 import Footer from "../footer";
 
 
@@ -150,7 +150,7 @@ export default function Login(props) {
 
     return (
         <>
-            <Header />
+            <Navigator />
             <div className="login-container" >
                 <Typography>
                     Please Login...
