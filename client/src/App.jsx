@@ -15,16 +15,26 @@ import ProductSearch from './components/screens/ProductSearch';
 import ProductPage from './components/screens/ProductPage';
 import Header from './components/Header';
 import Footer from './components/footer';
+import { useEffect, useState } from 'react';
 // const bootstrap = require("bootstrap");
 
 function App(props) {
+
+  const [search , setAppSearch] = useState('')
+
+  function setSearchCallback(newQuery){
+    setAppSearch(newQuery)
+  }
+
+  useEffect(()=>[
+    console.log('app search' , search)
+  ] , [search])
+
   return (
     <>
       <EthProvider>
         <Router>
-          <Switch>
-            <Header />
-          </Switch>
+          <Header search_query={search} setAppSearch={setSearchCallback}/>
           <Switch>
             <Route exact path="/">
               <HomePage  {...props} />
@@ -42,13 +52,13 @@ function App(props) {
               <AddProduct  {...props} />
             </Route>
             <Route exact path="/product_search">
-              <ProductSearch  {...props} />
+              <ProductSearch  {...props } search_query={search} />
             </Route>
             <Route exact path="/product/:productID"
               component={ProductPage} />
           </Switch>
-        </Router>
         <Footer />
+        </Router>
       </EthProvider>
     </>
   );

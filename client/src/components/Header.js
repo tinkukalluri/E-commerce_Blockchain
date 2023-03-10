@@ -13,10 +13,12 @@ export default function Header(props) {
 
     function handleSearch(e) {
         setSearch(e.target.value)
+        
     }
 
     function handleSearchSubmit(e) {
-        history.push(`/product_search?q=${search}`)
+        props.setAppSearch(search)
+        history.replace(`/product_search?q=${search}`)
     }
 
     function jumbotron_maintop(logoutPressed, authResult) {
