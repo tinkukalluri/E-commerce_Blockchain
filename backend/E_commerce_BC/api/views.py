@@ -57,7 +57,7 @@ def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=10):
 
 def getProductsWithSimilarNames(query_list , offset=0 , limit = 10):
     # ob_list = ProductItem.objects.get(reduce(lambda x, y: x | y, [Q(name__contains=word) for word in query_list]))
-    querySet_product = Product.objects.filter(reduce(lambda x, y: x | y, [Q(name__contains=word) for word in query_list]))
+    querySet_product = Product.objects.filter(reduce(lambda x, y: x | y, [Q(name__contains=word.lower()) | Q(description__contains=word.lower()) for word in query_list]))
     print(type(querySet_product))
     tot_rows=0
     inner_query = f"{querySet_product[0].id}"

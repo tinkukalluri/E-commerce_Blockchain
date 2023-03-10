@@ -425,6 +425,10 @@ export default function (props) {
   }
   
   function fetchProducts(query) {
+    if(query==''){
+      return
+    }
+    console.log("fetch product query" , query)
     const requestOptions = {
       method: 'get',
       headers: { "Content-Type": "application/json" },
@@ -434,7 +438,7 @@ export default function (props) {
     fetch(path, requestOptions).then(function (response) {
       return response.json()
     }).then((data) => {
-      console.log(data);1
+      console.log(data);
       setProduct(data);
       
     })
@@ -446,7 +450,6 @@ export default function (props) {
   } , [])
 
   useEffect(() => {
-    
     fetchProducts(props.search_query)
   }, [props.search_query])
 

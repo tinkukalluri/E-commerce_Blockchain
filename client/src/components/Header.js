@@ -12,7 +12,7 @@ export default function Header(props) {
     console.log('Header rerendered')
 
     function handleSearch(e) {
-        setSearch(e.target.value)
+        setSearch(e.target.value.toLowerCase())
         
     }
 
