@@ -1,7 +1,77 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useHistory} from 'react-router-dom';
 
 export default function ProductPage({ match, ...props }) {
+
+  const [productDetails , setProductDetails] = useState([])
+  const [variationJSX , setVariationJSX] = useState([])
+
   const { params: { productID } } = match;
+  const history = useHistory()
+
+  function fetchProductDetails(){
+    const requestOptions = {
+      method: 'get',
+      headers: { "Content-Type": "application/json" },
+  }
+  let path = `/api/product_detials?pID=${productID}`
+  fetch(path , requestOptions).then((response)=>{
+    return response.json()
+  }).then(data =>{
+    console.log('data from productpage')
+    console.log(data)
+    setProductDetails(data)
+  }).catch(e=>{
+    console.log("error in product oage")
+    setTimeout(fetchProductDetails , 1000)
+  })
+  }
+
+  useEffect(()=>{
+    console.log("product details updated")
+    setvariationJSX_()
+  } , [productDetails])
+
+  function setvariationJSX_(){
+    productDetails.forEach(product=>{
+      
+  setVariationJSX(prev =>{
+    return prev.push(
+      <div className="accordion-item">
+      <h2 className="accordion-header" id="headingThree">
+        <button className="accordion-button text-dark bg-light" type="button" data-mdb-toggle="collapse"
+          data-mdb-target="#panelsStayOpen-collapseFour" aria-expanded="false"
+          aria-controls="panelsStayOpen-collapseFour">
+          {product.name}
+        </button>
+      </h2>
+      <div id="panelsStayOpen-collapseFour" className="accordion-collapse collapse show"
+        aria-labelledby="headingThree">
+        <div className="accordion-body">
+          {
+            product.variation_options.forEach(variationOpt =>{
+                <>
+                <input type="checkbox" className="btn-check border justify-content-center" id="btn-check1"
+            autoComplete="off" checked={true} />
+          <label className="btn btn-white mb-1 px-1" style={{ "width": "60px" }} htmlFor="btn-check1">{variationOpt.value}</label>
+                </>
+            })
+          }
+        </div>
+      </div>
+    </div>
+    )
+  })
+})
+console.log(variationJSX)
+  }
+
+
+  useEffect(()=>{
+    fetchProductDetails()
+  } , [])
+
+    
   console.log(props)
   // console.log(location)
 
@@ -42,9 +112,17 @@ export default function ProductPage({ match, ...props }) {
                     <span>$100</span>
                   </p>
 
-                  <strong><p style={{ "font-size": "20px" }}>Description</p></strong>
+                  <strong><p style={{ "fontSize": "20px" }}>Description</p></strong>
 
                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et dolor suscipit libero eos atque quia ipsa sint voluptatibus! Beatae sit assumenda asperiores iure at maxime atque repellendus maiores quia sapiente.</p>
+                  
+
+                  <div className="accordion" id="accordionPanelsStayOpenExample">
+
+                    {variationJSX}
+
+                  </div>
+
 
                   <form className="d-flex justify-content-left">
                     {/* <!-- Default input --> */}

@@ -15,11 +15,11 @@ export function footer_blue(props) {
                             {/* <!-- Grid column --> */}
                             <div className="col-12 col-lg-3 col-sm-12 mb-2">
                                 {/* <!-- Content --> */}
-                                <a href="https://mdbootstrap.com/" target="_blank" className="text-white h2">
-                                    MDB
+                                <a href="https://kalluriabhinandan.web.app/" target="_blank" className="text-white h2">
+                                    ABC
                                 </a>
                                 <p className="mt-1 text-white">
-                                    © 2023 Copyright: MDBootstrap.com
+                                    © 2023 Copyright: https://kalluriabhinandan.web.app/
                                 </p>
                             </div>
                             {/* <!-- Grid column --> */}
@@ -164,11 +164,11 @@ export function footer_grey(props) {
                             {/* Grid column */}
                             <div className="col-12 col-lg-3 col-sm-12 mb-2">
                                 {/* Content */}
-                                <a href="https://mdbootstrap.com/" target="_blank" className="">
-                                    <img src="https://mdbootstrap.com/img/logo/mdb-transaprent-noshadows.png" height="35" />
+                                <a href="https://kalluriabhinandan.web.app/" target="_blank" className="text-white h2">
+                                    ABC
                                 </a>
-                                <p className="mt-2 text-dark">
-                                    © 2023 Copyright: MDBootstrap.com
+                                <p className="mt-1 text-white">
+                                    © 2023 Copyright: https://kalluriabhinandan.web.app/
                                 </p>
                             </div>
                             {/* Grid column */}

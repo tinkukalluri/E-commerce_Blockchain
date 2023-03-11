@@ -21,6 +21,7 @@ import { useEffect, useState } from 'react';
 function App(props) {
 
   const [search , setAppSearch] = useState('')
+  const [authResultApp , setAuthResultApp] = useState(false)
 
   function setSearchCallback(newQuery){
     setAppSearch(newQuery)
@@ -34,13 +35,13 @@ function App(props) {
     <>
       <EthProvider>
         <Router>
-          <Header search_query={search} setAppSearch={setSearchCallback}/>
+          <Header search_query={search} setAppSearch={setSearchCallback} authResultApp = {authResultApp}/>
           <Switch>
             <Route exact path="/">
               <HomePage  {...props} />
             </Route>
             <Route exact path="/login">
-              <FirebaseLogin  {...props} />
+              <FirebaseLogin  {...props} setAuthResultApp = {setAuthResultApp}/>
             </Route>
             <Route exact path="/cart">
               <Cart  {...props} />

@@ -78,9 +78,11 @@ export default function Login(props) {
             if (data.result) {
                 //console.log("logged in successfully")
                 console.log(props.history)
+                props.setAuthResultApp(data.result)
                 history.push('/')
             } else {
                 //console.log("opps something when wrong")
+                props.setAuthResultApp(!data.result)
                 history.push('/login')
             }
         })

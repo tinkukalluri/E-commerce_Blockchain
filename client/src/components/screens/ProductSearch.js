@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Navigator from "../Navigator";
-import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
+import { useHistory, useLocation, useParams, useRouteMatch } from 'react-router-dom';
 var qs = require('qs');
 
 
@@ -15,6 +15,7 @@ export default function (props) {
   
   const [product , setProduct] = useState([])
   const [productJSX , setProductJSX] = useState(false)
+  const history = useHistory()
 
   function getSearchParams() {
     const params = qs.parse(window.location.search, { ignoreQueryPrefix: true })
@@ -413,6 +414,8 @@ export default function (props) {
       </>
     )
   }
+
+
   
   function getQueryWords(value) {
     console.log('search values', value);
@@ -453,17 +456,24 @@ export default function (props) {
     fetchProducts(props.search_query)
   }, [props.search_query])
 
+
+  function handleProductClick(e){
+    const productID = e
+    console.log('handle click' , productID)
+    history.push(`/product/${productID}`)
+  }
+
   function setProductJSX_(){
     let new_products = []
     product.forEach(element => {
       new_products.push(
-                <div className="col-lg-4 col-md-6 col-sm-6 d-flex">
+                <div  className="col-lg-4 col-md-6 col-sm-6 d-flex">
                   <div className="card w-100 my-2 shadow-2-strong">
-                    <img src={element.product_image_item}
+                    <img onClick={() => handleProductClick(element['id'])} src={element.product_image}
                       className="card-img-top" />
                     <div className="card-body d-flex flex-column">
                       <div className="d-flex flex-row">
-                        <h5 className="mb-1 me-1">rs{element.prize}</h5>
+                        <h5 className="mb-1 me-1">rs{element.min_prize}</h5>
                         <span className="text-danger"><s>$49.99</s></span>
                       </div>
                       <p className="card-text">{element.name}</p>

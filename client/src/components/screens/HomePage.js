@@ -2,20 +2,21 @@ import React, { useState, useEffect } from 'react'
 import { useEth } from '../../contexts/EthContext'
 import Footer from '../footer';
 import Navigator from '../Navigator';
+import { useHistory } from 'react-router-dom';
 
 export default function HomePage() {
 
     const { state } = useEth();
     const [NewProducts, setNewProducts] = useState('')
     const [NewProductsJSX, setNewProductsJSX] = useState(null)
-
+    const history = useHistory()
+            
     function handleBuy(e) {
         console.log(e.target.value)
     }
     console.log(state)
     useEffect(() => {
         console.log('component Did mount')
-
         get_new_products()
     }, [])
 
@@ -31,9 +32,18 @@ export default function HomePage() {
         }).then((data) => {
             console.log(data);
             setNewProducts(data);
-
+            return true
+        }).catch(e=> {
+            console.log("exception in fetching new products")
+            console.log(e)
+            setTimeout(get_new_products , 1000)
         })
     }
+    function handleProductClick(e){
+        const productID = e
+        console.log('handle click' , productID)
+        history.push(`/product/${productID}`)
+      }
 
     useEffect(() => {
         if (NewProducts == '') {
@@ -43,11 +53,11 @@ export default function HomePage() {
             NewProducts.forEach(product => {
                 li.push(<div className="col-lg-3 col-md-6 col-sm-6 d-flex">
                     <div className="card w-100 my-2 shadow-2-strong">
-                        <img src={product.product_image_item} className="card-img-top"
+                        <img onClick={() => handleProductClick(product['id'])} src={product.product_image} className="card-img-top"
                             style={{ 'aspectRation': '1 / 1' }} />
                         <div className="card-body d-flex flex-column">
                             <h5 className="card-title">{product.name}</h5>
-                            <p className="card-text">rs{product.prize}</p>
+                            <p className="card-text">rs{product.min_prize}</p>
                             <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
                                 <a href="#!" className="btn btn-primary shadow-0 me-1">Add to cart</a>
                                 <a href="#!" className="btn btn-light border px-2 pt-2 icon-hover"><i
