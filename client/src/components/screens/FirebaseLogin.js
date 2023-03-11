@@ -82,7 +82,7 @@ export default function Login(props) {
                 history.push('/')
             } else {
                 //console.log("opps something when wrong")
-                props.setAuthResultApp(!data.result)
+                props.setAuthResultApp(false)
                 history.push('/login')
             }
         })

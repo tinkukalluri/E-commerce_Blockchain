@@ -4,13 +4,6 @@ import { useHistory, useLocation, useParams, useRouteMatch } from 'react-router-
 var qs = require('qs');
 
 
-
-
-
-
-
-
-
 export default function (props) {
 
   const [product, setProduct] = useState([])
@@ -451,10 +444,6 @@ export default function (props) {
     console.log('Product Search component did mount')
     fetchProducts(getSearchParams().q)
   }, [])
-
-  useEffect(() => {
-    fetchProducts(props.search_query)
-  }, [props.search_query])
 
 
   function handleProductClick(e) {

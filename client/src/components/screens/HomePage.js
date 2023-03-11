@@ -10,7 +10,8 @@ export default function HomePage() {
     const [NewProducts, setNewProducts] = useState('')
     const [NewProductsJSX, setNewProductsJSX] = useState(null)
     const history = useHistory()
-            
+    const fetchNewProductsTimeout = 0
+
     function handleBuy(e) {
         console.log(e.target.value)
     }
@@ -18,6 +19,9 @@ export default function HomePage() {
     useEffect(() => {
         console.log('component Did mount')
         get_new_products()
+        return () => {
+            clearTimeout(fetchNewProductsTimeout)
+        }
     }, [])
 
 
@@ -33,17 +37,17 @@ export default function HomePage() {
             console.log(data);
             setNewProducts(data);
             return true
-        }).catch(e=> {
+        }).catch(e => {
             console.log("exception in fetching new products")
             console.log(e)
-            setTimeout(get_new_products , 1000)
+            fetchNewProductsTimeout = setTimeout(get_new_products, 1000)
         })
     }
-    function handleProductClick(e){
+    function handleProductClick(e) {
         const productID = e
-        console.log('handle click' , productID)
+        console.log('handle click', productID)
         history.push(`/product/${productID}`)
-      }
+    }
 
     useEffect(() => {
         if (NewProducts == '') {
@@ -76,7 +80,7 @@ export default function HomePage() {
     return (
         <>
             {/*Main Navigation*/}
-            <Navigator navbar page="homepage" homepage/>
+            <Navigator navbar page="homepage" homepage />
 
             {/* Products */}
 

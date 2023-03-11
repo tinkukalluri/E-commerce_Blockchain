@@ -20,28 +20,33 @@ import { useEffect, useState } from 'react';
 
 function App(props) {
 
-  const [search , setAppSearch] = useState('')
-  const [authResultApp , setAuthResultApp] = useState(false)
+  const [search, setAppSearch] = useState('')
+  const [authResultApp, setAuthResultApp] = useState(false)
 
-  function setSearchCallback(newQuery){
+  function setSearchCallback(newQuery) {
     setAppSearch(newQuery)
   }
 
-  useEffect(()=>[
-    console.log('app search' , search)
-  ] , [search])
+  useEffect(() => {
+    console.log('search updated in App.jsx')
+    console.log(search)
+  }, [search])
+
+  useEffect(() => [
+    console.log('app search', search)
+  ], [search])
 
   return (
     <>
       <EthProvider>
         <Router>
-          <Header search_query={search} setAppSearch={setSearchCallback} authResultApp = {authResultApp}/>
+          <Header search_query={search} setAppSearch={setSearchCallback} authResultApp={authResultApp} setAuthResultApp={setAuthResultApp} />
           <Switch>
             <Route exact path="/">
               <HomePage  {...props} />
             </Route>
             <Route exact path="/login">
-              <FirebaseLogin  {...props} setAuthResultApp = {setAuthResultApp}/>
+              <FirebaseLogin  {...props} setAuthResultApp={setAuthResultApp} />
             </Route>
             <Route exact path="/cart">
               <Cart  {...props} />
@@ -53,12 +58,12 @@ function App(props) {
               <AddProduct  {...props} />
             </Route>
             <Route exact path="/product_search">
-              <ProductSearch  {...props } search_query={search} />
+              <ProductSearch  {...props} search_query={search} />
             </Route>
             <Route exact path="/product/:productID"
               component={ProductPage} />
           </Switch>
-        <Footer />
+          <Footer />
         </Router>
       </EthProvider>
     </>

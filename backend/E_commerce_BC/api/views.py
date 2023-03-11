@@ -5,7 +5,7 @@ from rest_framework import generics, status
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response    
-from .models import ProductItem , Product , Users , Variation , VariationOption
+from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory
 from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer;
 import collections
 from django.db.models import Q
@@ -15,7 +15,7 @@ from django.db.models import Q
 def index(request, *args, **kwargs):
     return HttpResponse('hello world from api')
 
-def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=10):
+def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100):
     products_=[]
     if len(order_by):
         if filter_by:
@@ -56,7 +56,7 @@ def getProductItemsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=
     return ProductItems_
 
 
-def getProductsWithSimilarNames(query_list , offset=0 , limit = 10):
+def getProductsWithSimilarNames(query_list , offset=0 , limit = 100):
     products_=[]
     # ob_list = ProductItem.objects.get(reduce(lambda x, y: x | y, [Q(name__contains=word) for word in query_list]))
     querySet_product = Product.objects.filter(reduce(lambda x, y: x | y, [Q(name__contains=word.lower()) | Q(description__contains=word.lower()) for word in query_list]))
@@ -66,6 +66,25 @@ def getProductsWithSimilarNames(query_list , offset=0 , limit = 10):
     print(products_)
     return products_
     
+def getProductAndProductItems(product_id_list):
+    result_= []
+    for id in product_id_list:
+        products = getProductsWithKwargs(filter_by={
+            "id": id
+        })
+        for product in products:
+            temp={
+                "product": product,
+                "productItem":[]
+            }
+            productItems = getProductItemsWithKwargs(filter_by={
+                "product_id":product['id']
+            } , order_by=['-added_on'])
+            for productItem in productItems:
+                temp['productItem'].append(productItem)
+            result_.append(temp)
+    return result_
+        
 
 
 
@@ -115,7 +134,45 @@ class ProductSearch(APIView):
         print('for loop exit')
         return Response(products_ , status=status.HTTP_200_OK)
     
-    
+def getVariationFromCategoryID(categoryID):
+    variation_querySet = Variation.objects.filter(id=categoryID)
+    result_=[]
+    for row in variation_querySet:
+        result_.append(VariationSerializer(row).data)
+    return result_
+
+def getVariationValuesFromVariationID(variation_id):
+    variationOption_querySet = VariationOption.objects.filter(variation_id = variation_id)
+    result_ = []
+    for row in variationOption_querySet:
+        result_.append(VariationOptionSerializer(row).data)
+    return result_
+
+class getProductDetails(APIView):
+    def get(self , request):
+        product_id = request.GET.get('pID')
+        product = Product.objects.filter(id = product_id)[0]
+        product_items = getProductAndProductItems([int(product_id)])[0]
+        categoryID = product.category_id.id
+        product_category = ProductCategory.objects.filter(id = categoryID)[0]
+        print('category id: ' , categoryID)
+        variation_rows = getVariationFromCategoryID(categoryID)
+        result_=[]
+        print(variation_rows)
+        variations=[]
+        for variation in variation_rows:
+            variation_options= getVariationValuesFromVariationID(variation["id"])
+            variation["variation_options"]=[]
+            for variation_option in variation_options:
+                variation["variation_options"].append(variation_option)
+            variations.append(variation)
+        result_.append({"variation":variations,
+                        "product" : product_items['product'],
+                        "productItem" : product_items['productItem'],
+                        "category": product_category.category_name
+                        })
+        print(result_)
+        return Response(result_ , status=status.HTTP_200_OK)
     
     
 class LoginWithGoogle(APIView):
@@ -183,36 +240,7 @@ def loggedIn(request):
 class AddProductItem(APIView):
     pass
 
-def getVariationFromCategoryID(categoryID):
-    variation_querySet = Variation.objects.filter(id=categoryID)
-    result_=[]
-    for row in variation_querySet:
-        result_.append(VariationSerializer(row).data)
-    return result_
 
-def getVariationValuesFromVariationID(variation_id):
-    variationOption_querySet = VariationOption.objects.filter(variation_id = variation_id)
-    result_ = []
-    for row in variationOption_querySet:
-        result_.append(VariationOptionSerializer(row).data)
-    return result_
-
-class getProductDetails(APIView):
-    def get(self , request):
-        product_id = request.GET.get('pID')
-        categoryID = Product.objects.filter(id = product_id)[0].category_id.id
-        print('category id: ' , categoryID)
-        variation_rows = getVariationFromCategoryID(categoryID)
-        result_=[]
-        print(variation_rows)
-        for variation in variation_rows:
-            variation_options= getVariationValuesFromVariationID(variation["id"])
-            variation["variation_options"]=[]
-            for variation_option in variation_options:
-                variation["variation_options"].append(variation_option)
-            result_.append(variation)
-        print(result_)
-        return Response(result_ , status=status.HTTP_200_OK)
             
     
 

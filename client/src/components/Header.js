@@ -8,19 +8,31 @@ import { Navigate, useHistory } from "react-router-dom";
 export default function Header(props) {
     const [authResult, setAuthResult] = useState(false)
     const history = useHistory()
-    const [search, setSearch] = useState('')
+    const [searchState, setSearchState] = useState('')
     const [jumbotronJSX, setJumbotronJSX] = useState([])
     console.log('Header rerendered')
 
     function handleSearchtxt(e) {
-        console.log(e)
-        setSearch(e.target.value.toLowerCase())
-        console.log(search)
+        console.log(e.target.value.toLowerCase())
+        setSearchState(e.target.value.toLowerCase())
+        console.log(searchState)
+    }
+
+    useEffect(() => {
+        console.log('search updated')
+        console.log(searchState)
+    }, [searchState])
+
+    function onkeyup(e) {
+        if (e.keyCode === 13) {
+            handleSearchSubmit(e);
+        }
     }
 
     function handleSearchSubmit(e) {
-        props.setAppSearch(search)
-        history.replace(`/product_search?q=${search}`)
+        console.log('searching----------------------------------')
+        props.setAppSearch(searchState)
+        history.replace(`/product_search?q=${searchState}`)
     }
 
     function loginPressed(e) {
@@ -55,7 +67,7 @@ export default function Header(props) {
                         <div className="col-lg-5 col-md-12 col-12">
                             <div className="input-group float-center">
                                 <div className="form-outline">
-                                    <input type="search" value={search} onChange={handleSearchtxt} id="form1" className="form-control" />
+                                    <input type="search" onKeyUp={onkeyup} value={searchState} onChange={handleSearchtxt} id="form1" className="form-control" />
                                     <label className="form-label" htmlFor="form1">Search</label>
                                     <div className="form-notch"><div className="form-notch-leading" style={{ "width": "9px" }}></div>
                                         <div className="form-notch-middle" style={{ "width": "47.2px" }}></div>
@@ -117,9 +129,11 @@ export default function Header(props) {
             if (data.result) {
                 console.log("user successfully authenticated", data.result);
                 setAuthResult(data.result)
+                props.setAuthResultApp(data.result)
             } else {
                 // window.location.replace('/login')
                 console.log("user not authenticated")
+                props.setAuthResultApp(false)
             }
         })
     };
@@ -155,7 +169,6 @@ export default function Header(props) {
 
 
     useEffect(() => {
-        authenticateUser()
         jumbotron_maintop()
     }, [props.authResultApp, authResult])
 
