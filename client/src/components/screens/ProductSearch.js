@@ -12,9 +12,9 @@ var qs = require('qs');
 
 
 export default function (props) {
-  
-  const [product , setProduct] = useState([])
-  const [productJSX , setProductJSX] = useState(false)
+
+  const [product, setProduct] = useState([])
+  const [productJSX, setProductJSX] = useState(false)
   const history = useHistory()
 
   function getSearchParams() {
@@ -23,7 +23,7 @@ export default function (props) {
     return params
   }
 
-  console.log("search_query_from_prop_productSearch" , props.search_query)
+  console.log("search_query_from_prop_productSearch", props.search_query)
 
   function body(props) {
     return (
@@ -258,7 +258,7 @@ export default function (props) {
                     </div>
                   </div>
                 </header>
-  
+
                 <div className="row">
                   {productJSX}
                   <div className="col-lg-4 col-md-6 col-sm-6 d-flex">
@@ -382,9 +382,9 @@ export default function (props) {
                     </div>
                   </div>
                 </div>
-  
+
                 <hr />
-  
+
                 {/* <!-- Pagination --> */}
                 <nav aria-label="Page navigation example" className="d-flex justify-content-center mt-3">
                   <ul className="pagination">
@@ -416,7 +416,7 @@ export default function (props) {
   }
 
 
-  
+
   function getQueryWords(value) {
     console.log('search values', value);
     const words = value.split(' ');
@@ -426,12 +426,12 @@ export default function (props) {
     console.log('words', words);
     return words;
   }
-  
+
   function fetchProducts(query) {
-    if(query==''){
+    if (query == '') {
       return
     }
-    console.log("fetch product query" , query)
+    console.log("fetch product query", query)
     const requestOptions = {
       method: 'get',
       headers: { "Content-Type": "application/json" },
@@ -443,56 +443,56 @@ export default function (props) {
     }).then((data) => {
       console.log(data);
       setProduct(data);
-      
+
     })
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log('Product Search component did mount')
     fetchProducts(getSearchParams().q)
-  } , [])
+  }, [])
 
   useEffect(() => {
     fetchProducts(props.search_query)
   }, [props.search_query])
 
 
-  function handleProductClick(e){
+  function handleProductClick(e) {
     const productID = e
-    console.log('handle click' , productID)
+    console.log('handle click', productID)
     history.push(`/product/${productID}`)
   }
 
-  function setProductJSX_(){
+  function setProductJSX_() {
     let new_products = []
     product.forEach(element => {
       new_products.push(
-                <div  className="col-lg-4 col-md-6 col-sm-6 d-flex">
-                  <div className="card w-100 my-2 shadow-2-strong">
-                    <img onClick={() => handleProductClick(element['id'])} src={element.product_image}
-                      className="card-img-top" />
-                    <div className="card-body d-flex flex-column">
-                      <div className="d-flex flex-row">
-                        <h5 className="mb-1 me-1">rs{element.min_prize}</h5>
-                        <span className="text-danger"><s>$49.99</s></span>
-                      </div>
-                      <p className="card-text">{element.name}</p>
-                      <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                        <a href="#!" className="btn btn-primary shadow-0 me-1">Add to cart</a>
-                        <a href="#!" className="btn btn-light border icon-hover px-2 pt-2"><i
-                          className="fas fa-heart fa-lg text-secondary px-1"></i></a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+        <div className="col-lg-4 col-md-6 col-sm-6 d-flex">
+          <div className="card w-100 my-2 shadow-2-strong">
+            <img onClick={() => handleProductClick(element['id'])} src={element.product_image}
+              className="card-img-top" />
+            <div className="card-body d-flex flex-column">
+              <div className="d-flex flex-row">
+                <h5 className="mb-1 me-1">rs{element.min_prize}</h5>
+                <span className="text-danger"><s>$49.99</s></span>
+              </div>
+              <p className="card-text">{element.name}</p>
+              <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
+                <a href="#!" className="btn btn-primary shadow-0 me-1">Add to cart</a>
+                <a href="#!" className="btn btn-light border icon-hover px-2 pt-2"><i
+                  className="fas fa-heart fa-lg text-secondary px-1"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
       )
     });
     setProductJSX(new_products)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     setProductJSX_()
-  } , [product])
+  }, [product])
 
   return (
     <>
