@@ -2,20 +2,17 @@ import React, { useEffect, useState } from 'react'
 
 import { Navigate, useHistory } from "react-router-dom";
 
-
-
-
 export default function Header(props) {
     const [authResult, setAuthResult] = useState(false)
     const history = useHistory()
     const [searchState, setSearchState] = useState('')
-    const [jumbotronJSX, setJumbotronJSX] = useState([])
     console.log('Header rerendered')
 
     function handleSearchtxt(e) {
         console.log(e.target.value.toLowerCase())
         setSearchState(e.target.value.toLowerCase())
         console.log(searchState)
+        props.setAppSearch(e.target.value)
     }
 
     useEffect(() => {
@@ -48,11 +45,8 @@ export default function Header(props) {
     }
 
     function jumbotron_maintop() {
-        console.log('authResult changed')
-        console.log(typeof authResult)
-        console.log(authResult)
-        setJumbotronJSX(
-            <div className="p-3 text-center bg-white border-bottom">
+        return (
+            < div className="p-3 text-center bg-white border-bottom" >
                 <div className="container">
                     <div className="row gy-3">
                         {/* Left elements */}
@@ -81,8 +75,6 @@ export default function Header(props) {
                         </div>
                         {/* Center elements */}
 
-
-
                         {/* Right elements */}
                         <div className="order-lg-last col-lg-5 col-sm-8 col-8">
                             <div className="d-flex float-end">
@@ -110,9 +102,10 @@ export default function Header(props) {
                         {/* Right elements */}
                     </div>
                 </div>
-            </div>
+            </div >
         )
     }
+
 
 
     function authenticateUser() {
@@ -169,14 +162,17 @@ export default function Header(props) {
 
 
     useEffect(() => {
-        jumbotron_maintop()
+        console.log('authResult changed')
+        console.log(typeof authResult)
+        console.log(authResult)
+        authenticateUser()
     }, [props.authResultApp, authResult])
 
 
     console.log(props)
     return (
         < header >
-            {jumbotronJSX}
+            {jumbotron_maintop()}
         </header >
     )
 }

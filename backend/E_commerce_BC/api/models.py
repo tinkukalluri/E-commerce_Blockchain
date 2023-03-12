@@ -40,7 +40,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     # this a generall image
-    product_image= models.URLField()
+    product_image= models.URLField(null=True , max_length=1000)
     added_on = models.DateTimeField(null=True)
 
     def save(self, *args, **kwargs):
@@ -59,9 +59,9 @@ class ProductItem(models.Model):
     SKU = models.CharField(max_length=255)
     qty_in_stock = models.IntegerField(null=True)
     # this img represents a particular variation of product of image
-    product_image = models.URLField(null=True)
-    IPFS_hash = models.URLField(null= True)
-    img_url = models.URLField(null=True)
+    product_image = models.CharField(null=True , max_length=1000)
+    IPFS_hash = models.URLField(null= True , max_length=1000)
+    img_url = models.URLField(null=True , max_length=1000)
     prize = models.IntegerField()
     added_on = models.DateTimeField(null=True)
 

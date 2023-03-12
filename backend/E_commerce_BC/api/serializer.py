@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product , ProductItem  , Variation , VariationOption
+from .models import Product , ProductItem  , Variation , VariationOption , ProductConfig
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -22,4 +22,10 @@ class VariationOptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = VariationOption
         fields =("id" , "variation_id" , "value")
+
+
+class ProductConfigSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=ProductConfig
+        fields=('id' ,'product_item_id' , 'variation_option')
         

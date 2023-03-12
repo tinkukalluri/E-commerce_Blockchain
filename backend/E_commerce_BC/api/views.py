@@ -5,8 +5,8 @@ from rest_framework import generics, status
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response    
-from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory
-from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer;
+from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory , ProductConfig
+from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer, ProductConfigSerializer
 import collections
 from django.db.models import Q
 
@@ -34,10 +34,10 @@ def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100)
     print(products_)
     return products_
 
-def getProductItemsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100):
+def getProductItemsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=10000):
     print("getProductItemsWithKwargs")
     print(filter_by , order_by , offset , limit)
-    ProductItems_=[]
+    productConfig_=[]
     if len(order_by):
         if filter_by:
             querySet_items = ProductItem.objects.filter(**filter_by).order_by(*order_by)[offset:limit]
@@ -51,9 +51,9 @@ def getProductItemsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=
     print(len(querySet_items))
     for row in querySet_items:
         temp_ProductItem = dict(ProductItemSerializer(row).data)
-        ProductItems_.append(temp_ProductItem)
-    print(ProductItems_)
-    return ProductItems_
+        productConfig_.append(temp_ProductItem)
+    print(productConfig_)
+    return productConfig_
 
 
 def getProductsWithSimilarNames(query_list , offset=0 , limit = 100):
@@ -95,11 +95,11 @@ class getNewProducts(APIView):
         products_ = getProductsWithKwargs(offset=offset, limit=limit , order_by=['-added_on'])
         for product in products_:  
             min_prize=float('inf')
-            productItems_ = getProductItemsWithKwargs(offset=1 , limit=100 , filter_by={
+            productConfig_ = getProductItemsWithKwargs(offset=1 , limit=100 , filter_by={
                 "product_id":product["id"]
             })
-            print(productItems_)
-            for productItem in productItems_:
+            print(productConfig_)
+            for productItem in productConfig_:
                 min_prize= min(min_prize , int(productItem['prize']))
             if min_prize==float('inf'):
                 min_prize=0 
@@ -122,11 +122,11 @@ class ProductSearch(APIView):
         products_ = getProductsWithSimilarNames(query_list , offset=offset , limit=limit)
         for product in products_:  
             min_prize=float('inf')
-            productItems_ = getProductItemsWithKwargs(offset=1 , limit=100 , filter_by={
+            productConfig_ = getProductItemsWithKwargs(offset=1 , limit=100 , filter_by={
                 "product_id":product["id"]
             })
-            print(productItems_)
-            for productItem in productItems_:
+            print(productConfig_)
+            for productItem in productConfig_:
                 min_prize= min(min_prize , int(productItem['prize']))
             if min_prize==float('inf'):
                 min_prize=0 
@@ -135,9 +135,10 @@ class ProductSearch(APIView):
         return Response(products_ , status=status.HTTP_200_OK)
     
 def getVariationFromCategoryID(categoryID):
-    variation_querySet = Variation.objects.filter(id=categoryID)
+    variation_querySet = Variation.objects.filter(category_id=categoryID)
     result_=[]
     for row in variation_querySet:
+        print(row)
         result_.append(VariationSerializer(row).data)
     return result_
 
@@ -156,7 +157,7 @@ class getProductDetails(APIView):
         categoryID = product.category_id.id
         product_category = ProductCategory.objects.filter(id = categoryID)[0]
         print('category id: ' , categoryID)
-        variation_rows = getVariationFromCategoryID(categoryID)
+        variation_rows = getVariationFromCategoryID(int(categoryID))
         result_=[]
         print(variation_rows)
         variations=[]
@@ -173,8 +174,92 @@ class getProductDetails(APIView):
                         })
         print(result_)
         return Response(result_ , status=status.HTTP_200_OK)
-    
-    
+
+
+def getProductIdsFromProductConfig(productItem_ids , **kwargs):
+    for variation in kwargs.values():
+        variation_id = variation['variation_id']
+        variationOpt_id = variation['variationOpt_id']
+
+
+def getProductConfigWithKwargs( filter_by=False ,order_by=[]):
+    print("getProductConfigWithKwargs")
+    print(filter_by , order_by)
+    productConfig_=[]
+    if len(order_by):
+        if filter_by:
+            querySet_items = ProductConfig.objects.filter(**filter_by).order_by(*order_by)
+        else:
+            querySet_items = ProductConfig.objects.all().order_by(*order_by)
+    else:
+        if filter_by:
+            querySet_items = ProductConfig.objects.filter(**filter_by)
+        else:
+            querySet_items = ProductConfig.objects.all()
+    print(len(querySet_items))
+    for row in querySet_items:
+        temp_ProductItem = dict(ProductConfigSerializer(row).data)
+        productConfig_.append(temp_ProductItem)
+    print(productConfig_)
+    return productConfig_
+
+
+# color
+# : 
+# {val: 'olive green', variation_id: 3, variationOpt_id: 15}
+# memory
+# : 
+# {val: '256', variation_id: 4, variationOpt_id: 18}
+# product_id
+# : 
+# 8
+# quantity
+# : 
+# "4"
+class AddToCart(APIView):
+    def post(self, request):
+        if request.method == 'POST':
+            post_data= request.data
+            print(post_data)
+            qty =post_data.get('quantity')
+            product_id = int(post_data.get('product_id'))
+            productItem_querySet = getProductItemsWithKwargs(filter_by={
+                'product_id':product_id
+            })
+            productItem_ids = [productItem['id'] for productItem in productItem_querySet]
+            del post_data['quantity']
+            del post_data['product_id']
+            print(post_data)
+            print(productItem_ids)
+            temp_list=[]
+            potential_product=[]
+            for key in post_data.keys():
+                variation_id = post_data[key]['variation_id']
+                variationOpt_id = post_data[key]['variationOpt_id']
+                temp_list=getProductConfigWithKwargs(filter_by={
+                    'product_item_id__in': productItem_ids ,
+                    'variation_option': variationOpt_id
+                })
+                temp_list = [prodConfig['product_item_id'] for prodConfig in temp_list]
+                print('temp_list' , temp_list)
+                if not len(potential_product):
+                    potential_product=temp_list
+                else:
+                    potential_product = list(set(potential_product) & set(temp_list))
+                print('potential product')
+                print(potential_product)
+            if(len(potential_product)==1):
+                return Response({
+                    "product_item":potential_product[0]
+                    } , status=status.HTTP_200_OK)
+        else:
+            return Response({
+                "oops":"something went wrong with the server"
+            } , status=status.HTTP_204_NO_CONTENT)
+        
+
+
+
 class LoginWithGoogle(APIView):
     def post(self, request, format=None):
         post_data = dict(request.data)
@@ -212,7 +297,7 @@ class LoginWithGoogle(APIView):
             
 class Authenticate(APIView):
     def post(self, request, format=None):
-        post_data=dict(request.POST)
+        post_data=dict(post_data)
         print("post_data" , post_data)
         #print("from authenticate" , dict(self.request.session))
         if self.request.session.get('user_id')!= None:

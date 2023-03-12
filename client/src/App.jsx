@@ -19,7 +19,7 @@ import { useEffect, useState } from 'react';
 // const bootstrap = require("bootstrap");
 
 function App(props) {
-
+  console.log('app component re-rendered')
   const [search, setAppSearch] = useState('')
   const [authResultApp, setAuthResultApp] = useState(false)
 
@@ -40,7 +40,9 @@ function App(props) {
     <>
       <EthProvider>
         <Router>
-          <Header search_query={search} setAppSearch={setSearchCallback} authResultApp={authResultApp} setAuthResultApp={setAuthResultApp} />
+          <Switch>
+            <Header search_query={search} setAppSearch={setSearchCallback} authResultApp={authResultApp} setAuthResultApp={setAuthResultApp} />
+          </Switch>
           <Switch>
             <Route exact path="/">
               <HomePage  {...props} />

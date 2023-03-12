@@ -16,6 +16,12 @@ export default function (props) {
     return params
   }
 
+
+  function handleCheckbox(e) {
+    console.log("change in checkbox")
+    console.log(e)
+  }
+
   console.log("search_query_from_prop_productSearch", props.search_query)
 
   function body(props) {
@@ -161,16 +167,16 @@ export default function (props) {
                       <div id="panelsStayOpen-collapseFour" className="accordion-collapse collapse show"
                         aria-labelledby="headingThree">
                         <div className="accordion-body">
-                          <input type="checkbox" className="btn-check border justify-content-center" id="btn-check1"
-                            autoComplete="off" checked={true} />
+                          <input onChange={handleCheckbox} type="checkbox" className="btn-check border justify-content-center" id="btn-check1"
+                            autoComplete="off" defaultChecked={true} />
                           <label className="btn btn-white mb-1 px-1" style={{ "width": "60px" }} htmlFor="btn-check1">XS</label>
-                          <input type="checkbox" className="btn-check border justify-content-center" id="btn-check2"
+                          <input onChange={handleCheckbox} type="checkbox" className="btn-check border justify-content-center" id="btn-check2"
                             autoComplete="off" />
                           <label className="btn btn-white mb-1 px-1" style={{ "width": "60px" }} htmlFor="btn-check2">SM</label>
-                          <input type="checkbox" className="btn-check border justify-content-center" id="btn-check3"
+                          <input onChange={handleCheckbox} type="checkbox" className="btn-check border justify-content-center" id="btn-check3"
                             autoComplete="off" />
                           <label className="btn btn-white mb-1 px-1" style={{ "width": "60px" }} htmlFor="btn-check3">LG</label>
-                          <input type="checkbox" className="btn-check border justify-content-center" id="btn-check4"
+                          <input onChange={handleCheckbox} type="checkbox" className="btn-check border justify-content-center" id="btn-check4"
                             autoComplete="off" />
                           <label className="btn btn-white mb-1 px-1" style={{ "width": "60px" }} htmlFor="btn-check4">XXL</label>
                         </div>
@@ -444,6 +450,12 @@ export default function (props) {
     console.log('Product Search component did mount')
     fetchProducts(getSearchParams().q)
   }, [])
+
+
+  useEffect(() => {
+    console.log('change in search from App.js')
+    fetchProducts(props.search_query)
+  }, [props.search_query])
 
 
   function handleProductClick(e) {
