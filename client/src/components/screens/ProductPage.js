@@ -126,7 +126,7 @@ export default function ProductPage({ match, ...props }) {
 
                           <p className="lead">
                             <span className="me-1">
-                              <del>$200</del>
+                              <del>₹200</del>
                             </span>
                             <span>₹ need to update</span>
                           </p>

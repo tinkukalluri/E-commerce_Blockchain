@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product , ProductItem  , Variation , VariationOption , ProductConfig
+from .models import Product , ProductItem  , Variation , VariationOption , ProductConfig , ShoppingCart, ShoppingCartItem
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -28,4 +28,15 @@ class ProductConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model=ProductConfig
         fields=('id' ,'product_item_id' , 'variation_option')
+        
+        
+class ShoppingCartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=ShoppingCart
+        fields = ('id' , 'user_id')
+
+class ShoppingCartItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShoppingCartItem
+        fields = ('id' ,'cart_id' ,'product_item_id' , 'qty' , 'added_on' )
         

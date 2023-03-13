@@ -5,8 +5,8 @@ from rest_framework import generics, status
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response    
-from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory , ProductConfig
-from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer, ProductConfigSerializer
+from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory , ShoppingCart , ShoppingCartItem
+from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer, ProductConfigSerializer , ShoppingCartSerializer , ShoppingCartItemSerializer
 import collections
 from django.db.models import Q
 
@@ -82,6 +82,22 @@ def getProductAndProductItems(product_id_list):
             } , order_by=['-added_on'])
             for productItem in productItems:
                 temp['productItem'].append(productItem)
+            result_.append(temp)
+    return result_
+
+def getProductAndProductItemsWithProductItem(productItem_id_list):
+    result_= []
+    for id in productItem_id_list:
+        products = getProductItemsWithKwargs(filter_by={
+            "id": id
+        })
+        for productItem in products:
+            temp={
+                "productItem": productItem,
+                "product": getProductsWithKwargs(filter_by={
+                "id":productItem['product_id']
+            } , order_by=['-added_on'])[0]
+            }
             result_.append(temp)
     return result_
         
@@ -233,9 +249,18 @@ class AddToCart(APIView):
             print(productItem_ids)
             temp_list=[]
             potential_product=[]
+            variation=[]
+            # this entire code is for finding the product_item_id(which is inside potential_product) using variations
             for key in post_data.keys():
                 variation_id = post_data[key]['variation_id']
                 variationOpt_id = post_data[key]['variationOpt_id']
+                variationOpt_value = post_data[key]['val']
+                variation.append({
+                    'variation_name':str(key),
+                    'variation_id' : int(variation_id),
+                    'variationOpt_id': int(variationOpt_id),
+                    'variationOpt_value' : str(variationOpt_value)      
+                    })
                 temp_list=getProductConfigWithKwargs(filter_by={
                     'product_item_id__in': productItem_ids ,
                     'variation_option': variationOpt_id
@@ -248,16 +273,98 @@ class AddToCart(APIView):
                     potential_product = list(set(potential_product) & set(temp_list))
                 print('potential product')
                 print(potential_product)
+            # finished finding the product_item_id in potential_product[0]
             if(len(potential_product)==1):
                 return Response({
-                    "product_item":potential_product[0]
+                    "product_item":potential_product[0],
+                    "variation": variation
                     } , status=status.HTTP_200_OK)
         else:
             return Response({
                 "oops":"something went wrong with the server"
             } , status=status.HTTP_204_NO_CONTENT)
-        
+    
+def getShoppingCartWithKwargs( filter_by=False ,order_by=[]):
+    print("getProductConfigWithKwargs")
+    print(filter_by , order_by)
+    shoppingCart_=[]
+    if len(order_by):
+        if filter_by:
+            querySet_items = ShoppingCart.objects.filter(**filter_by).order_by(*order_by)
+        else:
+            querySet_items = ShoppingCart.objects.all().order_by(*order_by)
+    else:
+        if filter_by:
+            querySet_items = ShoppingCart.objects.filter(**filter_by)
+        else:
+            querySet_items = ShoppingCart.objects.all()
+    print(len(querySet_items))
+    for row in querySet_items:
+        temp_ProductItem = dict(ShoppingCartSerializer(row).data)
+        shoppingCart_.append(temp_ProductItem)
+    print(shoppingCart_)
+    return shoppingCart_
 
+
+def getShoppingCartItemWithKwargs( filter_by=False ,order_by=[]):
+    print("getProductConfigWithKwargs")
+    print(filter_by , order_by)
+    ShoppingCartItem_=[]
+    if len(order_by):
+        if filter_by:
+            querySet_items = ShoppingCartItem.objects.filter(**filter_by).order_by(*order_by)
+        else:
+            querySet_items = ShoppingCartItem.objects.all().order_by(*order_by)
+    else:
+        if filter_by:
+            querySet_items = ShoppingCartItem.objects.filter(**filter_by)
+        else:
+            querySet_items = ShoppingCartItem.objects.all()
+    print(len(querySet_items))
+    for row in querySet_items:
+        temp_ProductItem = dict(ShoppingCartItemSerializer(row).data)
+        ShoppingCartItem_.append(temp_ProductItem)
+    print(ShoppingCartItem_)
+    return ShoppingCartItem_
+
+
+class CartProducts(APIView):
+    def get(self , request):
+        user_id = self.request.session["user_id"]
+        shoppingCart = getShoppingCartWithKwargs(filter_by={
+            "user_id":int(user_id)
+        } )
+        cart_id = 0
+        if(len(shoppingCart)):
+            cart_id=shoppingCart[0]['id']
+        else:
+            return Response(
+                {
+                    'oops': 'cannot find the shopping cart of the user'
+                } , status=status.HTTP_204_NO_CONTENT
+            )
+        shopping_cart_items = getShoppingCartItemWithKwargs(
+            filter_by={
+                "cart_id":int(cart_id)
+            } , order_by=['-added_on']
+        )
+        # shopping_cart_productItems_ids = [cartItem['product_item_id'] for cartItem in shopping_cart_items]
+        for index , cartItem in enumerate(shopping_cart_items):
+            shopping_cart_item= getProductAndProductItemsWithProductItem([cartItem['product_item_id']])[0]
+            shopping_cart_items[index]={
+                **cartItem,
+                **shopping_cart_item
+            }
+        return Response(
+            {
+                'shopping_cart_items':shopping_cart_items , 
+                'cart_id': cart_id
+            }
+            , status=status.HTTP_200_OK)
+        
+        
+        
+        
 
 
 class LoginWithGoogle(APIView):
@@ -297,7 +404,7 @@ class LoginWithGoogle(APIView):
             
 class Authenticate(APIView):
     def post(self, request, format=None):
-        post_data=dict(post_data)
+        post_data=dict(request.data)
         print("post_data" , post_data)
         #print("from authenticate" , dict(self.request.session))
         if self.request.session.get('user_id')!= None:

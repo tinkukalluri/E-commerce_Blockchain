@@ -99,6 +99,15 @@ class ShoppingCartItem(models.Model):
     cart_id = models.ForeignKey(ShoppingCart , on_delete=models.CASCADE)
     product_item_id = models.ForeignKey(ProductItem , on_delete=models.CASCADE)
     qty = models.IntegerField()
+    added_on = models.DateTimeField(null=True)
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        # converting utc to itc , the gap is 5.5 hours
+        self.added_on=timezone.now() + timezone.timedelta(hours=5.5)
+        #print("timezome.now()::", self.send_on)
+        #     self.created = timezone.now()
+        # self.modified = timezone.now()
+        return super(ShoppingCartItem , self).save(*args, **kwargs)
 
 
 # ---------------------------------address----------------------------------------
