@@ -11,5 +11,6 @@ urlpatterns = [
     path('checkout/' , views.index),
     path('add_product/' , views.index),
     path('product_search/' , views.index),
-    path('product/<str:productID>' , views.index)
+    path('product/<str:productID>' , views.index),
+    path('tin_wallet/' , views.index)
 ]

@@ -5,7 +5,7 @@ from rest_framework import generics, status
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response    
-from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory , ShoppingCart , ShoppingCartItem
+from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory , ShoppingCart , ShoppingCartItem , ProductConfig
 from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer, ProductConfigSerializer , ShoppingCartSerializer , ShoppingCartItemSerializer
 import collections
 from django.db.models import Q
@@ -233,12 +233,26 @@ def getProductConfigWithKwargs( filter_by=False ,order_by=[]):
 # : 
 # "4"
 class AddToCart(APIView):
+    def add_to_cart(productItemID , cartID , qty):
+        shoppingCartInstance = ShoppingCart.objects.filter(id= cartID)[0]
+        productItemInstance = ProductItem.objects.get(id=productItemID)
+        productItemObj = ShoppingCartItem(cart_id=shoppingCartInstance , product_item_id = productItemInstance , qty = qty)
+        productItemObj.save()
+
+
     def post(self, request):
         if request.method == 'POST':
             post_data= request.data
             print(post_data)
             qty =post_data.get('quantity')
             product_id = int(post_data.get('product_id'))
+            user_id = self.request.session["user_id"]
+            shoppingCart = getShoppingCartWithKwargs(filter_by={
+                "user_id":int(user_id)
+            } )
+            cart_id = 0
+            if(len(shoppingCart)):
+                cart_id=shoppingCart[0]['id']
             productItem_querySet = getProductItemsWithKwargs(filter_by={
                 'product_id':product_id
             })
@@ -274,11 +288,17 @@ class AddToCart(APIView):
                 print('potential product')
                 print(potential_product)
             # finished finding the product_item_id in potential_product[0]
+            
             if(len(potential_product)==1):
+                AddToCart.add_to_cart(potential_product[0] , cart_id , qty)
                 return Response({
                     "product_item":potential_product[0],
                     "variation": variation
                     } , status=status.HTTP_200_OK)
+            else:
+                return Response({
+                    'oops':"couldn't findout the productitem variation in productConfig tabe"
+                })
         else:
             return Response({
                 "oops":"something went wrong with the server"

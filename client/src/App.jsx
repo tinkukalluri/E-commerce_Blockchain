@@ -16,6 +16,7 @@ import ProductPage from './components/screens/ProductPage';
 import Header from './components/Header';
 import Footer from './components/footer';
 import { useEffect, useState } from 'react';
+import TinWallet from './components/screens/TinWallet';
 // const bootstrap = require("bootstrap");
 
 function App(props) {
@@ -61,6 +62,9 @@ function App(props) {
             </Route>
             <Route exact path="/product_search">
               <ProductSearch  {...props} search_query={search} />
+            </Route>
+            <Route exact path="/tin_wallet">
+              <TinWallet/>
             </Route>
             <Route exact path="/product/:productID"
               component={ProductPage} />

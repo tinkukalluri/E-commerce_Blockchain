@@ -24,8 +24,8 @@ contract TinToken is ERC20 {
         uint amount;
     }
 
-    order_struct[] orders;
-    uint[] ordersIndices;  // will have orderID
+    order_struct[] public orders;
+    uint[] public ordersIndices;  // will have orderID
 
     // enents
     event Bought(uint256 amount , address receiver);
@@ -103,6 +103,7 @@ contract TinToken is ERC20 {
     function payWithPaymentID(uint amount, uint paymendId) external returns(bool){
         if(transfer(msg.sender, amount)){
             emit PaymentDone(msg.sender, amount, paymendId, block.timestamp);
+
             return true;
         }
         emit PaymentFailed(msg.sender, amount, paymendId, block.timestamp);

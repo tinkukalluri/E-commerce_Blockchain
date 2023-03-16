@@ -2,6 +2,8 @@ const TinTokenInstance = await TinToken.deployed();
 
 var value = (await TinTokenInstance.balanceOf(TinToken.networks[5777].address)).toString();
 
+ value = (await TinTokenInstance.balanceOf('0xddC4B03F2abaA36697Bd8b0CC9F8D5606112bEb7')).toString();
+
  const PaymentProcessorInstance = await PaymentProcessor.deployed();
  PaymentProcessorInstance.pay(2 , 123)
 

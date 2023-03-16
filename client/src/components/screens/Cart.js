@@ -8,6 +8,10 @@ export default function () {
 
     let fetchCartItemsTimeout=0
 
+    function makePayment(){
+        
+    }
+
     function fetchCartItems() {
         const requestOptions = {
           method: 'get',
@@ -229,7 +233,7 @@ export default function () {
                                     </div>
 
                                     <div className="mt-3">
-                                        <a href="#" className="btn btn-success w-100 shadow-0 mb-2"> Make Purchase </a>
+                                        <a onclick={makePayment} className="btn btn-success w-100 shadow-0 mb-2"> Make Purchase </a>
                                         <a href="#" className="btn btn-light w-100 border mt-2"> Back to shop </a>
                                     </div>
                                 </div>
@@ -240,7 +244,6 @@ export default function () {
                 </div>
             </div>
             {/* <!-- cart + summary --> */}
-            < Footer />
         </>
     )
 }
