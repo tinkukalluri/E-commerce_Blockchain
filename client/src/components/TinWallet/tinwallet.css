@@ -1,0 +1,24 @@
+
+
+.wallet_balance{
+    border: 3px solid black;
+    border-radius: 9px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size:xx-large;
+}
+
+.wallet_balance_coins{
+    text-align: right;
+}
+
+.wallet_add_coins{
+    border: 3px solid black;
+    border-radius: 9px;
+    text-align: right;
+}
+
+.wallet_coins_entry{
+    border: 3px solid black;
+    border-radius: 9px;
+    text-align: right;
+}

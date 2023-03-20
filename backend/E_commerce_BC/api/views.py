@@ -9,6 +9,7 @@ from .models import ProductItem , Product , Users , Variation , VariationOption 
 from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer, ProductConfigSerializer , ShoppingCartSerializer , ShoppingCartItemSerializer
 import collections
 from django.db.models import Q
+from .utils import DEBUG
 
 # Create your views here.
 
@@ -232,6 +233,29 @@ def getProductConfigWithKwargs( filter_by=False ,order_by=[]):
 # quantity
 # : 
 # "4"
+
+# url - remove_from_cart
+# JSON Response
+class RemoveFromCart(APIView):
+    def post(self , request):
+        post_data = request.data
+        shoppingCartItemInstance =   ShoppingCartItem.objects.filter(id = post_data['cart_item_id'])
+        if shoppingCartItemInstance.exists():
+            shoppingCartItemInstance=shoppingCartItemInstance[0]
+            shoppingCartItemInstance.delete()
+            return Response(
+                {
+                "status" : True
+                } , status=status.HTTP_200_OK
+            )
+        else:
+            return Response({
+                "status" : "Item doesnt exists in cart"
+            } , status=status.HTTP)
+            
+
+
+# url - add_to_cart
 class AddToCart(APIView):
     def add_to_cart(productItemID , cartID , qty):
         shoppingCartInstance = ShoppingCart.objects.filter(id= cartID)[0]
@@ -348,6 +372,39 @@ def getShoppingCartItemWithKwargs( filter_by=False ,order_by=[]):
     return ShoppingCartItem_
 
 
+# url - cart_products  
+# JSON Response :
+#     {
+#     "shopping_cart_items": [
+#         {
+#             "id": 5,
+#             "cart_id": 1,
+#             "product_item_id": 12,
+#             "qty": 1,
+#             "added_on": "2023-03-16T14:23:34.199006Z",
+#             "productItem": {
+#                 "id": 12,
+#                 "product_id": 7,
+#                 "SKU": "xs-pants",
+#                 "qty_in_stock": 19,
+#                 "product_image": "http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119",
+#                 "prize": 333,
+#                 "IPFS_hash": null,
+#                 "img_url": "http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119",
+#                 "added_on": "2023-03-10T19:36:02Z"
+#             },
+#             "product": {
+#                 "id": 7,
+#                 "category_id": 2,
+#                 "name": "cool pants",
+#                 "description": "cools shirts",
+#                 "product_image": "https://m.media-amazon.com/images/I/71DBklVte9L._UX569_.jpg",
+#                 "added_on": "2023-03-10T19:35:20Z"
+#             }
+#         }
+#     ],
+#     "cart_id": 1
+# }
 class CartProducts(APIView):
     def get(self , request):
         user_id = self.request.session["user_id"]

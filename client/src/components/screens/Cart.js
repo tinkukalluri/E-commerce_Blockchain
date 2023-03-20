@@ -12,6 +12,22 @@ export default function () {
         
     }
 
+    function handleRemoveItem(e){
+        console.log(e)
+        const requestOptions = {
+            method: 'post',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                cart_item_id : e.target.value
+            })
+          }
+          let path = `/api/remove_from_cart`
+          fetch(path , requestOptions).then(response => response.json()).then((data)=>{
+            console.log('remove item from cart respose')
+            console.log(data)
+          })
+    }
+
     function fetchCartItems() {
         const requestOptions = {
           method: 'get',
@@ -102,7 +118,7 @@ export default function () {
                                                         <div className="float-md-end">
                                                             <a href="#!" className="btn btn-light border px-2 icon-hover-primary"><i
                                                                 className="fas fa-heart fa-lg px-1 p-secondary"></i></a>
-                                                            <a href="#" className="btn btn-light border p-danger icon-hover-danger"> Remove</a>
+                                                            <a href="#" className="btn btn-light border p-danger icon-hover-danger" value={item.id} onClick={handleRemoveItem}> Remove</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -233,7 +249,7 @@ export default function () {
                                     </div>
 
                                     <div className="mt-3">
-                                        <a onclick={makePayment} className="btn btn-success w-100 shadow-0 mb-2"> Make Purchase </a>
+                                        <a onClick={makePayment} className="btn btn-success w-100 shadow-0 mb-2"> Make Purchase </a>
                                         <a href="#" className="btn btn-light w-100 border mt-2"> Back to shop </a>
                                     </div>
                                 </div>

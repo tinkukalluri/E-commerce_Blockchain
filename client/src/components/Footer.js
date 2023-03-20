@@ -294,7 +294,7 @@ export function footer_grey(props) {
                         </div>
                     </div>
                 </div>
-            </div >
+            </div>
         </>
     )
 }
@@ -303,7 +303,9 @@ export default function Footer(props) {
     console.log(props, 'from footer')
     return (
         <>
+        <div>
             {props.grey ? footer_grey() : footer_blue()}
+        </div>
         </>
     )
 }

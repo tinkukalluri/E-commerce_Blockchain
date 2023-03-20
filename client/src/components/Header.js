@@ -55,7 +55,9 @@ export default function Header(props) {
                     <div className="row gy-3">
                         {/* Left elements */}
                         <div className="col-lg-2 col-sm-4 col-4">
-                            <a href="https://kalluriabhinandan.web.app/" target="_blank" className="text-black h2">
+                            <a  onClick={(e)=>{
+                                history.push('/')
+                            }} className="text-black h2">
                                 ABC
                             </a>
                         </div>
