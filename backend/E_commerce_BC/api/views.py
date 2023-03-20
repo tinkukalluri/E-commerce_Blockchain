@@ -230,7 +230,7 @@ def getProductConfigWithKwargs( filter_by=False ,order_by=[]):
 # product_id
 # : 
 # 8
-# quantity
+# quantity  
 # : 
 # "4"
 

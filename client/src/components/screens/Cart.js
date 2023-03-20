@@ -12,13 +12,12 @@ export default function () {
         
     }
 
-    function handleRemoveItem(e){
-        console.log(e)
+    function handleRemoveItem(cart_item_id){
         const requestOptions = {
             method: 'post',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                cart_item_id : e.target.value
+                'cart_item_id' : cart_item_id
             })
           }
           let path = `/api/remove_from_cart`
@@ -118,7 +117,7 @@ export default function () {
                                                         <div className="float-md-end">
                                                             <a href="#!" className="btn btn-light border px-2 icon-hover-primary"><i
                                                                 className="fas fa-heart fa-lg px-1 p-secondary"></i></a>
-                                                            <a href="#" className="btn btn-light border p-danger icon-hover-danger" value={item.id} onClick={handleRemoveItem}> Remove</a>
+                                                            <a className="btn btn-light border p-danger icon-hover-danger" onClick={()=>{handleRemoveItem(item.id)}}> Remove</a>
                                                         </div>
                                                     </div>
                                                 </div>
