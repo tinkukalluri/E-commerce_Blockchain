@@ -23,6 +23,7 @@ def index(request):
     contract_address = contract_dict['networks'][network_id]['address']
     contract_abi = contract_dict['abi']
     contract = web3.eth.contract(address=contract_address, abi=contract_abi)
-    transaction_hash = ''
-    tx_receipt = web3.eth.get_transaction_receipt()
+    transaction_hash = ""
+    tx_receipt = web3.eth.get_transaction_receipt(transaction_hash)
+    rich_logs = contract.events.PaymentDone().process_receipt(tx_receipt)
     return HttpResponse('tinnu')
