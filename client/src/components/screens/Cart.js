@@ -1,15 +1,34 @@
 import React, { useEffect  , useState} from 'react'
 import Footer from '../footer'
 import Navigator from "../Navigator";
+import Loading from '../Loading';
 
 export default function () {
+    const [cart , setCart] = useState([])
     const [cartID , setCartID] = useState(0)
     const [cartItems , setCartItems] = useState([])
+    const [cartTotal , setCartTotal] = useState(-1)
+    const [cartTax , setCartTax] = useState(0)
+    const [cartDiscount , setCartDiscount]= useState(0)
+    const [ready_to_make_order , setMakeOrder] = useState(false)
 
     let fetchCartItemsTimeout=0
+    let cart_total= 0
 
     function makePayment(){
-        
+        console.log('make payment')
+        if(ready_to_make_order){
+            const requestOptions = {
+                method: 'post',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(ready_to_make_order)
+            }
+            let path = `/api/create_order`
+            fetch(path , requestOptions).then(response => response.json()).then(data => {
+                console.log('response data from make order ')
+                console.log(data)
+            })
+        }
     }
 
     function handleRemoveItem(cart_item_id){
@@ -24,6 +43,9 @@ export default function () {
           fetch(path , requestOptions).then(response => response.json()).then((data)=>{
             console.log('remove item from cart respose')
             console.log(data)
+            if(data.status){
+                fetchCartItems()
+            }
           })
     }
 
@@ -38,9 +60,11 @@ export default function () {
         }).then(data => {
           console.log('data from cartItems')
           console.log(data)
+          setCart(data)
           setCartID(data.cart_id)
           setCartItems(data.shopping_cart_items)
           clearTimeout(fetchCartItemsTimeout)
+          setCartTotal(0)
         }).catch(e => {
           console.log("error in cartItems")
           fetchCartItemsTimeout = setTimeout(fetchCartItems, 1000)
@@ -48,16 +72,25 @@ export default function () {
       }
 
       useEffect(()=>{
+        let total_value = 0
+        cartItems.map(item =>{
+            total_value+=item.productItem.prize
+        })
+        setCartTotal(total_value)
+      } , [cartItems])
+
+      useEffect(()=>[
+        setMakeOrder(
+            {...cart , cart_total: cartTotal}
+        )
+      ] , [cartTotal])
+
+      useEffect(()=>{
         fetchCartItems()
         return ()=>{
             clearTimeout(fetchCartItemsTimeout)
         }
       } , [])
-
-      useEffect(()=>{
-        console.log(cartItems , cartID)
-
-      } , [cartItems , cartID])
 
 
     return (
@@ -74,9 +107,11 @@ export default function () {
                                     <h4 className="card-title mb-4">Your shopping cart</h4>
                                     {/* cart item -1 */}
                                     
-                                    {
+                                    {   
+                                        
+                                        cartItems.length==0 ? <Loading/>: (
                                         cartItems.map(item =>{
-
+                                            cart_total+=item.productItem.prize
                                             return (
                                                 <div className="row gy-3 mb-4">
                                                     <div className="col-lg-5">
@@ -123,10 +158,11 @@ export default function () {
                                                 </div>
                                             )
                                         })
+                                        )
                                     }
 
                                     {/* cart-item-2 */}
-                                    <div className="row gy-3 mb-4">
+                                    {/* <div className="row gy-3 mb-4">
                                         <div className="col-lg-5">
                                             <div className="me-lg-5">
                                                 <div className="d-flex">
@@ -161,59 +197,22 @@ export default function () {
                                                 <a href="#" className="btn btn-light border p-danger icon-hover-danger"> Remove</a>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div className="row gy-3">
-                                        <div className="col-lg-5">
-                                            <div className="me-lg-5">
-                                                <div className="d-flex">
-                                                    <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/13.webp"
-                                                        className="border rounded me-3" style={{ "width": "96px", "height": "96px" }} />
-                                                    <div className="">
-                                                        <a href="#" className="nav-link">Blazer Suit Dress Jacket for Men</a>
-                                                        <p className="p-muted">XL size, Jeans, Blue</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap">
-                                            <div className="">
-                                                <select style={{ 'width': "100px" }} className="form-select me-4">
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                </select>
-                                            </div>
-                                            <div className="">
-                                                <p className="h6">₹1156.00</p> <br />
-                                                <small className="p-muted p-nowrap"> ₹460.00 / per item </small>
-                                            </div>
-                                        </div>
-                                        <div
-                                            className="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
-                                            <div className="float-md-end">
-                                                <a href="#!" className="btn btn-light border px-2 icon-hover-primary"><i
-                                                    className="fas fa-heart fa-lg px-1 p-secondary"></i></a>
-                                                <a href="#" className="btn btn-light border p-danger icon-hover-danger"> Remove</a>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    </div> */}
                                 </div>
 
-                                <div className="border-top pt-4 mx-4 mb-4">
+                                {/* <div className="border-top pt-4 mx-4 mb-4">
                                     <p><i className="fas fa-truck p-muted fa-lg"></i> Free Delivery within 1-2 weeks</p>
                                     <p className="p-muted">
                                         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
                                         dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
                                         aliquip
                                     </p>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                         {/* <!-- cart -->
                         <!-- summary --> */}
-                        < div className="col-lg-3" >
+                        <div className="col-lg-3" >
                             <div className="card mb-3 border shadow-0">
                                 <div className="card-body">
                                     <form>
@@ -231,20 +230,20 @@ export default function () {
                                 <div className="card-body">
                                     <div className="d-flex justify-content-between">
                                         <p className="mb-2">Total price:</p>
-                                        <p className="mb-2">₹329.00</p>
+                                        <p className="mb-2">{cartTotal}</p>
                                     </div>
                                     <div className="d-flex justify-content-between">
                                         <p className="mb-2">Discount:</p>
-                                        <p className="mb-2 p-success">-₹60.00</p>
+                                        <p className="mb-2 p-success">-₹{cartDiscount}</p>
                                     </div>
                                     <div className="d-flex justify-content-between">
                                         <p className="mb-2">TAX:</p>
-                                        <p className="mb-2">₹14.00</p>
+                                        <p className="mb-2">₹{cartTax}</p>
                                     </div>
                                     <hr />
                                     <div className="d-flex justify-content-between">
                                         <p className="mb-2">Total price:</p>
-                                        <p className="mb-2 fw-bold">₹283.00</p>
+                                        <p className="mb-2 fw-bold">{cartTotal==-1 ? <Loading/> : cartTotal}</p>
                                     </div>
 
                                     <div className="mt-3">

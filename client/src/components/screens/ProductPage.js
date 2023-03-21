@@ -39,7 +39,7 @@ export default function ProductPage({ match, ...props }) {
     let path = `/api/add_to_cart`
     fetch(path, requestOptions).then(response => response.json()).then(data => {
       console.log(data)
-      if (data.added) {
+      if (data.status) {
         console.log('added to cart')
       } else {
         console.log('something went wrong with the item adding to cart')

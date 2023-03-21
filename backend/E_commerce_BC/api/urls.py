@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 from . import views
+from . import order_views
 
 
 urlpatterns = [
@@ -14,4 +15,5 @@ urlpatterns = [
     path('add_to_cart' , views.AddToCart.as_view()),
     path('remove_from_cart' , views.RemoveFromCart.as_view()),
     path('cart_products' , views.CartProducts.as_view()),
+    path('create_order' ,  order_views.MakeOrder.as_view()),
 ]

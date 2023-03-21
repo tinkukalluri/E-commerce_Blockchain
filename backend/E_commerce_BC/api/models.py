@@ -132,12 +132,16 @@ class UserAddress(models.Model):
 
 class OrderStatus(models.Model):
     status = models.CharField(max_length=255)
+    
+class PaymentStatus(models.Model):
+    status = models.CharField(max_length=255)
 
 # this will give details about value of card address , user who ordered etc
 class ShopOrder(models.Model):
     user_id = models.ForeignKey(Users , on_delete=models.SET_NULL , null=True)
     order_date = models.DateField()
-    # payment_method_id=models.ForeignKey(PaymentMethod)
+    # success | failed | pending
+    payment_status=models.ForeignKey(PaymentStatus , on_delete=models.SET_NULL , null=True)
     shipping_address_id = models.ForeignKey(Address , on_delete=models.SET_NULL , null=True)
     # methods like prime , express delivery
     # shipping_method_id = models.ForeignKey(ShippingMethod)

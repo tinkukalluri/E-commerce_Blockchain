@@ -316,6 +316,7 @@ class AddToCart(APIView):
             if(len(potential_product)==1):
                 AddToCart.add_to_cart(potential_product[0] , cart_id , qty)
                 return Response({
+                    "status" : True,
                     "product_item":potential_product[0],
                     "variation": variation
                     } , status=status.HTTP_200_OK)
@@ -438,6 +439,7 @@ class CartProducts(APIView):
                 'cart_id': cart_id
             }
             , status=status.HTTP_200_OK)
+    
         
         
         
