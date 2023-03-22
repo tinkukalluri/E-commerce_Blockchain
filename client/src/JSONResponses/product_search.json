@@ -1,0 +1,56 @@
+[
+    {
+        "id": 7,
+        "category_id": 2,
+        "name": "cool pants",
+        "description": "cools shirts",
+        "product_image": "https://m.media-amazon.com/images/I/71DBklVte9L._UX569_.jpg",
+        "added_on": "2023-03-10T19:35:20Z",
+        "min_prize": 300
+    },
+    {
+        "id": 6,
+        "category_id": null,
+        "name": "entity relationship diagram",
+        "description": "erd diagram for Ecommerce Web application",
+        "product_image": "https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fhuiiipzu1.png?alt=media&token=12817ab2-cc89-41d4-a07c-cd146cb0db03",
+        "added_on": "2023-03-10T09:38:42Z",
+        "min_prize": 0
+    },
+    {
+        "id": 5,
+        "category_id": null,
+        "name": "erd-2",
+        "description": "ER diagram for Ecommerce Web application",
+        "product_image": "https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fhuiiipzu1.png?alt=media&token=12817ab2-cc89-41d4-a07c-cd146cb0db03",
+        "added_on": "2023-03-10T07:18:54Z",
+        "min_prize": 0
+    },
+    {
+        "id": 4,
+        "category_id": 1,
+        "name": "shirt",
+        "description": "cools shirts",
+        "product_image": "https://m.media-amazon.com/images/I/71DBklVte9L._UX569_.jpg",
+        "added_on": "2023-03-09T07:54:21Z",
+        "min_prize": 0
+    },
+    {
+        "id": 3,
+        "category_id": 1,
+        "name": "shirt",
+        "description": "cools shirts",
+        "product_image": "https://m.media-amazon.com/images/I/71DBklVte9L._UX569_.jpg",
+        "added_on": "2023-03-09T07:54:19Z",
+        "min_prize": 333
+    },
+    {
+        "id": 1,
+        "category_id": null,
+        "name": "erd-2",
+        "description": "ER diagram for Ecommerce Web application",
+        "product_image": "https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fhuiiipzu1.png?alt=media&token=12817ab2-cc89-41d4-a07c-cd146cb0db03",
+        "added_on": "2023-03-09T07:54:16Z",
+        "min_prize": 1000
+    }
+]

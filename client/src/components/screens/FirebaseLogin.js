@@ -7,6 +7,7 @@ import {
     Route,
     Link,
     Redirect,
+    useHistory
 } from "react-router-dom";
 // import { Grid, Button, ButtonGroup, Typography } from "@material-ui/core";
 import { Typography } from '@mui/material';
@@ -16,7 +17,7 @@ import '@fontsource/roboto/300.css';
 import firebase from 'firebase/compat/app';
 import { firebaseConfig } from "../Firebase/firebase_config"
 import { redirect_url } from '../Firebase/credentials';
-import Header from "../Header";
+import Navigator from "../Navigator";
 import Footer from "../footer";
 
 
@@ -28,6 +29,7 @@ var firebaseui = require('firebaseui');
 export default function Login(props) {
     const [authResult, setAuthResult] = useState('')
     const [parsedAuthResult, setParsedAuthResult] = useState('')
+    const history = useHistory()
 
     function parseAuth(auth_result) {
         return {
@@ -75,10 +77,13 @@ export default function Login(props) {
         }).then(data => {
             if (data.result) {
                 //console.log("logged in successfully")
-                window.location.replace('/')
+                console.log(props.history)
+                props.setAuthResultApp(data.result)
+                history.push('/')
             } else {
                 //console.log("opps something when wrong")
-                props.history.push('/login')
+                props.setAuthResultApp(false)
+                history.push('/login')
             }
         })
     }
@@ -150,16 +155,19 @@ export default function Login(props) {
 
     return (
         <>
-            <Header />
+            <Navigator />
             <div className="login-container" >
-                <div id='login_mot'>
+                <Typography>
+                    Please Login...
+                </Typography>
+                {/* <div id='login_mot'>
                     welcome to the future
                     <br />
                     of Online Shopping
-                </div>
+                </div> */}
                 <div id="firebaseui-auth-container"></div>
             </div>
-            <Footer />
+            {/* <Footer /> */}
         </>
     )
 

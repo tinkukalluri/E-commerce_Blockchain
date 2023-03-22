@@ -2,10 +2,18 @@ const TinTokenInstance = await TinToken.deployed();
 
 var value = (await TinTokenInstance.balanceOf(TinToken.networks[5777].address)).toString();
 
+ value = (await TinTokenInstance.balanceOf('0xddC4B03F2abaA36697Bd8b0CC9F8D5606112bEb7')).toString();
+
  const PaymentProcessorInstance = await PaymentProcessor.deployed();
  PaymentProcessorInstance.pay(2 , 123)
 
  TinTokenInstance.approve(PaymentProcessor.networks[5777].address)
 
  // buy some money
-  TinTokenInstance.buy({value:4000})
+  TinTokenInstance.buyTokens({value:4000})
+
+
+
+  TinTokenInstance.getorders()
+
+  TinTokenInstance.payToSeller(123 , '0xDFeb088754c16A2657ee3a78F702016eBB5d1C15' , '0xddC4B03F2abaA36697Bd8b0CC9F8D5606112bEb7' , "ipfs hash" , 'storage_link' , "transaction hash" , 20)

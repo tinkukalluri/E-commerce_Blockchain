@@ -40,7 +40,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     # this a generall image
-    product_image= models.URLField()
+    product_image= models.URLField(null=True , max_length=1000)
     added_on = models.DateTimeField(null=True)
 
     def save(self, *args, **kwargs):
@@ -59,9 +59,9 @@ class ProductItem(models.Model):
     SKU = models.CharField(max_length=255)
     qty_in_stock = models.IntegerField(null=True)
     # this img represents a particular variation of product of image
-    product_image = models.URLField(null=True)
-    IPFS_hash = models.URLField(null= True)
-    img_url = models.URLField(null=True)
+    product_image = models.CharField(null=True , max_length=1000)
+    IPFS_hash = models.URLField(null= True , max_length=1000)
+    img_url = models.URLField(null=True , max_length=1000)
     prize = models.IntegerField()
     added_on = models.DateTimeField(null=True)
 
@@ -99,6 +99,15 @@ class ShoppingCartItem(models.Model):
     cart_id = models.ForeignKey(ShoppingCart , on_delete=models.CASCADE)
     product_item_id = models.ForeignKey(ProductItem , on_delete=models.CASCADE)
     qty = models.IntegerField()
+    added_on = models.DateTimeField(null=True)
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        # converting utc to itc , the gap is 5.5 hours
+        self.added_on=timezone.now() + timezone.timedelta(hours=5.5)
+        #print("timezome.now()::", self.send_on)
+        #     self.created = timezone.now()
+        # self.modified = timezone.now()
+        return super(ShoppingCartItem , self).save(*args, **kwargs)
 
 
 # ---------------------------------address----------------------------------------
@@ -123,12 +132,17 @@ class UserAddress(models.Model):
 
 class OrderStatus(models.Model):
     status = models.CharField(max_length=255)
+    
+class PaymentStatus(models.Model):
+    status = models.CharField(max_length=255)
 
 # this will give details about value of card address , user who ordered etc
 class ShopOrder(models.Model):
     user_id = models.ForeignKey(Users , on_delete=models.SET_NULL , null=True)
-    order_date = models.DateField()
-    # payment_method_id=models.ForeignKey(PaymentMethod)
+    order_date = models.DateTimeField()
+    # success | failed | pending
+    payment_status=models.ForeignKey(PaymentStatus , on_delete=models.SET_NULL , null=True)
+    transaction_hash = models.CharField(max_length=1000 , null=True)
     shipping_address_id = models.ForeignKey(Address , on_delete=models.SET_NULL , null=True)
     # methods like prime , express delivery
     # shipping_method_id = models.ForeignKey(ShippingMethod)
