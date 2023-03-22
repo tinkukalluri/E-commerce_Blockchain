@@ -6,9 +6,15 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response    
 from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory , ShoppingCart , ShoppingCartItem , ProductConfig , ShopOrder , PaymentStatus , OrderStatus , OrderLine
-from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer, ProductConfigSerializer , ShoppingCartSerializer , ShoppingCartItemSerializer , ShopOrderSerializer_add
+from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer, ProductConfigSerializer , ShoppingCartSerializer , ShoppingCartItemSerializer , ShopOrderSerializer_add , ShopOrderSerializer , OrderLineSeializer
 import collections
 from django.db.models import Q
+
+
+from .views import loggedIn
+from .views import getProductAndProductItemsWithProductItem
+
+# debug
 from .utils import DEBUG
 
 import uuid 
@@ -48,7 +54,7 @@ class MakeOrder(APIView):
             }, status=status.HTTP_404_NOT_FOUND)
         
         # -----------------order-line------------------------------------
-
+# this is the json data coming from the client(payload)
 #         {
 #     "shopping_cart_items": [
 #         {
@@ -82,22 +88,150 @@ class MakeOrder(APIView):
 #     "cart_total": 20 , 
 #
 # }
-        order_id = shopingOrderInstance
         try:
             for product_item in product_items:
+                print('--------------------------------------------------------------------------')
+                print(product_item)
                 product_item_id = product_item['productItem']['id']
                 product_item_qty = product_item['qty']
                 product_item_total_prize = product_item['productItem']['prize'] * product_item_qty
                 productItemInstance  = ProductItem.objects.get(id=product_item_id)
-                temp_productItemInstance  = OrderLine(product_item_id = productItemInstance ,order_id = order_id , qty = product_item_qty , price = product_item_total_prize)
+                temp_productItemInstance  = OrderLine(product_item_id = productItemInstance ,order_id = shopingOrderInstance , qty = product_item_qty , price = product_item_total_prize)
                 temp_productItemInstance.save()
         except:
             return Response({
                 "status": False,
                 "oops":"something went wrong adding productItems in the orderLine table"
+            } , status=status.HTTP_404_NOT_FOUND)
+        
+        return Response({**post_data , "status":True ,"order_id": shopingOrderInstance.id, "payment_status":2 , "order_status": 5} , status = status.HTTP_200_OK)
+        
+
+def getOrdersWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100):
+    orders_=[]
+    if len(order_by):
+        if filter_by:
+            querySet_items = ShopOrder.objects.filter(**filter_by).order_by(*order_by)[offset:limit]
+        else:
+            querySet_items = ShopOrder.objects.all().order_by(*order_by)[offset:limit]
+    else:
+        if filter_by:
+            querySet_items = ShopOrder.objects.filter(**filter_by)[offset:limit]
+        else:
+            querySet_items = ShopOrder.objects.all()[offset:limit]
+    print(len(querySet_items))
+    for row in querySet_items:
+        temp_Product = dict(ShopOrderSerializer(row).data)
+        orders_.append(temp_Product)
+    print("orders: " , end='')
+    print(orders_)
+    return orders_
+
+
+def getorderItemssWithKwargs( filter_by=False ,orderItems_by=[] , offset=0  , limit=100):
+    orderItemss_=[]
+    if len(orderItems_by):
+        if filter_by:
+            querySet_items = OrderLine.objects.filter(**filter_by).orderItems_by(*orderItems_by)[offset:limit]
+        else:
+            querySet_items = OrderLine.objects.all().orderItems_by(*orderItems_by)[offset:limit]
+    else:
+        if filter_by:
+            querySet_items = OrderLine.objects.filter(**filter_by)[offset:limit]
+        else:
+            querySet_items = OrderLine.objects.all()[offset:limit]
+    print(len(querySet_items))
+    for row in querySet_items:
+        temp_Product = dict(OrderLineSeializer(row).data)
+        orderItemss_.append(temp_Product)
+    print("orderItemss: " , end='')
+    print(orderItemss_)
+    return orderItemss_
+
+
+class UserOrders(APIView):
+    def get(self , request):
+        if(loggedIn(request) or DEBUG):
+            user_id = self.request.session.get('user_id')
+            #user is logged in 
+            user_orders = getOrdersWithKwargs(filter_by={
+                'user_id': user_id
+            } , order_by=['-order_date'])
+            return Response({
+                "orders": user_orders,
+                'status':True
             })
+        else:
+            return Response({
+                "oops":"User not logged in" , 
+                "status": False
+            } , status = status.HTTP_401_UNAUTHORIZED)
         
-        return Response({**post_data , "status":True , "payment_status":2 , "order_status": 5} , status = status.HTTP_200_OK)
+
+class UserOrderItems(APIView):
+    def get(self, request):
+        if(loggedIn(request) or DEBUG):
+            user_id = self.request.session.get('user_id')
+            get_data = request.GET
+            print(get_data)
+            order_id= get_data['order_id']
+            #user is logged in 
+            user_orders = getOrdersWithKwargs(filter_by={
+                'id': order_id
+            })
+            if len(user_orders)==1:
+                user_order = user_orders[0]
+                if user_id ==user_order['user_id']:
+                    orderItems = getorderItemssWithKwargs(filter_by={
+                        "order_id": order_id
+                    })
+                    for index , orderItem in enumerate(orderItems):
+                        shopping_cart_item = getProductAndProductItemsWithProductItem([orderItem['product_item_id']])[0]
+                        orderItems[index] = {
+                            "order_item": orderItem , 
+                            **shopping_cart_item
+                        }
+                    return Response({
+                        "status": True,
+                        "order_items": orderItems,
+                        "order_id": order_id
+                    } , status= status.HTTP_200_OK)
+                else:
+                    return Response({
+                        "status": False,
+                        "oops": "looks like ur trying to views others orders , please login with correct credentals to view the order"
+                    },  status = status.HTTP_401_UNAUTHORIZED)
+            else:
+                return Response({
+                    "oops":"looks like there is no order with order_id:"+str(order_id),
+                    'status':False
+                } , status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({
+                "oops":"User not logged in" , 
+                "status": False
+            } , status = status.HTTP_401_UNAUTHORIZED)
+
+
+class UpdateTransactionHashShopOrder(APIView):
+    def post(self, request):
+        post_data = request.data
+        tx_hash= post_data.get('tx_hash')
+        order_id = post_data.get('order_id')
+        print(tx_hash , order_id)
+        try:
+            ShopOrderInstance = ShopOrder.objects.get(id=order_id)
+            ShopOrderInstance.transaction_hash = tx_hash
+            ShopOrderInstance.save(update_fields=['transaction_hash'])
+            return Response({
+                "status":True,
+                "tx_hash": tx_hash,
+                "order_id": order_id
+            })
+        except:
+            return Response({
+                "status":False,
+                "oops": "something went wrong updating transaction field"
+            } , status = status.HTTP_304_NOT_MODIFIED)
         
-        
-        
+

@@ -12,5 +12,7 @@ urlpatterns = [
     path('add_product/' , views.index),
     path('product_search/' , views.index),
     path('product/<str:productID>' , views.index),
-    path('tin_wallet/' , views.index)
+    path('tin_wallet/' , views.index),
+    path('orders/' , views.index),
+    path('order_items/' , views.index),
 ]

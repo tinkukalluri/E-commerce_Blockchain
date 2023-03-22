@@ -100,9 +100,21 @@ contract TinToken is ERC20 {
         transferFrom(buyer,address(this), amount);
     }
 
-    function payWithPaymentID(uint amount, uint paymendId , uint orderId) external returns(bool){
-        if(transfer(msg.sender, amount)){
+    function payWithPaymentID(uint amount, uint paymendId , uint orderId , string memory IPFS_Hash_ ,string memory Storage_link_ , string memory transaction_hash_) external returns(bool){
+        order_struct memory order;
+        // order.orderID = orderID_;
+        order.orderID = orderId;
+        order.from = msg.sender;
+        order.to = address(this);
+        order.IPFS_Hash=IPFS_Hash_;
+        order.Storage_link =Storage_link_;
+        order.transaction_hash =transaction_hash_;
+        order.amount =amount;
+        
+        if(transfer(address(this), amount)){
             emit PaymentDone(msg.sender, amount, paymendId, orderId ,  block.timestamp);
+            orders.push(order);
+            ordersIndices.push(orderId);
             return true;
         }
         emit PaymentFailed(msg.sender, amount, paymendId, orderId , block.timestamp);
@@ -120,10 +132,10 @@ contract TinToken is ERC20 {
         order.Storage_link =Storage_link_;
         order.transaction_hash =transaction_hash_;
         order.amount =amount_;
-        orders.push(order);
-
-        ordersIndices.push(orderID_);
+        
         if(transfer(to_, amount_)){
+            orders.push(order);
+            ordersIndices.push(orderID_);
             emit PaymentDoneToSeller(orderID_ , from_ , to_ ,IPFS_Hash_ ,Storage_link_ , transaction_hash_ , amount_);
             return order;
         }

@@ -13,6 +13,13 @@ from .utils import DEBUG
 
 # Create your views here.
 
+def loggedIn(request):
+    # return True
+    if request.session.get('user_id'):
+        return True
+    else:
+        return False
+
 def index(request, *args, **kwargs):
     return HttpResponse('hello world from api')
 
@@ -511,8 +518,5 @@ def loggedIn(request):
 class AddProductItem(APIView):
     pass
 
-
-            
-    
 
 

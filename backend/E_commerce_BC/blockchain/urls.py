@@ -5,5 +5,5 @@ from . import views
 
 
 urlpatterns = [
-    path('' , views.index),
+    path('verify_payment' , views.VerifyPaymentRequest.as_view()),
 ]

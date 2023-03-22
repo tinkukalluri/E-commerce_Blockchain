@@ -17,6 +17,8 @@ import Header from './components/Header';
 import Footer from './components/footer';
 import { useEffect, useState } from 'react';
 import TinWallet from './components/screens/TinWallet';
+import ViewOrders from './components/screens/ViewOrders';
+import ViewOrderItems from './components/screens/ViewOrderItems';
 // const bootstrap = require("bootstrap");
 
 function App(props) {
@@ -41,33 +43,39 @@ function App(props) {
     <>
       <EthProvider>
         <Router>
+          <Header search_query={search} setAppSearch={setSearchCallback} authResultApp={authResultApp} setAuthResultApp={setAuthResultApp} />
           <Switch>
-            <Header search_query={search} setAppSearch={setSearchCallback} authResultApp={authResultApp} setAuthResultApp={setAuthResultApp} />
-          </Switch>
-          <Switch>
-            <Route exact path="/">
-              <HomePage  {...props} />
-            </Route>
-            <Route exact path="/login">
-              <FirebaseLogin  {...props} setAuthResultApp={setAuthResultApp} />
-            </Route>
-            <Route exact path="/cart">
-              <Cart  {...props} />
-            </Route>
-            <Route exact path="/checkout">
-              <Checkout  {...props} />
-            </Route>
-            <Route exact path="/add_product">
-              <AddProduct  {...props} />
-            </Route>
-            <Route exact path="/product_search">
-              <ProductSearch  {...props} search_query={search} />
-            </Route>
-            <Route exact path="/tin_wallet">
-              <TinWallet/>
-            </Route>
-            <Route exact path="/product/:productID"
-              component={ProductPage} />
+            <div style={{ 'minHeight': "50vh" }}>
+              <Route exact path="/">
+                <HomePage  {...props} />
+              </Route>
+              <Route exact path="/login">
+                <FirebaseLogin  {...props} setAuthResultApp={setAuthResultApp} />
+              </Route>
+              <Route exact path="/cart">
+                <Cart  {...props} />
+              </Route>
+              <Route exact path="/checkout">
+                <Checkout  {...props} />
+              </Route>
+              <Route exact path="/add_product">
+                <AddProduct  {...props} />
+              </Route>
+              <Route exact path="/product_search">
+                <ProductSearch  {...props} search_query={search} />
+              </Route>
+              <Route exact path="/tin_wallet">
+                <TinWallet />
+              </Route>
+              <Route exact path="/product/:productID"
+                component={ProductPage} />
+              <Route exact path="/orders">
+                <ViewOrders />
+              </Route>
+              <Route exact path="/order_items">
+                <ViewOrderItems />
+              </Route>
+            </div>
           </Switch>
           <Footer />
         </Router>

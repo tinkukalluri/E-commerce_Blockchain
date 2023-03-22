@@ -44,8 +44,12 @@ export default function Header(props) {
         history.push('/cart')
     }
 
-    function walletPressed(){
+    function walletPressed() {
         history.push('/tin_wallet')
+    }
+
+    function ordersPressed() {
+        history.push('/orders')
     }
 
     function jumbotron_maintop() {
@@ -55,7 +59,7 @@ export default function Header(props) {
                     <div className="row gy-3">
                         {/* Left elements */}
                         <div className="col-lg-2 col-sm-4 col-4">
-                            <a  onClick={(e)=>{
+                            <a onClick={(e) => {
                                 history.push('/')
                             }} className="text-black h2">
                                 ABC
@@ -93,11 +97,11 @@ export default function Header(props) {
                                         className="fas fa-user-alt m-1 me-md-2"></i>
                                     <p className="d-none d-md-block mb-0">Sign in</p>
                                 </a>)}
-                                <a onClick={wishlistPressed}
+                                {/* <a onClick={wishlistPressed}
                                     className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
                                         className="fas fa-heart m-1 me-md-2"></i>
                                     <p className="d-none d-md-block mb-0">Wishlist</p>
-                                </a>
+                                </a> */}
                                 <a onClick={walletPressed}
                                     className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
                                         className="fas fa-wallet m-1 me-md-2"></i>
@@ -105,8 +109,13 @@ export default function Header(props) {
                                 </a>
                                 <a onClick={cartPressed}
                                     className="border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
-                                        className="fas fa-shopping-cart m-1 me-md-2"></i>
+                                        className="fas fa-heart m-1 me-md-2"></i>
                                     <p className="d-none d-md-block mb-0">My cart</p>
+                                </a>
+                                <a onClick={ordersPressed}
+                                    className="border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
+                                        className="fas fa-shopping-cart m-1 me-md-2"></i>
+                                    <p className="d-none d-md-block mb-0">My orders</p>
                                 </a>
                             </div>
                         </div>
