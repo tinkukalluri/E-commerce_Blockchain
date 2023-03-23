@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom';
 
 
 // custom components
@@ -8,10 +9,38 @@ import Loading from '../Loading'
 
 import css from '../ViewOrders/css/orders.css'
 
+export function getOrderStatusTXT(order_status) {
+    switch (order_status) {
+        case 1:
+            return "delivered"
+        case 2:
+            return "out for delivery"
+        case 3:
+            return "shipped"
+        case 4:
+            return 'packed'
+        case 5:
+            return "confirmed"
+        default:
+            return "unconfirmed"
+    }
+}
+
+export function getPaymentStatusTXT(payment_status){
+    switch (payment_status){
+        case 1:
+            return "payment successfull"
+        case 2:
+            return "payment pending"
+        case 3:
+            return "payment failed"
+    }
+}
+
 export default function ViewOrders(props) {
 
     const [orders, setOrders] = useState(-1)
-
+    const history = useHistory()
     var fetchOrdersTimeInterval = 0
 
     // component did mount
@@ -76,22 +105,7 @@ export default function ViewOrders(props) {
     //     </div>
     // </div >
 
-    function getOrderStatusTXT(order_status) {
-        switch (order_status) {
-            case 1:
-                return "delivered"
-            case 2:
-                return "out_for_delivery"
-            case 3:
-                return "shipped"
-            case 4:
-                return 'packed'
-            case 5:
-                return "confirmed"
-            default:
-                return "unconfirmed"
-        }
-    }
+    
 
     function handlePaymentVerification(e, order_id) {
         console.log('clicked on payment verification')
@@ -111,6 +125,19 @@ export default function ViewOrders(props) {
 
     }
 
+    function handleOrderClick(e , order_id){
+        console.log('handleOrderClick')
+        console.log(order_id , e)
+        history.push({ 
+            pathname:'/order_items',
+            state : {
+                order_id
+            }
+
+        })
+
+    }
+
 
     return (
         <>
@@ -121,7 +148,9 @@ export default function ViewOrders(props) {
                         {
                             orders.map(order => {
                                 return (
-                                    <div className="row bg-white mb-2 ">
+                                    <div className="row bg-white mb-2 " onClick={(e)=>{
+                                        handleOrderClick(e , order.id)
+                                    }} >
                                         <div className="col-lg-12 p-3 order-item">
                                             <div className="d-flex justify-content-between align-items-center">
                                                 <div className="">status: {getOrderStatusTXT(order.order_status)}</div>

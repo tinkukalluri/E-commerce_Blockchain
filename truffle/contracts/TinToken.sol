@@ -9,7 +9,8 @@ import "../node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract TinToken is ERC20 {
     // state variables with will cost u gas for manipulation
-    uint private tokenPrize = 1000000000000000000;
+    // uint private tokenPrize = 1000000000000000000;
+    uint private tokenPrize = 100000;
     mapping(address => uint[]) private EthereumSendersList;
     address[] addressIndices ;
     

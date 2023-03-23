@@ -60,4 +60,4 @@ class ShopOrderSerializer(serializers.ModelSerializer):
 class OrderLineSeializer(serializers.ModelSerializer):
     class Meta:
         model = OrderLine
-        fields = ('id' , 'product_item_id' ,'order_id' , 'qty' ,  'qty')
+        fields = ('id' , 'product_item_id' ,'order_id' , 'qty' ,  'price')

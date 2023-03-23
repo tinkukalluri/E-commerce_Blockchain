@@ -194,6 +194,7 @@ class UserOrderItems(APIView):
                     return Response({
                         "status": True,
                         "order_items": orderItems,
+                        "order": user_order , 
                         "order_id": order_id
                     } , status= status.HTTP_200_OK)
                 else:

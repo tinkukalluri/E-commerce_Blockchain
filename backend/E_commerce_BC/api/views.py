@@ -173,6 +173,38 @@ def getVariationValuesFromVariationID(variation_id):
         result_.append(VariationOptionSerializer(row).data)
     return result_
 
+class EmptyCart(APIView):
+    def get(self, request):
+        user_id = self.request.session["user_id"]
+        shoppingCart = getShoppingCartWithKwargs(filter_by={
+            "user_id":int(user_id)
+        }  , order_by='-id')
+        if len(shoppingCart):
+            shoppingCartItems = getShoppingCartItemWithKwargs(filter_by={
+                "cart_id" : int(shoppingCart[0]['id'])
+            })
+            if len(shoppingCartItems):
+                for shoppingcartitem in shoppingCartItems:
+                    temp_shoppingCartInstance = ShoppingCartItem.objects.filter({
+                        "id":shoppingcartitem['id']
+                    })
+                    temp_shoppingCartInstance.delete()
+            else:
+                return Response({
+                    "status": False , 
+                    "oops": "no items to delete in cart id"
+                } , status= status.HTTP_202_ACCEPTED)
+        else:
+            return Response({
+                "status": False ,
+                "oops":"looks like there is no cart"
+            } , status=status.HTTP_202_ACCEPTED)
+        
+        return Response({
+            "status": True 
+        } , status=status.HTTP_200_OK)
+        
+
 class getProductDetails(APIView):
     def get(self , request):
         product_id = request.GET.get('pID')
@@ -280,10 +312,14 @@ class AddToCart(APIView):
             user_id = self.request.session["user_id"]
             shoppingCart = getShoppingCartWithKwargs(filter_by={
                 "user_id":int(user_id)
-            } )
+            }  , order_by='-id')
             cart_id = 0
             if(len(shoppingCart)):
-                cart_id=shoppingCart[0]['id']
+                cart_id=shoppingCart[len(shoppingCart)-1]['id']
+            else:
+                cartInstance = ShoppingCart(user_id=int(user_id))
+                cartInstance.save()
+                cart_id=cartInstance.id
             productItem_querySet = getProductItemsWithKwargs(filter_by={
                 'product_id':product_id
             })
