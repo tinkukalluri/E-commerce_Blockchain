@@ -191,6 +191,7 @@ export default function () {
             console.log(data)
             if (data.status) {
                 console.log('updated successfully tx_hash')
+                
             }
         })
     }
