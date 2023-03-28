@@ -15,6 +15,7 @@ import os
 from api import views as api_views
 from api import order_views as api_order_views
 from api import models as api_models
+from .utils import TINTOKEN_path
 
 from web3 import Web3
 
@@ -30,7 +31,7 @@ class   VerifyPaymentRequest(APIView):
         # src\contracts\TinToken.json
         # C:\Users\sintin\Desktop\Major_project\e_commerce\react-box-master\client\src\contracts\TinToken.json
         print(cur_directory)
-        contract = open(r"C:\Users\sintin\Desktop\Major_project\e_commerce\react-box-master\client\src\contracts\TinToken.json")
+        contract = open(TINTOKEN_path)
         contract_dict = json.load(contract)
         network_id =  web3.net.version
         contract_address = contract_dict['networks'][network_id]['address']

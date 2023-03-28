@@ -3,11 +3,17 @@ import { useState } from "react";
 import { storage } from "../Firebase/firebase_config";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
+
+import Loading from '../Loading';
+
 export default function AddProduct() {
     // State to store uploaded file
     const [file, setFile] = useState("");
     const [productItemsJSX , setProductItemJSX] = useState([])
     const [productCategories , setProductCategories] = useState([])
+
+    var fetchProductCategoryTimeout = 0
+
 
     // progress
     const [percent, setPercent] = useState(0);
@@ -16,6 +22,11 @@ export default function AddProduct() {
     function handleChange(event) {
         setFile(event.target.files[0]);
     }
+
+    useEffect(()=>{
+        fetchProductCategories()
+
+    } , [])
 
     useEffect(()=>{
         console.log('product item updated')
@@ -57,15 +68,21 @@ export default function AddProduct() {
             method: 'get',
             headers: { "Content-Type": "application/json" },
         }
-        const path = 'api/get_product_category'
+        const path = '/api/get_product_category'
         fetch(path , requestOpt).then(response=>response.json()).then(data=>{
             console.log(data)
             if(data.status){
                 setProductCategories(data.product_category)
+
+                clearTimeout(fetchProductCategoryTimeout)
             }else{
                 console.log('looks like somnething went wrong in fetching product categories')
                  console.log(data.oops)
+                 setTimeout(fetchProductCategories , 1000)
             }
+        }).catch((err)=>{
+            console.log(err)
+            fetchProductCategoryTimeout = setTimeout(fetchProductCategories , 1000)
         })
 
     }
@@ -88,7 +105,7 @@ export default function AddProduct() {
                         <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap">
                             <div class="form-group mb-2 col-12">
                                 <label for="exampleInputEmail1">Quantity</label>
-                                <input type="text" id="qty" name="qty" class="form-control" aria-describedby="emailHelp" placeholder="Enter product qty"/>
+                                <input type="number" id="qty" name="qty" class="form-control" aria-describedby="emailHelp" placeholder="Enter product qty"/>
                             </div>
                         </div>
 
@@ -104,7 +121,7 @@ export default function AddProduct() {
                         <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap">
                             <div class="form-group mb-2 col-12">
                                 <label for="exampleInputEmail1">Price</label>
-                                <input type="text" id="price" name="Price" class="form-control" aria-describedby="emailHelp" placeholder="Enter product name"/>
+                                <input type="number" id="price" name="Price" class="form-control" aria-describedby="emailHelp" placeholder="Enter product name"/>
                             </div>
                         </div>
 
@@ -141,21 +158,82 @@ export default function AddProduct() {
             setProductItemJSX(prev)
     }
 
-    function handleProductsSubmit(e){
+    function readFileAsDataURL(file){
+        return new Promise((resolve, reject) => {
+          var fr = new FileReader();  
+          fr.onload = () => {
+            resolve(fr.result )
+          };
+          fr.onerror = reject;
+          fr.readAsDataURL(file);
+        });
+    }
+
+
+    async function handleProductsSubmit(e){
         console.log('clicked submit')
         let product_rows = document.querySelectorAll('.product_row')
         console.log(product_rows)
+        let product_items = []
+        let product_cat = document.querySelector("#product_category").value
+        console.log(product_cat)
+        if(product_cat=="None"){
+            console.log('please select any category')
+            return null
+        }
+
+        let product_name = document.querySelector('#product_name')
+        let product_desc =  document.querySelector('#product_desc')
+        let product_img = document.querySelector('#product_img').files[0]
+        let product_img_base64 = ''
+        product_img_base64 = await readFileAsDataURL(product_img)
+        console.log('product_image_base64' ,product_img_base64 )
+
+        // product items
         for(let i =0 ; i<product_rows.length ; i++){
             console.log(product_rows[i])
             let product_row = product_rows[i]
-            console.log(product_row.querySelector('#sku').value)
-            console.log(product_row.querySelector('#qty').value)
-            console.log(product_row.querySelector('#image').value)
-            console.log(product_row.querySelector('#price').value)
-            console.log(product_row.querySelector('#var_name').value)
-            console.log(product_row.querySelector('#var_val').value)
+            let sku = product_row.querySelector('#sku').value
+            let qty = product_row.querySelector('#qty').value
+            let image = product_row.querySelector('#image').files[0]
+            let image_base64 = ''
+            image_base64 = await readFileAsDataURL(image)
+            let price = product_row.querySelector('#price').value
+            let variation_name = product_row.querySelector('#var_name').value
+            let variation_val = product_row.querySelector('#var_val').value
+            product_items.push({
+                sku , qty , image_base64 , price , variation_name , variation_val
+            })
         }
+        const requestOpt = {
+            method: 'post',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                'product' : {
+                    'product_name' : product_name ,
+                    'product_desc': product_desc , 
+                    'product_img_base64': product_img_base64
+                }, 
+                'product_items' : product_items
+            }) 
+        }
+        const path = `/api/add_products`
+        fetch(path , requestOpt).then(response => response.json()).then(data =>{
+            console.log(data)
+            if(data.status){
+                console.log('products added to the server')
+            }else{
+                console.log('something went wrong adding products to the database')
+                console.log(data.oops)
+            }
+
+        }).catch(err =>{
+            console.log('oops something went wrong while sending a request')
+            console.log(err)
+        })
     }
+
+
 
     function handleProductCategoryChange(e){
         let product_cat = document.querySelector("#product_category").value
@@ -176,28 +254,36 @@ export default function AddProduct() {
                 <div class="row">
             {/* select category */}
                 <label for="product_category">Product category</label>
+                {
+                    productCategories.length?(
+                
                 <select style={{"margin":"10px"}} name="cars" id="product_category" onChange={handleProductCategoryChange}>
                     <option selected value="None">select</option>
-                    <option value="volvo">Volvo</option>
-                    <option value="saab">Saab</option>
-                    <option value="mercedes">Mercedes</option>
-                    <option value="audi">Audi</option>
-                </select>
+                    
+                    {
+                        productCategories.map(product_category=>{
+                            return (
+                                <option value={product_category.id}>{product_category.category_name}</option>
+                            )
+                        })
+                    }
+                </select>) : <Loading/>
+                }
 
 
     <div class="form-group mb-2 col-12">
-        <label for="exampleInputEmail1">Product name</label>
-        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter product name"/>
+        <label for="product_name">Product name</label>
+        <input type="text" class="form-control" id="product_name" aria-describedby="emailHelp" placeholder="Enter product name"/>
     </div>
 
     <div class="form-group mb-2 col-12">
-        <label for="exampleInputEmail1">Product Description</label>
-        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter product Description"/>
+        <label for="product_desc">Product Description</label>
+        <input type="text" class="form-control" id="product_desc" aria-describedby="emailHelp" placeholder="Enter product Description"/>
     </div>
 
     <div class="form-group mb-2 col-12">
-        <label for="exampleInputEmail1">Product Image</label>
-        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter product Image"/>
+        <label for="product_img">Product Image</label>
+        <input type="file" accept="image/*" class="form-control" id="product_img" aria-describedby="emailHelp" placeholder="Enter product Image"/>
     </div>
     
 

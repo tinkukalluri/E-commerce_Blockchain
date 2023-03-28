@@ -597,8 +597,14 @@ def loggedIn(request):
     else:
         return False
 
+
+# url = 'api/add_products'
 class AddProductItem(APIView):
-    pass
+    def post(self , request):
+        post_data = request.data
+        print(post_data)
+        
+        
 
 
 
