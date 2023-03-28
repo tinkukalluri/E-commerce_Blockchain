@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response    
 from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory , ShoppingCart , ShoppingCartItem , ProductConfig
 from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer, ProductConfigSerializer , ShoppingCartSerializer , ShoppingCartItemSerializer
+from .serializer import ProductCategorySerializer
 import collections
 from django.db.models import Q
 from .utils import DEBUG
@@ -23,9 +24,26 @@ def loggedIn(request):
 def index(request, *args, **kwargs):
     return HttpResponse('hello world from api')
 
-def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100):
+def getVariationFromCategoryID(categoryID):
+    variation_querySet = Variation.objects.filter(category_id=categoryID)
+    result_=[]
+    for row in variation_querySet:
+        print(row)
+        result_.append(VariationSerializer(row).data)
+    return result_
+
+def getVariationValuesFromVariationID(variation_id):
+    variationOption_querySet = VariationOption.objects.filter(variation_id = variation_id)
+    result_ = []
+    for row in variationOption_querySet:
+        result_.append(VariationOptionSerializer(row).data)
+    return result_
+
+def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100 , all=False):
     products_=[]
-    if len(order_by):
+    if all:
+        querySet_items = Product.objects.all()
+    elif len(order_by):
         if filter_by:
             querySet_items = Product.objects.filter(**filter_by).order_by(*order_by)[offset:limit]
         else:
@@ -41,6 +59,31 @@ def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100)
         products_.append(temp_Product)
     print(products_)
     return products_
+
+
+def getProductCategoryWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100):
+    productCategory_=[]
+    if all:
+        querySet_items = ProductCategory.objects.all()
+    elif len(order_by):
+        if filter_by:
+            querySet_items = ProductCategory.objects.filter(**filter_by).order_by(*order_by)[offset:limit]
+        else:
+            querySet_items = ProductCategory.objects.all().order_by(*order_by)[offset:limit]
+    else:
+        if filter_by:
+            querySet_items = ProductCategory.objects.filter(**filter_by)[offset:limit]
+        else:
+            querySet_items = ProductCategory.objects.all()[offset:limit]
+    print(len(querySet_items))
+    for row in querySet_items:
+        temp_Product = dict(ProductCategorySerializer(row).data)
+        productCategory_.append(temp_Product)
+    print("productCategories")
+    print(productCategory_)
+    return productCategory_
+
+
 
 def getProductItemsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=10000):
     print("getProductItemsWithKwargs")
@@ -158,20 +201,23 @@ class ProductSearch(APIView):
         print('for loop exit')
         return Response(products_ , status=status.HTTP_200_OK)
     
-def getVariationFromCategoryID(categoryID):
-    variation_querySet = Variation.objects.filter(category_id=categoryID)
-    result_=[]
-    for row in variation_querySet:
-        print(row)
-        result_.append(VariationSerializer(row).data)
-    return result_
 
-def getVariationValuesFromVariationID(variation_id):
-    variationOption_querySet = VariationOption.objects.filter(variation_id = variation_id)
-    result_ = []
-    for row in variationOption_querySet:
-        result_.append(VariationOptionSerializer(row).data)
-    return result_
+
+class getProductCategory(APIView):
+    def get(self , request):
+        # try:
+            product_categories = getProductCategoryWithKwargs()
+            return Response({
+                'status':True, 
+                "product_category": product_categories
+            } , status= status.HTTP_200_OK)
+        # except:
+            return Response({
+                "status":False,
+                "oops" : "looks like we have problem fetching product categories"
+            })
+        
+
 
 class EmptyCart(APIView):
     def get(self, request):

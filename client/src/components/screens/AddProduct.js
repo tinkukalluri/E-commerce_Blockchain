@@ -7,6 +7,7 @@ export default function AddProduct() {
     // State to store uploaded file
     const [file, setFile] = useState("");
     const [productItemsJSX , setProductItemJSX] = useState([])
+    const [productCategories , setProductCategories] = useState([])
 
     // progress
     const [percent, setPercent] = useState(0);
@@ -51,13 +52,28 @@ export default function AddProduct() {
         );
     };
 
+    function fetchProductCategories(){
+        const requestOpt = {
+            method: 'get',
+            headers: { "Content-Type": "application/json" },
+        }
+        const path = 'api/get_product_category'
+        fetch(path , requestOpt).then(response=>response.json()).then(data=>{
+            console.log(data)
+            if(data.status){
+                setProductCategories(data.product_category)
+            }else{
+                console.log('looks like somnething went wrong in fetching product categories')
+                 console.log(data.oops)
+            }
+        })
+
+    }
+
     function addAddNewProduct(e){
-        setProductItemJSX(prev =>{
-            console.log("prev")
-            console.log(prev)
-            let newItemList=prev;
-            newItemList.push(
-                <>
+        
+            let prev= [...productItemsJSX]
+            prev.push(
                     <div class="row gy-3 mb-4 border shadow-0 product_row">
                         
                         {/* <!-- SKU --> */}
@@ -106,7 +122,7 @@ export default function AddProduct() {
                         </div>
 
                         {/* <!-- variation value --> */}
-                        <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap align-items-center">
+                        <div  class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap align-items-center">
                             
                             <label for="var_val">Variation value:</label>
                             <select name="cars" id="var_val">
@@ -120,16 +136,25 @@ export default function AddProduct() {
                         </div>
 
                     </div>
-                </>
             )
-            console.log(newItemList)
-            return newItemList
-            
-        })
+            console.log(prev)
+            setProductItemJSX(prev)
     }
 
     function handleProductsSubmit(e){
-
+        console.log('clicked submit')
+        let product_rows = document.querySelectorAll('.product_row')
+        console.log(product_rows)
+        for(let i =0 ; i<product_rows.length ; i++){
+            console.log(product_rows[i])
+            let product_row = product_rows[i]
+            console.log(product_row.querySelector('#sku').value)
+            console.log(product_row.querySelector('#qty').value)
+            console.log(product_row.querySelector('#image').value)
+            console.log(product_row.querySelector('#price').value)
+            console.log(product_row.querySelector('#var_name').value)
+            console.log(product_row.querySelector('#var_val').value)
+        }
     }
 
     function handleProductCategoryChange(e){
@@ -150,8 +175,8 @@ export default function AddProduct() {
             <div class="container mt-3">
                 <div class="row">
             {/* select category */}
-                <label for="product_category">Variation value:</label>
-                <select name="cars" id="product_category" onChange={handleProductCategoryChange}>
+                <label for="product_category">Product category</label>
+                <select style={{"margin":"10px"}} name="cars" id="product_category" onChange={handleProductCategoryChange}>
                     <option selected value="None">select</option>
                     <option value="volvo">Volvo</option>
                     <option value="saab">Saab</option>
@@ -181,7 +206,7 @@ export default function AddProduct() {
             <h4 class="card-title mb-4">Add items</h4>
             <div id="products_list">
 
-                {productItemsJSX}
+                {productItemsJSX.map(ele=> ele)}
             
 
 

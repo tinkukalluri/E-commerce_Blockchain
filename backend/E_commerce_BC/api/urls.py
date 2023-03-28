@@ -20,4 +20,5 @@ urlpatterns = [
     path('get_user_orders' ,  order_views.UserOrders.as_view()),
     path('update_tx_hash' ,  order_views.UpdateTransactionHashShopOrder.as_view()),
     path('user_order_items' ,  order_views.UserOrderItems.as_view()),
+    path('get_product_category' ,  views.getProductCategory.as_view()),
 ]

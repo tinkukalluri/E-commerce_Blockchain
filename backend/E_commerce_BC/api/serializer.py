@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Product , ProductItem  , Variation , VariationOption , ProductConfig , ShoppingCart, ShoppingCartItem
-from .models import ShopOrder , OrderStatus , PaymentStatus , OrderLine
+from .models import ShopOrder , OrderStatus , PaymentStatus , OrderLine , ProductCategory
 
 
 # suffix `_add` means this serializer is used to add data into table
@@ -61,3 +61,8 @@ class OrderLineSeializer(serializers.ModelSerializer):
     class Meta:
         model = OrderLine
         fields = ('id' , 'product_item_id' ,'order_id' , 'qty' ,  'price')
+
+class ProductCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductCategory
+        fields = ('id' , 'parent_category_id' , 'category_name' )
