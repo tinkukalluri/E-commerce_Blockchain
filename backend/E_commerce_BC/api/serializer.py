@@ -26,6 +26,15 @@ class ProductItemSerializer_add(serializers.ModelSerializer):
         model = ProductItem
         fields = ('product_id' , 'SKU' , 'qty_in_stock' , 'product_image' , 'prize' , 'IPFS_hash' ,'img_url')
 
+class ProductConfigSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=ProductConfig
+        fields=('id' ,'product_item_id' , 'variation_option')
+
+class ProductConfigSerializer_add(serializers.ModelSerializer):
+    class Meta:
+        model=ProductConfig
+        fields=('product_item_id' , 'variation_option')
 
 
 class VariationSerializer(serializers.ModelSerializer):
@@ -39,10 +48,6 @@ class VariationOptionSerializer(serializers.ModelSerializer):
         fields =("id" , "variation_id" , "value")
 
 
-class ProductConfigSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=ProductConfig
-        fields=('id' ,'product_item_id' , 'variation_option')
         
         
 class ShoppingCartSerializer(serializers.ModelSerializer):

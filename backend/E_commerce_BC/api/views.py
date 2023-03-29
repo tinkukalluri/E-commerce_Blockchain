@@ -10,7 +10,7 @@ from .serializer import ProductItemSerializer , ProductSerializer ,VariationSeri
 
 # _add serializers 
 
-from .serializer import ProductSerializer_add , ProductItemSerializer_add
+from .serializer import ProductSerializer_add , ProductItemSerializer_add , ProductConfigSerializer_add
 
 from .serializer import ProductCategorySerializer
 import collections
@@ -174,7 +174,7 @@ class getNewProducts(APIView):
         products_ = getProductsWithKwargs(offset=offset, limit=limit , order_by=['-added_on'])
         for product in products_:  
             min_prize=float('inf')
-            productConfig_ = getProductItemsWithKwargs(offset=1 , limit=100 , filter_by={
+            productConfig_ = getProductItemsWithKwargs( filter_by={
                 "product_id":product["id"]
             })
             print(productConfig_)
@@ -353,6 +353,16 @@ class RemoveFromCart(APIView):
 
 
 # url - add_to_cart
+# payload:
+{
+    "quantity": 1,
+    "size": {
+        "val": "s",
+        "variation_id": 1,
+        "variationOpt_id": 2
+    },
+    "product_id": 24
+}
 class AddToCart(APIView):
     def add_to_cart(productItemID , cartID , qty):
         shoppingCartInstance = ShoppingCart.objects.filter(id= cartID)[0]
@@ -610,25 +620,6 @@ def loggedIn(request):
         return False
 
 
-# url = 'api/add_products'
-# payload:
-{   
-    "product_category": "1",
-    "product": {
-        "product_name": "dawd",
-        "product_desc": "adw",
-        "product_img_base64": "6MjQrMDA6MDBU0pA3AAAAAElFTkSuQmCC"
-        },
-    "product_items":[{
-            'sku': '' , 
-            'qty' : '',
-            'image_base64':"6MjQrMDA6MDBU0pA3AAAAAElFTkSuQmCC",
-            "price": "2",
-            "variation_name": "volvo",
-            "variation_val": "saab"
-        }
-    ]
-}
 
 
 class getVariations(APIView):
@@ -652,13 +643,60 @@ class getVariationValue(APIView):
             "status":True,
             "variation_options":variation_options
         } , status = status.HTTP_200_OK)
+    
+
+def getVariationOptionsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100 , all=False , instance =False):
+    variation_options_=[]
+    if all:
+        querySet_items = VariationOption.objects.all()
+    elif len(order_by):
+        if filter_by:
+            querySet_items = VariationOption.objects.filter(**filter_by).order_by(*order_by)[offset:limit]
+        else:
+            querySet_items = VariationOption.objects.all().order_by(*order_by)[offset:limit]
+    else:
+        if filter_by:
+            querySet_items = VariationOption.objects.filter(**filter_by)[offset:limit]
+        else:
+            querySet_items = VariationOption.objects.all()[offset:limit]
+    print(len(querySet_items))
+    for row in querySet_items:
+        if instance:
+            temp_VariationOption = row
+        else:
+            temp_VariationOption = dict(VariationOptionSerializer(row).data)
+        variation_options_.append(temp_VariationOption)
+    print(variation_options_)
+    return variation_options_
         
         
+
+# url = 'api/add_products'
+# payload:
+{
+    "product_category": "1",
+    "product": {
+        "product_name": "tinku",
+        "product_desc": "tinku the dev",
+        "product_img_base64" : "https://scontent.fhyd11-2.fna.fbcdn.net/v/t1.18169-9/21105788_760434490831886_4333824704480604768_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=eGWD0a6GGJAAX_0KeNM&_nc_ht=scontent.fhyd11-2.fna&oh=00_AfBBc3h_wRgDrrBq1DQCw3GC6ApMF_yW36xorqp_6QrsIg&oe=644C1321"
+    },
+    "product_items": [
+        {
+            "sku": "tinku",
+            "qty": "2",
+            "image_base64" : "https://scontent.fhyd11-2.fna.fbcdn.net/v/t1.18169-9/21105788_760434490831886_4333824704480604768_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=eGWD0a6GGJAAX_0KeNM&_nc_ht=scontent.fhyd11-2.fna&oh=00_AfBBc3h_wRgDrrBq1DQCw3GC6ApMF_yW36xorqp_6QrsIg&oe=644C1321",
+            "price": "23",
+            "variation_name": "1",
+            "variation_val": "1"
+        }
+    ]
+}
 
 class AddProductItem(APIView):
     def post(self , request):
         post_data = request.data
         print(post_data)
+        all_good_variable_check = True
         product_cat_id = int(post_data['product_category'])
         productCategoryInstance  = getProductCategoryWithKwargs(filter_by={
             'id' : int(product_cat_id)
@@ -673,11 +711,19 @@ class AddProductItem(APIView):
         if ProductSerializerInstance.is_valid():
             print(dict(ProductSerializerInstance.data))
             productInstance = Product(category_id = productCategoryInstance,
-                                      name = ProductSerializerInstance.data.get('name'),
-                                      description = ProductSerializerInstance.data.get('description'),
-                                      product_image = ProductSerializerInstance.data.get('product_image')
-                                      )
-            productInstance.save()
+                                        name = ProductSerializerInstance.data.get('name'),
+                                        description = ProductSerializerInstance.data.get('description'),
+                                        product_image = ProductSerializerInstance.data.get('product_image')
+                                        )
+            try:
+                productInstance.save()
+                all_good_variable_check= all_good_variable_check and True
+            except:
+                all_good_variable_check= all_good_variable_check and False
+                return Response({
+                    "status":False , 
+                    "oops" : "something went wrong adding product to the database"
+                } , status = status.HTTP_200_OK)
             print(productInstance)
             for productItem_ in post_data['product_items']:
                 productItemSerializerInstance = ProductItemSerializer_add(data={
@@ -689,16 +735,70 @@ class AddProductItem(APIView):
                 'img_url' : productItem_.get('img_url'),
                 'prize' : int(productItem_['price']),
                 })
+                product_variation = int(productItem_['variation_val'])
+                productVariationInstance = getVariationOptionsWithKwargs(filter_by={
+                    "id":product_variation
+                }  , instance=True)
+                if len(productVariationInstance):
+                    all_good_variable_check= all_good_variable_check and True
+                    productVariationInstance = productVariationInstance[0]
+                    pass
+                else:
+                    all_good_variable_check= all_good_variable_check and False
+                    return Response({
+                        "status":False , 
+                        "oops": "somethings wrong with product variant option"
+                    })
                 if productItemSerializerInstance.is_valid():
                     print({**productItemSerializerInstance.data , 'product_id': productInstance})
                     productItemInstance = ProductItem(**{**productItemSerializerInstance.data , 'product_id': productInstance})
-                    productItemInstance.save()
+                    try:
+                        productItemInstance.save()
+                        all_good_variable_check= all_good_variable_check and True
+                    except:
+                        all_good_variable_check= all_good_variable_check and False
+                        print('something went wrong in adding productItem instance')
+                        return Response({
+                            "status":False , 
+                            "oops": "something went wrong in adding productItem instance"
+                        } , status = status.HTTP_200_OK)
+                    # now we will save in productConfig table both productItem and variation option
+                    productConfigSerializerInstance = ProductConfigSerializer_add(data={
+                        'product_item_id': productItemInstance.id , 
+                        'variation_option' : productVariationInstance.id
+                    })
                     
-        
-            
-        
-        return HttpResponse("good from add_product_item")
-            
+                    if productConfigSerializerInstance.is_valid():
+                        all_good_variable_check= all_good_variable_check and True
+                        productConfigInstance = ProductConfig(product_item_id = productItemInstance , variation_option = productVariationInstance)
+                        try:
+                            productConfigInstance.save()
+                            print('-------------------------------------productConfig-----------------------------')
+                            print(ProductConfigSerializer(productConfigInstance).data)
+                            all_good_variable_check= all_good_variable_check and True
+                        except:
+                            all_good_variable_check= all_good_variable_check and False
+                            print('something went wrong in adding productConfig instance')
+                            return Response({
+                                "status":False , 
+                                "oops": "something went wrong in adding productConfig instance"
+                            } , status = status.HTTP_200_OK)
+                    else:
+                        all_good_variable_check= all_good_variable_check and False
+                        return Response({
+                            "status":False ,
+                            "oops":"looks like something went wrong with productConfigSerializerInstance.isValid() "
+                        })
+
+        if all_good_variable_check:
+            return Response({
+                'status': True ,
+            })
+        else:
+            return Response({
+                "status":False ,
+                "oops": "looks like something went wrong with the entire thing"
+            })
         
         
         

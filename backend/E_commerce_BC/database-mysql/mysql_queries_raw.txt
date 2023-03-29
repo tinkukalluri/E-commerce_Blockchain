@@ -1,0 +1,284 @@
+show databases;
+use bgzbjnuqeinpjsp2r6uf;
+
+show tables;
+
+desc api_UserAddress ;
+
+-----------------------------api_users--------------------------------------------------------------
+desc api_users;
+insert into api_users VALUES(2 ,"hjsdfbyusafbhabfuvt" ,  "tinkukalluri2@gmail.com" , "tinkukalluri2" , "tinku1985" , "" ,false , '9133723619');
+insert into api_users VALUES(3 ,"hjsdfbyusafbhabfuvw" ,  "tinkukalluri3@gmail.com" , "tinkukalluri3" , "tinku1985" , "" ,true , '9133723619');
+insert into api_users VALUES(4 ,"hjsdfbyusafbhabfuvq" ,  "tinkukalluri4@gmail.com" , "tinkukalluri4" , "tinku1985" , "" ,true , '9133723619');
+insert into api_users VALUES(5 ,"hjsdfbyusafbhabfuvv" ,  "tinkukalluri5@gmail.com" , "tinkukalluri5" , "tinku1985" , "" ,true , '9133723619');
+
+select * from api_users;
+
+----------------------------! api_users------------------------------------------------------
+
+-------------------------------api_productCategory--------------------------------------------
+desc api_productcategory;
+insert into api_productcategory VALUES(1 , "shirts" , NULL);
+insert into api_productcategory VALUES(3 , "half_hands_shirts" , 1);
+insert into api_productcategory VALUES(4 , "full_hands_shirts" , 1);
+
+insert into api_productcategory VALUES(2 , "pants" , NULL);
+insert into api_productcategory VALUES(5 , "narrow_pants" , 2);
+insert into api_productcategory VALUES(6 , "slimfit_pants" , 2);
+
+insert into api_productcategory VALUES(7 , "phone" , NULL);
+
+select * from api_productcategory;
+
+---------------------------------! api_productCategory----------------------------------------
+
+---------------------------------api_product--------------------------------------------------
+desc api_product;
+
+-- insert into api_product VALUES(1 , 'ERD-1' , "ER diagram for Ecommerce Web application" , 'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Ferd_ecommerce_database.png?alt=media&token=7067d0f6-06c9-4dd3-912e-ceb86c39bf9b' , NULL);
+-- insert into api_product VALUES(2 , 'ERD-1' , "ER diagram for Ecommerce Web application" , 'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Ferd_ecommerce_database.png?alt=media&token=7067d0f6-06c9-4dd3-912e-ceb86c39bf9b' , NULL);
+-- insert into api_product VALUES(3 , 'ERD-1' , "ER diagram for Ecommerce Web application" , 'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Ferd_ecommerce_database.png?alt=media&token=7067d0f6-06c9-4dd3-912e-ceb86c39bf9b' , NULL);
+-- insert into api_product VALUES(4 , 'ERD-1' , "ER diagram for Ecommerce Web application" , 'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Ferd_ecommerce_database.png?alt=media&token=7067d0f6-06c9-4dd3-912e-ceb86c39bf9b' , NULL);
+
+
+insert into api_product VALUES(1 , 'erd-1' , "ER diagram for Ecommerce Web application" , 'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fhuiiipzu1.png?alt=media&token=12817ab2-cc89-41d4-a07c-cd146cb0db03' , NULL , NOW());
+insert into api_product VALUES(2 , 'me' , "my passport size photo" , 'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fpassport_photo.jpeg?alt=media&token=c7173094-fdc6-4fc4-9bde-af909b8c05a3' ,NULL,  NOW());
+insert into api_product VALUES(3 , 'shirt' , "cools shirts" , 'https://m.media-amazon.com/images/I/71DBklVte9L._UX569_.jpg', 1 , NOW());
+insert into api_product VALUES(4 , 'shirt' , "cools shirts" , 'https://m.media-amazon.com/images/I/71DBklVte9L._UX569_.jpg', 1 , NOW());
+insert into api_product VALUES(5 , 'erd-2' , "ER diagram for Ecommerce Web application" , 'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fhuiiipzu1.png?alt=media&token=12817ab2-cc89-41d4-a07c-cd146cb0db03' , NULL , NOW());
+insert into api_product VALUES(6 , 'entity relationship diagram' , "erd diagram for Ecommerce Web application" , 'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fhuiiipzu1.png?alt=media&token=12817ab2-cc89-41d4-a07c-cd146cb0db03' , NULL , NOW());
+insert into api_product VALUES(7 , 'pant' , "cools pants" , 'https://m.media-amazon.com/images/I/71DBklVte9L._UX569_.jpg', 2 , NOW());
+insert into api_product VALUES(8 , 'iphone' , "apple iphone" , "https://m.media-amazon.com/images/W/IMAGERENDERING_521856-T1/images/I/71ZDY57yTQL._SL1500_.jpg" , 7 , NOW());
+
+select * from api_product;
+
+update api_product
+set name="iphone"
+where id=8;
+
+delete from api_product where id>8;
+
+select * from api_product order by added_on ASC;
+select * from api_product order by added_on DESC;
+
+-----------------------------------!api_product-------------------------------------------------
+
+-----------------------------------api_productitem-------------------------------------------------
+
+desc api_productitem;
+
+insert into api_productitem VALUES(1 , 'myphoto' , 1 ,'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fpassport_photo.jpeg?alt=media&token=c7173094-fdc6-4fc4-9bde-af909b8c05a3' , null , 100 , 2 , 'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fpassport_photo.jpeg?alt=media&token=c7173094-fdc6-4fc4-9bde-af909b8c05a3' , NULL );
+insert into api_productitem VALUES(2 , 'ERD' , 3 ,'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fhuiiipzu1.png?alt=media&token=12817ab2-cc89-41d4-a07c-cd146cb0db03' , null , 200 , 1 , 'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fhuiiipzu1.png?alt=media&token=12817ab2-cc89-41d4-a07c-cd146cb0db03'  , NULL);
+insert into api_productitem VALUES(3 , 'ERD-2' , 1 ,'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Ferd_ecommerce_database.png?alt=media&token=7067d0f6-06c9-4dd3-912e-ceb86c39bf9b' , null , 1000 , 1 , 'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Ferd_ecommerce_database.png?alt=media&token=7067d0f6-06c9-4dd3-912e-ceb86c39bf9b' , NULL );
+insert into api_productitem VALUES(4 , 'ERD-2' , 1 ,'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Ferd_ecommerce_database.png?alt=media&token=7067d0f6-06c9-4dd3-912e-ceb86c39bf9b' , null , 1000 , 1 , 'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Ferd_ecommerce_database.png?alt=media&token=7067d0f6-06c9-4dd3-912e-ceb86c39bf9b' , now() );
+insert into api_productitem VALUES(5 , 'ERD-3' , 1 ,'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Ferd_ecommerce_database.png?alt=media&token=7067d0f6-06c9-4dd3-912e-ceb86c39bf9b' , null , 1000 , 1 , 'https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Ferd_ecommerce_database.png?alt=media&token=7067d0f6-06c9-4dd3-912e-ceb86c39bf9b' , now() );
+insert into api_productitem VALUES(6 , 'blue shirt' , 10 ,'https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/12.webp' , null , 333 , 3 , 'https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/12.webp' , now() );
+
+-- shirts
+insert into api_productitem VALUES(7 , 'xs-shirt' , 10 ,'https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/12.webp' , null , 333 , 3 , 'https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/12.webp' , now() );
+insert into api_productitem VALUES(8 , 's-shirt' , 10 ,'https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/12.webp' , null , 333 , 3 , 'https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/12.webp' , now() );
+insert into api_productitem VALUES(9 , 'm-shirt' , 10 ,'https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/12.webp' , null , 333 , 3 , 'https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/12.webp' , now() );
+insert into api_productitem VALUES(10 , 'l-shirt' , 10 ,'https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/12.webp' , null , 333 , 3 , 'https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/12.webp' , now() );
+insert into api_productitem VALUES(11 , 'xl-shirt' , 10 ,'https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/12.webp' , null , 333 , 3 , 'https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/12.webp' , now() );
+
+-- pants
+insert into api_productitem VALUES(12 , 'xs-pants' , 19 ,'http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119' , null , 333 , 7 , 'http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119' , now() );
+insert into api_productitem VALUES(13 , 's-pants' , 19 ,'http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119' , null , 333 , 7 , 'http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119' , now() );
+insert into api_productitem VALUES(14 , 'm-pants' , 19 ,'http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119' , null , 333 , 7 , 'http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119' , now() );
+insert into api_productitem VALUES(15 , 'l-pants' , 19 ,'http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119' , null , 333 , 7 , 'http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119' , now() );
+insert into api_productitem VALUES(16 , 'xl-pants' , 19 ,'http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119' , null , 333 , 7 , 'http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119' , now() );
+insert into api_productitem VALUES(17 , 'xxl-pants' , 21 ,'http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119' , null , 300 , 7 , 'http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119' , now() );
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- phone color: green memory
+insert into api_productitem VALUES(18 , 'phone-black' , 10 , 'https://d2d22nphq0yz8t.cloudfront.net/88e6cc4b-eaa1-4053-af65-563d88ba8b26/https://media.croma.com/image/upload/v1662703541/Croma%20Assets/Communication/Mobiles/Images/261930_q0hq3w.png/mxw_640,f_auto' , null , 80000 , 8  , null , now());
+insert into api_productitem VALUES(18 , 'phone-black' , 10 , 'https://d2d22nphq0yz8t.cloudfront.net/88e6cc4b-eaa1-4053-af65-563d88ba8b26/https://media.croma.com/image/upload/v1662703541/Croma%20Assets/Communication/Mobiles/Images/261930_q0hq3w.png/mxw_640,f_auto' , null , 80000 , 8  , null , now());
+insert into api_productitem VALUES(18 , 'phone-black' , 10 , 'https://d2d22nphq0yz8t.cloudfront.net/88e6cc4b-eaa1-4053-af65-563d88ba8b26/https://media.croma.com/image/upload/v1662703541/Croma%20Assets/Communication/Mobiles/Images/261930_q0hq3w.png/mxw_640,f_auto' , null , 80000 , 8  , null , now());
+insert into api_productitem VALUES(18 , 'phone-black' , 10 , 'https://d2d22nphq0yz8t.cloudfront.net/88e6cc4b-eaa1-4053-af65-563d88ba8b26/https://media.croma.com/image/upload/v1662703541/Croma%20Assets/Communication/Mobiles/Images/261930_q0hq3w.png/mxw_640,f_auto' , null , 80000 , 8  , null , now());
+insert into api_productitem VALUES(18 , 'phone-black' , 10 , 'https://d2d22nphq0yz8t.cloudfront.net/88e6cc4b-eaa1-4053-af65-563d88ba8b26/https://media.croma.com/image/upload/v1662703541/Croma%20Assets/Communication/Mobiles/Images/261930_q0hq3w.png/mxw_640,f_auto' , null , 80000 , 8  , null , now());
+
+
+insert into api_productitem VALUES(19 , 'phone-white' , 12 , 'https://www.reliancedigital.in/medias/iPhone-11-64GB-White-491901639-i-5-1200Wx1200H?context=bWFzdGVyfGltYWdlc3w4MzU5OHxpbWFnZS9qcGVnfGltYWdlcy9oY2EvaDM2Lzk0MjE5MDI1NDQ5MjYuanBnfGQxNzZkZGFlYzgyNGFkZGM0OTU1ODA2OGEzMjI3NzJmMzQ4MzJiY2M4MmIwMGEyMzkxZjEyYjEzZWY2NGM4MWQ' , null , 80000 , 8  , null , now());
+insert into api_productitem VALUES(20 , 'phone-purple' , 13 , 'https://m.media-amazon.com/images/W/IMAGERENDERING_521856-T1/images/I/71hIfcIPyxS._SL1500_.jpg' , null , 80000 , 8  , null , now());
+insert into api_productitem VALUES(21 , 'phone-pink' , 14 , 'https://www.jiomart.com/images/product/420x420/491997703/apple-iphone-13-128-gb-pink-digital-o491997703-p590798557-3-202208221207.jpeg' , null , 80000 , 8  , null , now());
+insert into api_productitem VALUES(22 , 'phone-olive green' , 15 , 'http://cdn.shopify.com/s/files/1/0507/2096/4799/products/2124.jpg?v=1669641803' , null , 80000 , 8  , null , now());
+
+
+
+select * from api_productitem;
+
+select * from api_product;
+
+delete from api_productitem where id>22;
+
+set ;
+----------------------------------------!api_productiem-----------------------------------
+
+
+-----------------------------------------api_variation------------------------------------
+
+desc api_variation;
+
+insert into api_variation VALUES(
+    1 , "size" , 1
+);
+insert into api_variation VALUES(
+    2 , "size" , 2
+);
+
+
+insert into api_variation VALUES(
+    3 , "color" , 7
+);
+
+insert into api_variation VALUES(
+    4 , "memory" , 7
+);
+
+update api_variation
+set category_id_id = 8
+where category_id_id = 7;
+
+delete from api_variation where id= 2;
+
+select * from api_variation;
+
+select * from api_variation where category_id_id=7;
+-----------------------------------------!api_variation------------------------------------
+
+------------------------------------------api_variation_option-----------------------------
+desc api_variationoption;
+
+insert into api_variationoption VALUES(1 , 'xs' , 1);
+insert into api_variationoption VALUES(2 , 's' , 1);
+insert into api_variationoption VALUES(3 , 'm' , 1);
+insert into api_variationoption VALUES(4 , 'l' , 1);
+insert into api_variationoption VALUES(5 , 'xl' , 1);
+
+insert into api_variationoption VALUES(6 , 'xs' , 2);
+insert into api_variationoption VALUES(7 , 's' , 2);
+insert into api_variationoption VALUES(8 , 'm' , 2);
+insert into api_variationoption VALUES(9 , 'l' , 2);
+insert into api_variationoption VALUES(10 , 'xl' , 2);
+
+insert into api_variationoption VALUES(11 , 'black' , 3);
+insert into api_variationoption VALUES(12 , 'white' , 3);
+insert into api_variationoption VALUES(13 , 'purple' , 3);
+insert into api_variationoption VALUES(14 , 'pink' , 3);
+insert into api_variationoption VALUES(15 , 'olive green' , 3);
+
+insert into api_variationoption VALUES(16 , '64' , 4);
+insert into api_variationoption VALUES(17 , '128' , 4);
+insert into api_variationoption VALUES(18 , '256' , 4);
+insert into api_variationoption VALUES(19 , '512' , 4);
+
+
+
+delete from api_variationoption where variation_id_id=2;
+
+select * from api_variationoption;
+
+---------------------------------------! api_variationoption------------------------------
+
+
+----------------------------------------api_productconfig -----------------------------------
+desc api_productconfig;
+
+insert into api_productconfig VALUES(1 , 7 , 1);
+insert into api_productconfig VALUES(2 , 8 , 2);
+insert into api_productconfig VALUES(3 , 9 , 3);
+insert into api_productconfig VALUES(4 , 10 , 4);
+insert into api_productconfig VALUES(5 , 11 , 5);
+
+
+insert into api_productconfig VALUES(6 , 12 , 6);
+insert into api_productconfig VALUES(7 , 13 , 7);
+insert into api_productconfig VALUES(8 , 14 , 8);
+insert into api_productconfig VALUES(9 , 15 , 9);
+insert into api_productconfig VALUES(10 , 16 , 10);
+
+select * from api_productconfig;
+
+-------------------------------------------!api_productConfig----------------------------------------
+
+------------------------------------------joins--------------------------------------------
+
+select * from api_productitem 
+INNER JOIN api_product on api_productitem.product_id_id=api_product.id
+INNER JOIN api_productcategory on api_product.category_id_id = api_productcategory.id
+INNER JOIN api_variation on api_productcategory.id = api_variation.category_id_id
+INNER JOIN api_variationoption on api_variation.id = api_variationoption.variation_id_id;
+
+
+---------------------------------------!join------------------------------------------------------------------
+
+
+---------------------------------------shopping_cart-----------------------------------------------------
+
+desc api_shoppingcart;
+
+insert into api_shoppingcart VALUES(1 , 1);
+insert into api_shoppingcart VALUES(2 , 6);
+insert into api_shoppingcart VALUES(3 , 7);
+
+select * from api_shoppingcart;
+
+
+--------------------------------------!shopping_cart-----------------------------------------------------------
+
+--------------------------------------shopping cart item-------------------------------------------------------
+desc api_shoppingcartitem;
+
+insert into api_shoppingcartitem VALUES(1 , 3 , 1 , 10);
+insert into api_shoppingcartitem VALUES(2 , 6 , 1 , 15);
+insert into api_shoppingcartitem VALUES(3 , 9 , 2 , 18);
+insert into api_shoppingcartitem VALUES(4 , 2 , 3 , 18);
+
+delete from api_shoppingcartitem;
+
+select * from api_shoppingcartitem;
+
+---------------------------------------!shoppingcartitem------------------------------------------------------
+
+---------------------------------------OrderStatus-----------------------------------------
+INSERT into api_orderstatus values(1 , 'delivered');
+INSERT into api_orderstatus values(2 , 'out_for_delivery');
+INSERT into api_orderstatus values(3 , 'shipped');
+INSERT into api_orderstatus values(4 , 'packed');
+INSERT into api_orderstatus values(5 , 'confirmed');
+
+select * from api_orderstatus;
+
+------------------------------------!OrderStatus----------------------------------------------
+
+
+----------------------------------------PaymentStatus---------------------------------------
+
+insert into api_paymentstatus VALUES(1 , 'successfull');
+insert into api_paymentstatus VALUES(2 , 'pending');
+insert into api_paymentstatus VALUES(3 , 'failed');
+
+select * from api_paymentstatus;
+---------------------------------------!PaymentStatus--------------------------------------
+
+------------------------------------ShopOrder---------------------------------------------
+
+select * from api_shoporder;
+
+delete from api_shoporder;
+
+-------------------------------------!shopOrder-------------------------------------------
+
+------------------------------------orderLine-------------------------------------------
+
+select * from api_orderline;
+
+delete from api_orderline;
+
+------------------------------------!order-line--------------------------------------
+
+
+
+
+
