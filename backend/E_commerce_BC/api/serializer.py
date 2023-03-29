@@ -11,11 +11,22 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ('id' , 'category_id', 'name', 'description', 'product_image' , 'added_on')
 
+class ProductSerializer_add(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ('category_id' , 'name' , 'description', 'product_image' )
 
 class ProductItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductItem
-        fields = ('id' , 'product_id', 'SKU' , 'qty_in_stock' , 'product_image' , 'prize' , 'IPFS_hash' ,'img_url' ,  'prize' , 'added_on')
+        fields = ('id' , 'product_id', 'SKU' , 'qty_in_stock' , 'product_image' , 'prize' , 'IPFS_hash' ,'img_url' , 'added_on')
+
+class ProductItemSerializer_add(serializers.ModelSerializer):
+    class Meta:
+        model = ProductItem
+        fields = ('product_id' , 'SKU' , 'qty_in_stock' , 'product_image' , 'prize' , 'IPFS_hash' ,'img_url')
+
+
 
 class VariationSerializer(serializers.ModelSerializer):
     class Meta:

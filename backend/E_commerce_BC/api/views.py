@@ -7,6 +7,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response    
 from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory , ShoppingCart , ShoppingCartItem , ProductConfig
 from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer, ProductConfigSerializer , ShoppingCartSerializer , ShoppingCartItemSerializer
+
+# _add serializers 
+
+from .serializer import ProductSerializer_add , ProductItemSerializer_add
+
 from .serializer import ProductCategorySerializer
 import collections
 from django.db.models import Q
@@ -24,12 +29,15 @@ def loggedIn(request):
 def index(request, *args, **kwargs):
     return HttpResponse('hello world from api')
 
-def getVariationFromCategoryID(categoryID):
+def getVariationFromCategoryID(categoryID , instance= False):
     variation_querySet = Variation.objects.filter(category_id=categoryID)
     result_=[]
     for row in variation_querySet:
         print(row)
-        result_.append(VariationSerializer(row).data)
+        if instance:
+            result_.append(row)
+        else:
+            result_.append(VariationSerializer(row).data)
     return result_
 
 def getVariationValuesFromVariationID(variation_id):
@@ -61,7 +69,7 @@ def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100 
     return products_
 
 
-def getProductCategoryWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100):
+def getProductCategoryWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100 , all=False , instance=False ):
     productCategory_=[]
     if all:
         querySet_items = ProductCategory.objects.all()
@@ -77,8 +85,12 @@ def getProductCategoryWithKwargs( filter_by=False ,order_by=[] , offset=0  , lim
             querySet_items = ProductCategory.objects.all()[offset:limit]
     print(len(querySet_items))
     for row in querySet_items:
-        temp_Product = dict(ProductCategorySerializer(row).data)
-        productCategory_.append(temp_Product)
+        if instance:
+            temp_Product=row
+            productCategory_.append(temp_Product)
+        else:
+            temp_Product = dict(ProductCategorySerializer(row).data)
+            productCategory_.append(temp_Product)
     print("productCategories")
     print(productCategory_)
     return productCategory_
@@ -599,10 +611,100 @@ def loggedIn(request):
 
 
 # url = 'api/add_products'
+# payload:
+{   
+    "product_category": "1",
+    "product": {
+        "product_name": "dawd",
+        "product_desc": "adw",
+        "product_img_base64": "6MjQrMDA6MDBU0pA3AAAAAElFTkSuQmCC"
+        },
+    "product_items":[{
+            'sku': '' , 
+            'qty' : '',
+            'image_base64':"6MjQrMDA6MDBU0pA3AAAAAElFTkSuQmCC",
+            "price": "2",
+            "variation_name": "volvo",
+            "variation_val": "saab"
+        }
+    ]
+}
+
+
+class getVariations(APIView):
+    def get(self , request):
+        get_data = request.GET
+        print(get_data)
+        category_id = get_data['category_id']
+        variations = getVariationFromCategoryID(int(category_id))
+        return Response({
+            "status":True,
+            "variations":variations
+        } , status = status.HTTP_200_OK)
+        
+class getVariationValue(APIView):
+    def get(self , request):
+        get_data = request.GET
+        print(get_data)
+        variation_id = get_data['variation_id']
+        variation_options = getVariationValuesFromVariationID(variation_id)
+        return Response({
+            "status":True,
+            "variation_options":variation_options
+        } , status = status.HTTP_200_OK)
+        
+        
+
 class AddProductItem(APIView):
     def post(self , request):
         post_data = request.data
         print(post_data)
+        product_cat_id = int(post_data['product_category'])
+        productCategoryInstance  = getProductCategoryWithKwargs(filter_by={
+            'id' : int(product_cat_id)
+        } , instance=True)[0]
+        product_name = post_data['product']['product_name']
+        product_desc = post_data['product']['product_desc']
+        product_img_base64= post_data['product']['product_img_base64']
+        
+        ProductSerializerInstance = ProductSerializer_add(data={"name" : product_name ,'description':product_desc  , "product_image":product_img_base64 ,  'category_id' : product_cat_id})
+        # ('product_id' , 'SKU' , 'qty_in_stock' , 'product_image' , 'prize' , 'IPFS_hash' ,'img_url')
+        
+        if ProductSerializerInstance.is_valid():
+            print(dict(ProductSerializerInstance.data))
+            productInstance = Product(category_id = productCategoryInstance,
+                                      name = ProductSerializerInstance.data.get('name'),
+                                      description = ProductSerializerInstance.data.get('description'),
+                                      product_image = ProductSerializerInstance.data.get('product_image')
+                                      )
+            productInstance.save()
+            print(productInstance)
+            for productItem_ in post_data['product_items']:
+                productItemSerializerInstance = ProductItemSerializer_add(data={
+                'product_id': productInstance.id,
+                'SKU' : productItem_['sku'],
+                'qty_in_stock' :int(productItem_['qty']) ,
+                'product_image': productItem_['image_base64'],
+                'IPFS_hash': productItem_.get('IPFS_hash'),
+                'img_url' : productItem_.get('img_url'),
+                'prize' : int(productItem_['price']),
+                })
+                if productItemSerializerInstance.is_valid():
+                    print({**productItemSerializerInstance.data , 'product_id': productInstance})
+                    productItemInstance = ProductItem(**{**productItemSerializerInstance.data , 'product_id': productInstance})
+                    productItemInstance.save()
+                    
+        
+            
+        
+        return HttpResponse("good from add_product_item")
+            
+        
+        
+        
+        
+        
+        
         
         
 

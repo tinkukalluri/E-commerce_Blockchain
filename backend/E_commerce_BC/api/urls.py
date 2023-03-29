@@ -17,6 +17,8 @@ urlpatterns = [
     path('cart_products' , views.CartProducts.as_view()),
     path('empty_cart' ,  views.EmptyCart.as_view()),
     path('add_products' ,  views.AddProductItem.as_view()),
+    path('get_variations' ,  views.getVariations.as_view()),
+    path('get_variation_options' ,  views.getVariationValue.as_view()),
     path('create_order' ,  order_views.MakeOrder.as_view()),
     path('get_user_orders' ,  order_views.UserOrders.as_view()),
     path('update_tx_hash' ,  order_views.UpdateTransactionHashShopOrder.as_view()),
