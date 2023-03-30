@@ -1,0 +1,75 @@
+{
+    "variation": [
+        {
+            "id": 1,
+            "category_id": 1,
+            "name": "size",
+            "variation_options": [
+                {
+                    "id": 1,
+                    "variation_id": 1,
+                    "value": "xs"
+                },
+                {
+                    "id": 2,
+                    "variation_id": 1,
+                    "value": "s"
+                },
+                {
+                    "id": 3,
+                    "variation_id": 1,
+                    "value": "m"
+                },
+                {
+                    "id": 4,
+                    "variation_id": 1,
+                    "value": "l"
+                },
+                {
+                    "id": 5,
+                    "variation_id": 1,
+                    "value": "xl"
+                }
+            ]
+        }
+    ],
+    "product": {
+        "id": 24,
+        "category_id": 1,
+        "name": "tinku3",
+        "description": "tinku the dev",
+        "product_image": "https://scontent.fhyd11-2.fna.fbcdn.net/v/t1.18169-9/21105788_760434490831886_4333824704480604768_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=eGWD0a6GGJAAX_0KeNM&_nc_ht=scontent.fhyd11-2.fna&oh=00_AfBBc3h_wRgDrrBq1DQCw3GC6ApMF_yW36xorqp_6QrsIg&oe=644C1321",
+        "added_on": "2023-03-30T01:21:42.119325Z"
+    },
+    "productItem": [
+        {
+            "id": 29,
+            "product_id": 24,
+            "SKU": "tinku-item-2",
+            "qty_in_stock": 2,
+            "product_image": "https://scontent.fhyd11-2.fna.fbcdn.net/v/t1.18169-9/21105788_760434490831886_4333824704480604768_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=eGWD0a6GGJAAX_0KeNM&_nc_ht=scontent.fhyd11-2.fna&oh=00_AfBBc3h_wRgDrrBq1DQCw3GC6ApMF_yW36xorqp_6QrsIg&oe=644C1321",
+            "prize": 23,
+            "IPFS_hash": null,
+            "img_url": null,
+            "added_on": "2023-03-30T01:21:43.947356Z",
+            "variation_options": [
+                1
+            ]
+        },
+        {
+            "id": 28,
+            "product_id": 24,
+            "SKU": "tinku-item-1",
+            "qty_in_stock": 2,
+            "product_image": "https://scontent.fhyd11-2.fna.fbcdn.net/v/t1.18169-9/21105788_760434490831886_4333824704480604768_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=eGWD0a6GGJAAX_0KeNM&_nc_ht=scontent.fhyd11-2.fna&oh=00_AfBBc3h_wRgDrrBq1DQCw3GC6ApMF_yW36xorqp_6QrsIg&oe=644C1321",
+            "prize": 23,
+            "IPFS_hash": null,
+            "img_url": null,
+            "added_on": "2023-03-30T01:21:42.719382Z",
+            "variation_options": [
+                1
+            ]
+        }
+    ],
+    "category": "shirts"
+}

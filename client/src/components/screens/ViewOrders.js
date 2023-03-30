@@ -26,8 +26,8 @@ export function getOrderStatusTXT(order_status) {
     }
 }
 
-export function getPaymentStatusTXT(payment_status){
-    switch (payment_status){
+export function getPaymentStatusTXT(payment_status) {
+    switch (payment_status) {
         case 1:
             return "payment successfull"
         case 2:
@@ -105,7 +105,7 @@ export default function ViewOrders(props) {
     //     </div>
     // </div >
 
-    
+
 
     function handlePaymentVerification(e, order_id) {
         console.log('clicked on payment verification')
@@ -117,20 +117,20 @@ export default function ViewOrders(props) {
             })
         }
         const path = '/blockchain/verify_payment'
-        fetch(path, requestOptions).then(response => response.json()).then(
-            data => {
-                console.log(data)
-            }
+        fetch(path, requestOptions).then(response => response.json()).then(data => {
+            console.log(data)
+            fetchOrders()
+        }
         )
 
     }
 
-    function handleOrderClick(e , order_id){
+    function handleOrderClick(e, order_id) {
         console.log('handleOrderClick')
-        console.log(order_id , e)
-        history.push({ 
-            pathname:'/order_items',
-            state : {
+        console.log(order_id, e)
+        history.push({
+            pathname: '/order_items',
+            state: {
                 order_id
             }
 
@@ -148,16 +148,18 @@ export default function ViewOrders(props) {
                         {
                             orders.map(order => {
                                 return (
-                                    <div className="row bg-white mb-2 " onClick={(e)=>{
-                                        handleOrderClick(e , order.id)
-                                    }} >
+                                    <div className="row bg-white mb-2 "  >
                                         <div className="col-lg-12 p-3 order-item">
                                             <div className="d-flex justify-content-between align-items-center">
-                                                <div className="">status: {getOrderStatusTXT(order.order_status)}</div>
-                                                <div className="">₹{order.order_total}</div>
-                                                <div className="">{order.shipping_address_id}</div>
-                                                {/* <div className="">{order.payment_status}</div> */}
-                                                <div className="">{order.order_date}</div>
+                                                <span onClick={(e) => {
+                                                    handleOrderClick(e, order.id)
+                                                }}>
+                                                    <div className="">status: {getOrderStatusTXT(order.order_status)}</div>
+                                                    <div className="">₹{order.order_total}</div>
+                                                    <div className="">{order.shipping_address_id}</div>
+                                                    {/* <div className="">{order.payment_status}</div> */}
+                                                    <div className="">{order.order_date}</div>
+                                                </span>
                                                 {order.payment_status == 1 ? <div className="text-success" >Payment Verified</div> : (order.payment_status == 2 ? <button onClick={(e) => { handlePaymentVerification(e, order.id) }} className="btn-outline-warning text-warning">Verify Payment</button> : <div className="text-danger" >Payment Failed</div>)}
                                             </div>
                                         </div>

@@ -1,6 +1,6 @@
-asgiref==3.6.0
 Django==3.2.3
-django-rest-framework==0.1.0
 djangorestframework==3.14.0
-mysqlclient==2.1.1
-sqlparse==0.4.3
+web3==6.0.0
+mysql==0.0.2
+mysql-connector-python==8.0.27
+mysqlclient==2.0.3
