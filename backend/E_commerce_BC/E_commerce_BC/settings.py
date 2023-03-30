@@ -102,6 +102,8 @@ WSGI_APPLICATION = 'E_commerce_BC.wsgi.application'
 # remote sql databae in clever-cloud (https://console.clever-cloud.com/users/me/addons/addon_37efe840-ac76-48ed-be0b-eb2396ccd06a)
 # mysql -h bgzbjnuqeinpjsp2r6uf-mysql.services.clever-cloud.com -P 3306 -u upmlh7oogimzovpw -p bgzbjnuqeinpjsp2r6uf
 
+
+# popSql link : https://app.popsql.com/queries/-NPrmI-lYXbYoOKEm_8m/e-commerce_bl
 DATABASES = {  
     'default': {  
         'ENGINE': 'django.db.backends.mysql',  

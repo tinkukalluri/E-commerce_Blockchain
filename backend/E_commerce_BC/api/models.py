@@ -72,7 +72,7 @@ class ProductItem(models.Model):
         #print("timezome.now()::", self.send_on)
         #     self.created = timezone.now()
         # self.modified = timezone.now()
-        return super(Product , self).save(*args, **kwargs)
+        return super(ProductItem , self).save(*args, **kwargs)
 
 # this will give all the variations possible in product like mobile will have variation like storage , color
 class Variation(models.Model):

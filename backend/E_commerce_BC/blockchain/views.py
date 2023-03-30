@@ -15,6 +15,7 @@ import os
 from api import views as api_views
 from api import order_views as api_order_views
 from api import models as api_models
+from .utils import TINTOKEN_path
 
 from web3 import Web3
 
@@ -30,7 +31,7 @@ class   VerifyPaymentRequest(APIView):
         # src\contracts\TinToken.json
         # C:\Users\sintin\Desktop\Major_project\e_commerce\react-box-master\client\src\contracts\TinToken.json
         print(cur_directory)
-        contract = open(r"C:\Users\sintin\Desktop\Major_project\e_commerce\react-box-master\client\src\contracts\TinToken.json")
+        contract = open(TINTOKEN_path)
         contract_dict = json.load(contract)
         network_id =  web3.net.version
         contract_address = contract_dict['networks'][network_id]['address']
@@ -44,6 +45,7 @@ class   VerifyPaymentRequest(APIView):
             "id": order_id
         })[0]
         # (AttributeDict({'args': AttributeDict({'payer': '0xDFeb088754c16A2657ee3a78F702016eBB5d1C15', 'amount': 333, 'paymentId': 6614633839, 'orderId': 25, 'date': 1679494948}), 'event': 'PaymentDone', 'logIndex': 1, 'transactionIndex': 0, 'transactionHash': HexBytes('0xd3b5a4cd45f34901f9587bdd1cffd97ab149aaf8c4f3d2f58310ed5befdf2f13'), 'address': '0x0b3FD59B26Ce37DEd4FD48918098d879D539bA4c', 'blockHash': HexBytes('0x9da67d1a718ef49d7f8fe3ad856853a28921eeadf27cd0120d16d6b1a45361e0'), 'blockNumber': 23}),)
+        ShopOrderInstance = api_models.ShopOrder.objects.get(id=order_id)
         for event in events:
             order_id_ = event.get('args').get('orderId')
             to_address = event.get('address')
@@ -52,7 +54,6 @@ class   VerifyPaymentRequest(APIView):
             payer = event.get('args').get('payer')
             event_name = event.get('event')
             # HexBytes('0x5e580dcaffb3f119c7a07ca9db560b7e5e09fb8314ca52ea3ae129ddf7d1514b') ===> 0x5e580dcaffb3f119c7a07ca9db560b7e5e09fb8314ca52ea3ae129ddf7d1514b
-            ShopOrderInstance = api_models.ShopOrder.objects.get(id=order_id)
             tx_hash = event.get('transactionHash').hex()
             if(order_id_ == order['id'] and to_address==contract_address and amount==order['order_total']):
                 print('looks like genuine transaction goahead and verify')
@@ -72,6 +73,11 @@ class   VerifyPaymentRequest(APIView):
                         "payment_status":2 ,
                         "oops":"something went wrong when making order_status successsful, check with db connection"
                     } , status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({
+                    'status': False,
+                    'oops': "looks like some parameters are false"
+                } , status=status.HTTP_400_BAD_REQUEST)
         ShopOrderInstance.transaction_hash = ""
         ShopOrderInstance.payment_status = api_models.PaymentStatus.objects.get(id=3)
         ShopOrderInstance.save(update_fields=['transaction_hash' , 'payment_status'])

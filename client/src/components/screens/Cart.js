@@ -10,7 +10,7 @@ export default function () {
     const { state: { contract, artifact, accounts, web3 }, state, setArtifact, dispatch } = useEth();
     const [cart, setCart] = useState([])
     const [cartID, setCartID] = useState(0)
-    const [cartItems, setCartItems] = useState([])
+    const [cartItems, setCartItems] = useState(-1)
     const [cartTotal, setCartTotal] = useState(-1)
     const [cartTax, setCartTax] = useState(0)
     const [cartDiscount, setCartDiscount] = useState(0)
@@ -191,6 +191,7 @@ export default function () {
             console.log(data)
             if (data.status) {
                 console.log('updated successfully tx_hash')
+                
             }
         })
     }
@@ -226,7 +227,7 @@ export default function () {
             console.log(data)
             setCart(data)
             setCartID(data.cart_id)
-            setCartItems(data.shopping_cart_items)
+            setCartItems(data.shopping_cart_items.length==0 ? [] :data.shopping_cart_items)
             clearTimeout(fetchCartItemsTimeout)
             setCartTotal(0)
         }).catch(e => {
@@ -237,6 +238,7 @@ export default function () {
 
     useEffect(() => {
         let total_value = 0
+        cartItems==-1?  total_value = 0 :
         cartItems.map(item => {
             total_value += item.productItem.prize * item.qty
         })
@@ -272,8 +274,7 @@ export default function () {
                                     {/* cart item -1 */}
 
                                     {
-
-                                        cartItems.length == 0 ? <Loading /> : (
+                                        cartItems == -1 ? <Loading /> : (
                                             cartItems.map(item => {
                                                 cart_total += item.productItem.prize
                                                 return (

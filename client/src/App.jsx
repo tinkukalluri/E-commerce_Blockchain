@@ -65,16 +65,15 @@ function App(props) {
                 <ProductSearch  {...props} search_query={search} />
               </Route>
               <Route exact path="/tin_wallet">
-                <TinWallet />
+                <TinWallet {...props}/>
               </Route>
               <Route exact path="/product/:productID"
                 component={ProductPage} />
               <Route exact path="/orders">
-                <ViewOrders />
+                <ViewOrders {...props}/>
               </Route>
-              <Route exact path="/order_items">
-                <ViewOrderItems />
-              </Route>
+              <Route exact path="/order_items"
+                component={ViewOrderItems}/>
             </div>
           </Switch>
           <Footer />

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Product , ProductItem  , Variation , VariationOption , ProductConfig , ShoppingCart, ShoppingCartItem
-from .models import ShopOrder , OrderStatus , PaymentStatus , OrderLine
+from .models import ShopOrder , OrderStatus , PaymentStatus , OrderLine , ProductCategory
 
 
 # suffix `_add` means this serializer is used to add data into table
@@ -11,11 +11,31 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ('id' , 'category_id', 'name', 'description', 'product_image' , 'added_on')
 
+class ProductSerializer_add(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ('category_id' , 'name' , 'description', 'product_image' )
 
 class ProductItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductItem
-        fields = ('id' , 'product_id', 'SKU' , 'qty_in_stock' , 'product_image' , 'prize' , 'IPFS_hash' ,'img_url' ,  'prize' , 'added_on')
+        fields = ('id' , 'product_id', 'SKU' , 'qty_in_stock' , 'product_image' , 'prize' , 'IPFS_hash' ,'img_url' , 'added_on')
+
+class ProductItemSerializer_add(serializers.ModelSerializer):
+    class Meta:
+        model = ProductItem
+        fields = ('product_id' , 'SKU' , 'qty_in_stock' , 'product_image' , 'prize' , 'IPFS_hash' ,'img_url')
+
+class ProductConfigSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=ProductConfig
+        fields=('id' ,'product_item_id' , 'variation_option')
+
+class ProductConfigSerializer_add(serializers.ModelSerializer):
+    class Meta:
+        model=ProductConfig
+        fields=('product_item_id' , 'variation_option')
+
 
 class VariationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,10 +48,6 @@ class VariationOptionSerializer(serializers.ModelSerializer):
         fields =("id" , "variation_id" , "value")
 
 
-class ProductConfigSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=ProductConfig
-        fields=('id' ,'product_item_id' , 'variation_option')
         
         
 class ShoppingCartSerializer(serializers.ModelSerializer):
@@ -60,4 +76,9 @@ class ShopOrderSerializer(serializers.ModelSerializer):
 class OrderLineSeializer(serializers.ModelSerializer):
     class Meta:
         model = OrderLine
-        fields = ('id' , 'product_item_id' ,'order_id' , 'qty' ,  'qty')
+        fields = ('id' , 'product_item_id' ,'order_id' , 'qty' ,  'price')
+
+class ProductCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductCategory
+        fields = ('id' , 'parent_category_id' , 'category_name' )

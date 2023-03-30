@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link href="mdb.min.js" rel="stylesheet">
+    <style>
+        .order-item-detail {
+            border: 3px solid black;
+            border-radius: 6px;
+            min-height: 150px;
+            margin-bottom:15px;
+        }
+
+        .order-details{
+            border: 3px solid black;
+            border-radius: 6px;
+            min-height: 300px;
+            background-color:lightgrey;
+            margin-bottom: 20px;
+        }
+
+        .order-item-flex{
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="user-orders">
+        <div class="text-primary text-center font-monospace">Your order</div>
+        <div class="container">
+            <div class="row bg-white mb-2 ">
+                <div class="col-lg-12 order-details p-3">
+                    <div class="text-danger"><i>order-details </i> </div>
+                    <h4 class="text-success">orderid: 36</h4>
+                    <h5 class="text-success"> <i>order status</i> : 36</h5>
+                    <h5 class="text-success"><i>payment status</i>: null</h5> 
+                    <h5 class="text-success"><i>transaction hash</i>: null</h5> 
+                    <h5 class="text-success"><i>order date</i>: null</h5> 
+                </div>
+                <div class="col-lg-12 order-item-detail">
+                    <div class=" order-item-flex d-flex justify-content-between align-items-center ">
+                        <div>product image</div>
+                        <div>product name</div>
+                        <div>product price</div>
+                    </div>
+                </div>
+
+                <div class="card border shadow-0">
+                    <div class="m-4">
+                        <h4 class="card-title mb-4">Your shopping cart</h4>
+                        <div class="row gy-3 mb-4">
+                            <div class="col-lg-5">
+                                <div class="me-lg-5">
+                                    <div class="d-flex">
+                                        <img src="http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119" class="border rounded me-3" style="width: 96px; height: 96px;">
+                                        <div class="">
+                                            <a href="#" class="nav-link">cool pants</a>
+                                            <p class="p-muted">cools shirts</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap">
+                                <i>qty {your quantity}</i>
+                                
+                            </div>
+                            <div class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
+                                <div class="float-md-end">
+                                    <div class="">
+                                        <p class="h6">₹333</p>
+                                        <br/>
+                                        <small class="p-muted p-nowrap">₹333 / per item </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+
+
+                        <div class="row gy-3 mb-4">
+                            <div class="col-lg-5">
+                                <div class="me-lg-5">
+                                    <div class="d-flex">
+                                        <img src="http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119" class="border rounded me-3" style="width: 96px; height: 96px;">
+                                        <div class="">
+                                            <a href="#" class="nav-link">cool pants</a>
+                                            <p class="p-muted">cools shirts</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap">
+                                <i>qty</i>
+                                <div class="">
+                                    <p class="h6">₹333</p>
+                                    <br/>
+                                    <small class="p-muted p-nowrap">₹333 / per item </small>
+                                </div>
+                            </div>
+                            <div class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
+                                <div class="float-md-end">
+                                    <a href="#!" class="btn btn-light border px-2 icon-hover-primary">
+                                        <i class="fas fa-heart fa-lg px-1 p-secondary"></i>
+                                    </a>
+                                    <a class="btn btn-light border p-danger icon-hover-danger">Remove</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 order-item-detail">
+                    <div class="d-flex justify-content-between align-items-center ">
+                        <div>product image</div>
+                        <div>product name</div>
+                        <div>product price</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

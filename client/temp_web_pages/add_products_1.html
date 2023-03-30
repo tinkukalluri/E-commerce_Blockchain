@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    
+    <script src="add_products.js"></script>
+
+</head>
+<body>
+    <div class="container mt-3">
+
+        <div class="row">
+            <div class="dropdown  mb-2 col-12">
+                <button class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                  select category
+                </button>
+              
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+            </div>
+
+
+            <div class="form-group mb-2 col-12">
+                <label for="exampleInputEmail1">Product name</label>
+                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter product name">
+                <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+            </div>
+
+            <div class="form-group mb-2 col-12">
+                <label for="exampleInputEmail1">Product Description</label>
+                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter product Description">
+                <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+            </div>
+
+            <div class="form-group mb-2 col-12">
+                <label for="exampleInputEmail1">Product Image</label>
+                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter product Image">
+                <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+            </div>
+            
+
+            <div class="card border shadow-0">
+                <div class="m-4">
+                    <h4 class="card-title mb-4">Add items</h4>
+                    <div id="products_list">
+
+                        <div class="row gy-3 mb-4 border shadow-0 product_row">
+                        
+                            <!-- SKU -->
+                            <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap">
+                                <div class="form-group mb-2 col-12">
+                                    <label for="exampleInputEmail1">SKU</label>
+                                    <input type="text" id="sku" name="sku" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter product SKU">
+                                    <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+                                </div>
+                            </div>
+    
+                            <!-- qty in stock -->
+                            <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap">
+                                <div class="form-group mb-2 col-12">
+                                    <label for="exampleInputEmail1">Quantity</label>
+                                    <input type="text" id="qty" name="qty" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter product qty">
+                                    <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+                                </div>
+                            </div>
+    
+                            <!-- product image -->
+                            <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap">
+                                <div class="form-group mb-2 col-12">
+                                    <label for="exampleInputEmail1">Image</label>
+                                    <input type="file" id="image" name="quantity" accept="image/*" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter product image">
+                                    <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+                                </div>
+                            </div>
+    
+                            <!-- price -->
+                            <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap">
+                                <div class="form-group mb-2 col-12">
+                                    <label for="exampleInputEmail1">Price</label>
+                                    <input type="text" id="price" name="Price" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter product name">
+                                    <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+                                </div>
+                            </div>
+    
+                            <!-- variation name -->
+                            <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap align-items-center"  >
+                                <!-- <div class="dropdown col-12" id="var_name">
+                                    <button class="btn btn-secondary dropdown-toggle" name="variation_name" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                      variation name
+                                    </button>
+                                  
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <li><a class="dropdown-item" href="#">var-1</a></li>
+                                        <li><a class="dropdown-item" href="#">var-2</a></li>
+                                        <li><a class="dropdown-item" href="#">var-3</a></li>
+                                    </ul>
+                                </div> -->
+                                <label for="var_name">Variation name:</label>
+                                <select name="variation name" id="var_name">
+                                    <option selected value="None">select</option>
+                                    <option value="volvo">Volvo</option>
+                                    <option value="saab">Saab</option>
+                                    <option value="mercedes">Mercedes</option>
+                                    <option value="audi">Audi</option>
+                                </select>
+                            </div>
+    
+                            <!-- variation value -->
+                            <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap align-items-center">
+                                <!-- <div class="dropdown col-12" id="var_val">
+                                    <button class="btn btn-secondary dropdown-toggle" href="#" name="variation_value" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                      variation value
+                                    </button>
+                                  
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <li><a class="dropdown-item" href="#">var_val-1</a></li>
+                                        <li><a class="dropdown-item" href="#">var_val-2</a></li>
+                                        <li><a class="dropdown-item" href="#">var_val-3</a></li>
+                                    </ul>
+                                </div> -->
+                                <label for="var_val">Variation value:</label>
+                                <select name="cars" id="var_val">
+                                    <option selected value="None">select</option>
+                                    <option value="volvo">Volvo</option>
+                                    <option value="saab">Saab</option>
+                                    <option value="mercedes">Mercedes</option>
+                                    <option value="audi">Audi</option>
+                                  </select>
+                            
+                            </div>
+    
+                        </div>
+
+                    </div>
+                    
+
+
+
+
+                    <!-- another product -->
+                    
+
+
+
+                    <!-- add product button -->
+
+
+                    <div class="d-flex flex-row gy-3 mb-4 border shadow-0 justify-content-around align-content-center">
+                        <button class="btn btn-primary" >Add Product</button>
+                        <button class="btn btn-primary" id="product_submit">submit</button>
+                    </div>
+
+
+                    
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    
+      
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+    crossorigin="anonymous"></script>
+</html>
