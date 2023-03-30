@@ -7,6 +7,8 @@ export default function ProductPage({ match, ...props }) {
   const [productDetails, setProductDetails] = useState([])
   const [quantity, setquantity] = useState(1)
   const [productVariation, setProductVariation] = useState({ quantity: 1 })
+  const [productPrice, setProductPrice] = useState("select a variation")
+  const [selectedProductItem, setSelectedProductItem] = useState(null)
 
   const { params: { productID } } = match;
   const history = useHistory()
@@ -34,7 +36,7 @@ export default function ProductPage({ match, ...props }) {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(productVariation)
+      body: JSON.stringify({ ...productVariation, "selected_product": selectedProductItem })
     }
     let path = `/api/add_to_cart`
     fetch(path, requestOptions).then(response => response.json()).then(data => {
@@ -69,6 +71,7 @@ export default function ProductPage({ match, ...props }) {
     console.log(e.target.name)
     console.log(e.target.value)
     console.log(product_id, productItem, variation_id, variationOpt_id)
+
     setProductVariation(
       prevState => {
         prevState[e.target.name] = {
@@ -87,6 +90,85 @@ export default function ProductPage({ match, ...props }) {
       }
     )
   }
+
+  // Returns true if arr1[0..n-1] and arr2[0..m-1]
+  // contain same elements.
+  function areEqualArrays(arr1, arr2) {
+    let N = arr1.length;
+    let M = arr2.length;
+
+    // If lengths of array are not equal means
+    // array are not equal
+    if (N != M)
+      return false;
+
+    // Sort both arrays
+    arr1.sort();
+    arr2.sort();
+
+    // Linearly compare elements
+    for (let i = 0; i < N; i++)
+      if (arr1[i] != arr2[i])
+        return false;
+
+    // If all elements were same.
+    return true;
+  }
+
+
+  let productVariation_json = {
+    "quantity": 1,
+    "size": {
+      "val": "xs",
+      "variation_id": 1,
+      "variationOpt_id": 1
+    },
+    "product_id": 24
+  }
+
+
+  useEffect(() => {
+    let var_opts = []
+    for (let key of Object.keys(productVariation)) {
+      if (key != 'quantity' && key != 'product_id') {
+        if (productVariation[key]) {
+          var_opts.push(productVariation[key]['variationOpt_id'])
+        }
+      }
+    }
+
+    if (productDetails.length && productDetails[0]['variation']?.length == var_opts?.length) {
+      console.log('=====================================================================================')
+      console.log(var_opts)
+      console.log(productDetails[0]['variation'])
+      for (let productItem_ of productDetails[0]['productItem']) {
+        if (areEqualArrays(productItem_.variation_options, var_opts)) {
+          setSelectedProductItem(productItem_)
+        }
+      }
+    }
+
+  }, [productVariation])
+
+  let selectedProductItem_json = {
+    "id": 28,
+    "product_id": 24,
+    "SKU": "tinku-item-1",
+    "qty_in_stock": 2,
+    "product_image": "https://scontent.fhyd11-2.fna.fbcdn.net/v/t1.18169-9/21105788_760434490831886_4333824704480604768_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=eGWD0a6GGJAAX_0KeNM&_nc_ht=scontent.fhyd11-2.fna&oh=00_AfBBc3h_wRgDrrBq1DQCw3GC6ApMF_yW36xorqp_6QrsIg&oe=644C1321",
+    "prize": 23,
+    "IPFS_hash": null,
+    "img_url": null,
+    "added_on": "2023-03-30T01:21:42.719382Z",
+    "variation_options": [
+      1
+    ]
+  }
+  useEffect(() => {
+    console.log('selected item')
+    console.log(selectedProductItem)
+    setProductPrice(selectedProductItem?.prize ? selectedProductItem.prize : "select a variation")
+  }, [selectedProductItem])
 
 
 
@@ -128,7 +210,7 @@ export default function ProductPage({ match, ...props }) {
                             <span className="me-1">
                               <del>₹200</del>
                             </span>
-                            <span>₹ need to update</span>
+                            <span>₹{productPrice}</span>
                           </p>
 
                           <strong><p style={{ "fontSize": "20px" }}>{product.product.name}</p></strong>

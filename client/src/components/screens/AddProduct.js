@@ -9,11 +9,12 @@ import Loading from '../Loading';
 export default function AddProduct() {
     // State to store uploaded file
     const [file, setFile] = useState("");
-    const [productItemsJSX, setProductItemJSX] = useState([])
     const [productCategories, setProductCategories] = useState([])
     const [productVariations, setProductVariations] = useState([])
     const [productVariationOptions, setProductVariationOptions] = useState([])
     const [productItemNo, setProductItemNo] = useState([])
+    const [selectedVariationOptions, setSelectedVariationOptions] = useState([])
+
 
     var fetchProductCategoryTimeout = 5
     var fetchProductVariationTimeout = 5
@@ -33,9 +34,6 @@ export default function AddProduct() {
 
     }, [])
 
-    useEffect(() => {
-        console.log('product item updated')
-    }, [productItemsJSX])
 
     const handleUpload = () => {
         if (!file) {
@@ -203,11 +201,16 @@ export default function AddProduct() {
             let image_base64 = ''
             image_base64 = await readFileAsDataURL(image)
             let price = product_row.querySelector('#price').value
-            let variation_name = product_row.querySelector('#var_name').value
-            let variation_val = product_row.querySelector('#var_val').value
-            console.log(sku, qty, image_base64, price, variation_name, variation_val)
+            let variations = product_row.querySelectorAll('.var_name_val')
+            let variations_ = []
+            for (let variation of variations) {
+                let variation_name = variation.name
+                let variation_val = variation.value
+                variations_.push({ variation_name, variation_val })
+            }
+            console.log(sku, qty, image_base64, price, variations_)
             product_items.push({
-                sku, qty, image_base64, price, variation_name, variation_val
+                sku, qty, image_base64, price, variations_
             })
         }
         console.log(product_items)
@@ -253,15 +256,43 @@ export default function AddProduct() {
     }
 
 
-    function handleProductVariationChange(e) {
+    function handleProductVariationChange(e, variation_name) {
         let variation_id = e.target.value
         console.log('handle product variation change', e.target.value)
         if (variation_id == 'None') {
             console.log('please select a valid vairation')
         } else {
-            fetchProductVariationOptions(variation_id)
+            let all_var_name_val_ = []
+            let all_var_name_val = document.querySelectorAll('.var_name_val')
+            for (let variation of all_var_name_val) {
+                let variation_name = parseInt(variation.name)
+                if (variation.value == 'None') {
+                    continue
+                }
+                let variation_val = parseInt(variation.value)
+                all_var_name_val_.push({ variation_name, variation_val })
+            }
+            setSelectedVariationOptions(all_var_name_val_)
         }
     }
+
+    const haveSameObjects = function (obj1, obj2) {
+        console.log(obj1, obj2)
+        const obj1Length = Object.keys(obj1).length;
+        const obj2Length = Object.keys(obj2).length;
+
+        if (obj1Length === obj2Length) {
+            return Object.keys(obj1).every(
+                key => obj2.hasOwnProperty(key)
+                    && obj2[key] === obj1[key]);
+        }
+        return false;
+    }
+
+    useEffect(() => {
+        console.log('selected variation options')
+        console.log(selectedVariationOptions)
+    }, [selectedVariationOptions])
 
     return (
         <div>
@@ -351,24 +382,47 @@ export default function AddProduct() {
                                                         </div>
                                                     </div>
 
-                                                    {/* <!-- variation name --> */}
-                                                    <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap align-items-center"  >
+                                                    {/* <!-- variations --> */}
 
-                                                        <label for="var_name">Variation name: </label>
-                                                        <select name="variation name" id="var_name" onChange={(e) => { handleProductVariationChange(e) }}>
-                                                            <option selected value="None">select</option>
-                                                            {
-                                                                productVariations.map((variation) => {
-                                                                    return (
-                                                                        <option value={variation.id} > {variation.name}  </option>
-                                                                    )
-                                                                })
-                                                            }
-                                                        </select>
-                                                    </div>
+                                                    {
+                                                        productVariations.map((variation) => {
+                                                            return (
+                                                                <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap align-items-center">
+                                                                    <label for="var_val">{variation.name}</label>
+                                                                    <select className='btn-secondary var_name_val' name={variation.id} onChange={(e) => {
+                                                                        handleProductVariationChange(e, variation.name)
+                                                                    }} >
+                                                                        <option selected value="None">select</option>
+                                                                        {
+                                                                            variation.variation_options.map(variation_option => {
+                                                                                return (
+                                                                                    <option value={variation_option.id}>{variation_option.value}</option>
+                                                                                )
+                                                                            })
+                                                                        }
 
-                                                    {/* <!-- variation value --> */}
-                                                    <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap align-items-center">
+                                                                        {/* {
+                                                                            variation.variation_options.map(variation_option => {
+                                                                                //  variation_name, variation_val 
+                                                                                return selectedVariationOptions.length ? (selectedVariationOptions.every(selectedVariation => {
+                                                                                    let res = haveSameObjects({ "variation_name": variation.id, "variation_val": variation_option.id }, selectedVariation)
+                                                                                    console.log(res)
+                                                                                    return !res
+                                                                                })
+                                                                                    ? <option value={variation_option.id}>{variation_option.value}</option> : null) :
+                                                                                    <option value={variation_option.id}>{variation_option.value}</option>
+
+                                                                            })
+                                                                        } */}
+
+                                                                    </select>
+                                                                </div>
+                                                            )
+                                                        })
+                                                    }
+
+
+                                                    {/* <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row p-nowrap align-items-center">
 
                                                         <label for="var_val">Variation value: </label>
                                                         <select name="cars" id="var_val">
@@ -382,7 +436,7 @@ export default function AddProduct() {
                                                             }
                                                         </select>
 
-                                                    </div>
+                                                    </div> */}
 
                                                 </div>
                                             )
@@ -417,6 +471,6 @@ export default function AddProduct() {
             </div>
 
 
-        </div>
+        </div >
     );
 }

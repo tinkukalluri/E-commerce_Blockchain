@@ -263,6 +263,8 @@ class EmptyCart(APIView):
         } , status=status.HTTP_200_OK)
         
 
+# payload
+
 class getProductDetails(APIView):
     def get(self , request):
         product_id = request.GET.get('pID')
@@ -275,12 +277,27 @@ class getProductDetails(APIView):
         result_=[]
         print(variation_rows)
         variations=[]
+        product_config=[]
         for variation in variation_rows:
             variation_options= getVariationValuesFromVariationID(variation["id"])
             variation["variation_options"]=[]
             for variation_option in variation_options:
                 variation["variation_options"].append(variation_option)
             variations.append(variation)
+        
+        # adding variation_options
+        for productItem in product_items['productItem']:
+            variation_options = []
+            productItemId = productItem.get('id')
+            product_configs = getProductConfigWithKwargs(filter_by={
+                "product_item_id": productItemId
+            })
+            print(product_configs)
+            for product_config in product_configs:
+                variation_options.append(product_config.get('variation_option'))
+            productItem['variation_options'] = variation_options
+
+
         result_.append({"variation":variations,
                         "product" : product_items['product'],
                         "productItem" : product_items['productItem'],
@@ -357,11 +374,25 @@ class RemoveFromCart(APIView):
 {
     "quantity": 1,
     "size": {
-        "val": "s",
-        "variation_id": 1,
-        "variationOpt_id": 2
+        "val": "xs",
+        "variation_id": 2,
+        "variationOpt_id": 6
     },
-    "product_id": 24
+    "product_id": 7,
+    "selected_product": {
+        "id": 12,
+        "product_id": 7,
+        "SKU": "xs-pants",
+        "qty_in_stock": 19,
+        "product_image": "http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119",
+        "prize": 333,
+        # "IPFS_hash": null,
+        "img_url": "http://cdn.shopify.com/s/files/1/0053/5350/4881/products/Steel-grey-everyday-pant2.jpg?v=1673092119",
+        "added_on": "2023-03-10T19:36:02Z",
+        "variation_options": [
+            6
+        ]
+    }
 }
 class AddToCart(APIView):
     def add_to_cart(productItemID , cartID , qty):
@@ -380,7 +411,7 @@ class AddToCart(APIView):
             user_id = self.request.session["user_id"]
             shoppingCart = getShoppingCartWithKwargs(filter_by={
                 "user_id":int(user_id)
-            }  , order_by='-id')
+            }  , order_by=['-id'])
             cart_id = 0
             if(len(shoppingCart)):
                 cart_id=shoppingCart[len(shoppingCart)-1]['id']
@@ -391,50 +422,61 @@ class AddToCart(APIView):
             productItem_querySet = getProductItemsWithKwargs(filter_by={
                 'product_id':product_id
             })
-            productItem_ids = [productItem['id'] for productItem in productItem_querySet]
-            del post_data['quantity']
-            del post_data['product_id']
-            print(post_data)
-            print(productItem_ids)
-            temp_list=[]
             potential_product=[]
-            variation=[]
-            # this entire code is for finding the product_item_id(which is inside potential_product) using variations
-            for key in post_data.keys():
-                variation_id = post_data[key]['variation_id']
-                variationOpt_id = post_data[key]['variationOpt_id']
-                variationOpt_value = post_data[key]['val']
-                variation.append({
-                    'variation_name':str(key),
-                    'variation_id' : int(variation_id),
-                    'variationOpt_id': int(variationOpt_id),
-                    'variationOpt_value' : str(variationOpt_value)      
+
+            if(post_data['selected_product']):
+                print("productItem selected from post_data['selected_product']")
+                potential_product=[post_data['selected_product']["id"]]
+            else:
+                productItem_ids = [productItem['id'] for productItem in productItem_querySet]
+                del post_data['quantity']
+                del post_data['product_id']
+                print(post_data)
+                print(productItem_ids)
+                temp_list=[]
+                variation=[]
+                # this entire code is for finding the product_item_id(which is inside potential_product) using variations
+                for key in post_data.keys():
+                    variation_id = post_data[key]['variation_id']
+                    variationOpt_id = post_data[key]['variationOpt_id']
+                    variationOpt_value = post_data[key]['val']
+                    variation.append({
+                        'variation_name':str(key),
+                        'variation_id' : int(variation_id),
+                        'variationOpt_id': int(variationOpt_id),
+                        'variationOpt_value' : str(variationOpt_value)      
+                        })
+                    temp_list=getProductConfigWithKwargs(filter_by={
+                        'product_item_id__in': productItem_ids ,
+                        'variation_option': variationOpt_id
                     })
-                temp_list=getProductConfigWithKwargs(filter_by={
-                    'product_item_id__in': productItem_ids ,
-                    'variation_option': variationOpt_id
-                })
-                temp_list = [prodConfig['product_item_id'] for prodConfig in temp_list]
-                print('temp_list' , temp_list)
-                if not len(potential_product):
-                    potential_product=temp_list
-                else:
-                    potential_product = list(set(potential_product) & set(temp_list))
-                print('potential product')
-                print(potential_product)
-            # finished finding the product_item_id in potential_product[0]
+                    temp_list = [prodConfig['product_item_id'] for prodConfig in temp_list]
+                    print('temp_list' , temp_list)
+                    if not len(potential_product):
+                        potential_product=temp_list
+                    else:
+                        potential_product = list(set(potential_product) & set(temp_list))
+                    print('potential product')
+                    print(potential_product)
+                # finished finding the product_item_id in potential_product[0]
             
             if(len(potential_product)==1):
                 AddToCart.add_to_cart(potential_product[0] , cart_id , qty)
                 return Response({
                     "status" : True,
                     "product_item":potential_product[0],
-                    "variation": variation
+                    # "variation": variation
                     } , status=status.HTTP_200_OK)
+            elif len(potential_product)>1:
+                return Response({
+                    "status" : False,
+                    'oops':"found more than one productitem satisfing the variation in productConfig tabe"
+                } , status = status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({
+                    "status" : False,
                     'oops':"couldn't findout the productitem variation in productConfig tabe"
-                })
+                } , status = status.HTTP_400_BAD_REQUEST)
         else:
             return Response({
                 "oops":"something went wrong with the server"
@@ -621,17 +663,63 @@ def loggedIn(request):
 
 
 
-
+# response
+{
+    # "status": true,
+    "variations": [
+        {
+            "id": 1,
+            "category_id": 1,
+            "name": "size",
+            "variation_options": [
+                {
+                    "id": 1,
+                    "variation_id": 1,
+                    "value": "xs"
+                },
+                {
+                    "id": 2,
+                    "variation_id": 1,
+                    "value": "s"
+                },
+                {
+                    "id": 3,
+                    "variation_id": 1,
+                    "value": "m"
+                },
+                {
+                    "id": 4,
+                    "variation_id": 1,
+                    "value": "l"
+                },
+                {
+                    "id": 5,
+                    "variation_id": 1,
+                    "value": "xl"
+                }
+            ]
+        }
+    ]
+}
 class getVariations(APIView):
     def get(self , request):
         get_data = request.GET
         print(get_data)
         category_id = get_data['category_id']
-        variations = getVariationFromCategoryID(int(category_id))
+        variation_rows = getVariationFromCategoryID(int(category_id))
+        variations= []
+        for variation in variation_rows:
+            variation_options= getVariationValuesFromVariationID(variation["id"])
+            variation["variation_options"]=[]
+            for variation_option in variation_options:
+                variation["variation_options"].append(variation_option)
+            variations.append(variation)
         return Response({
             "status":True,
             "variations":variations
         } , status = status.HTTP_200_OK)
+    
+
         
 class getVariationValue(APIView):
     def get(self , request):
@@ -676,24 +764,77 @@ def getVariationOptionsWithKwargs( filter_by=False ,order_by=[] , offset=0  , li
 {
     "product_category": "1",
     "product": {
-        "product_name": "tinku",
-        "product_desc": "tinku the dev",
-        "product_img_base64" : "https://scontent.fhyd11-2.fna.fbcdn.net/v/t1.18169-9/21105788_760434490831886_4333824704480604768_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=eGWD0a6GGJAAX_0KeNM&_nc_ht=scontent.fhyd11-2.fna&oh=00_AfBBc3h_wRgDrrBq1DQCw3GC6ApMF_yW36xorqp_6QrsIg&oe=644C1321"
+        "product_name": "jeans",
+        "product_desc": "torn jeans for women Calvin kein",
+        "product_img_base64": "https://i.pinimg.com/736x/ab/fc/ca/abfcca2493de4a22cea0fdc4b61e3965.jpg"
     },
     "product_items": [
         {
-            "sku": "tinku",
-            "qty": "2",
-            "image_base64" : "https://scontent.fhyd11-2.fna.fbcdn.net/v/t1.18169-9/21105788_760434490831886_4333824704480604768_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=eGWD0a6GGJAAX_0KeNM&_nc_ht=scontent.fhyd11-2.fna&oh=00_AfBBc3h_wRgDrrBq1DQCw3GC6ApMF_yW36xorqp_6QrsIg&oe=644C1321",
-            "price": "23",
-            "variation_name": "1",
-            "variation_val": "1"
+            "sku": "women-jean-xs",
+            "qty": "3",
+            "image_base64": "https://i.pinimg.com/736x/ab/fc/ca/abfcca2493de4a22cea0fdc4b61e3965.jpg",
+            "price": "2",
+            "variations_": [
+                {
+                    "variation_name": "1",
+                    "variation_val": "1"
+                }
+            ]
+        },
+        {
+            "sku": "women-jean-s",
+            "qty": "6",
+            "image_base64": "https://i.pinimg.com/736x/ab/fc/ca/abfcca2493de4a22cea0fdc4b61e3965.jpg",
+            "price": "4",
+            "variations_": [
+                {
+                    "variation_name": "1",
+                    "variation_val": "2"
+                }
+            ]
+        },
+        {
+            "sku": "women-jean-m",
+            "qty": "9",
+            "image_base64": "https://i.pinimg.com/736x/ab/fc/ca/abfcca2493de4a22cea0fdc4b61e3965.jpg",
+            "price": "6",
+            "variations_": [
+                {
+                    "variation_name": "1",
+                    "variation_val": "3"
+                }
+            ]
+        },
+        {
+            "sku": "women-jean-l",
+            "qty": "12",
+            "image_base64": "https://i.pinimg.com/736x/ab/fc/ca/abfcca2493de4a22cea0fdc4b61e3965.jpg",
+            "price": "8",
+            "variations_": [
+                {
+                    "variation_name": "1",
+                    "variation_val": "4"
+                }
+            ]
+        },
+        {
+            "sku": "women-jean-xl",
+            "qty": "15",
+            "image_base64": "https://i.pinimg.com/736x/ab/fc/ca/abfcca2493de4a22cea0fdc4b61e3965.jpg",
+            "price": "10",
+            "variations_": [
+                {
+                    "variation_name": "1",
+                    "variation_val": "5"
+                }
+            ]
         }
     ]
 }
 
 class AddProductItem(APIView):
     def post(self , request):
+        print('---------------------------add-product-item-start--------------------------------------')
         post_data = request.data
         print(post_data)
         all_good_variable_check = True
@@ -704,7 +845,7 @@ class AddProductItem(APIView):
         product_name = post_data['product']['product_name']
         product_desc = post_data['product']['product_desc']
         product_img_base64= post_data['product']['product_img_base64']
-        
+        # ('category_id' , 'name' , 'description', 'product_image' )
         ProductSerializerInstance = ProductSerializer_add(data={"name" : product_name ,'description':product_desc  , "product_image":product_img_base64 ,  'category_id' : product_cat_id})
         # ('product_id' , 'SKU' , 'qty_in_stock' , 'product_image' , 'prize' , 'IPFS_hash' ,'img_url')
         
@@ -719,6 +860,7 @@ class AddProductItem(APIView):
                 productInstance.save()
                 all_good_variable_check= all_good_variable_check and True
             except:
+                print('something went wrong adding product to the database')
                 all_good_variable_check= all_good_variable_check and False
                 return Response({
                     "status":False , 
@@ -735,61 +877,70 @@ class AddProductItem(APIView):
                 'img_url' : productItem_.get('img_url'),
                 'prize' : int(productItem_['price']),
                 })
-                product_variation = int(productItem_['variation_val'])
-                productVariationInstance = getVariationOptionsWithKwargs(filter_by={
-                    "id":product_variation
-                }  , instance=True)
-                if len(productVariationInstance):
-                    all_good_variable_check= all_good_variable_check and True
-                    productVariationInstance = productVariationInstance[0]
-                    pass
-                else:
-                    all_good_variable_check= all_good_variable_check and False
-                    return Response({
-                        "status":False , 
-                        "oops": "somethings wrong with product variant option"
-                    })
-                if productItemSerializerInstance.is_valid():
-                    print({**productItemSerializerInstance.data , 'product_id': productInstance})
-                    productItemInstance = ProductItem(**{**productItemSerializerInstance.data , 'product_id': productInstance})
-                    try:
-                        productItemInstance.save()
+                product_variation_option_ids = [int(productItem_['variations_'][i]['variation_val']) for i in range(len(productItem_['variations_'])) ]
+                for product_variation in product_variation_option_ids:
+                    productVariationInstance = getVariationOptionsWithKwargs(filter_by={
+                        "id":product_variation
+                    }  , instance=True)
+                    if len(productVariationInstance):
                         all_good_variable_check= all_good_variable_check and True
-                    except:
-                        all_good_variable_check= all_good_variable_check and False
-                        print('something went wrong in adding productItem instance')
-                        return Response({
-                            "status":False , 
-                            "oops": "something went wrong in adding productItem instance"
-                        } , status = status.HTTP_200_OK)
-                    # now we will save in productConfig table both productItem and variation option
-                    productConfigSerializerInstance = ProductConfigSerializer_add(data={
-                        'product_item_id': productItemInstance.id , 
-                        'variation_option' : productVariationInstance.id
-                    })
-                    
-                    if productConfigSerializerInstance.is_valid():
-                        all_good_variable_check= all_good_variable_check and True
-                        productConfigInstance = ProductConfig(product_item_id = productItemInstance , variation_option = productVariationInstance)
-                        try:
-                            productConfigInstance.save()
-                            print('-------------------------------------productConfig-----------------------------')
-                            print(ProductConfigSerializer(productConfigInstance).data)
-                            all_good_variable_check= all_good_variable_check and True
-                        except:
-                            all_good_variable_check= all_good_variable_check and False
-                            print('something went wrong in adding productConfig instance')
-                            return Response({
-                                "status":False , 
-                                "oops": "something went wrong in adding productConfig instance"
-                            } , status = status.HTTP_200_OK)
+                        productVariationInstance = productVariationInstance[0]
+                        pass
                     else:
                         all_good_variable_check= all_good_variable_check and False
                         return Response({
-                            "status":False ,
-                            "oops":"looks like something went wrong with productConfigSerializerInstance.isValid() "
+                            "status":False , 
+                            "oops": "somethings wrong with product variant option"
                         })
+                    if productItemSerializerInstance.is_valid():
+                        print({**productItemSerializerInstance.data , 'product_id': productInstance})
+                        productItemInstance = ProductItem(**{**productItemSerializerInstance.data , 'product_id': productInstance})
+                        try:
+                            productItemInstance.save()
+                            all_good_variable_check= all_good_variable_check and True
+                        except:
+                            all_good_variable_check= all_good_variable_check and False
+                            print('something went wrong in adding productItem instance')
+                            return Response({
+                                "status":False , 
+                                "oops": "something went wrong in adding productItem instance"
+                            } , status = status.HTTP_200_OK)
+                        # now we will save in productConfig table both productItem and variation option
+                        productConfigSerializerInstance = ProductConfigSerializer_add(data={
+                            'product_item_id': productItemInstance.id , 
+                            'variation_option' : productVariationInstance.id
+                        })
+                        
+                        if productConfigSerializerInstance.is_valid():
+                            all_good_variable_check= all_good_variable_check and True
+                            productConfigInstance = ProductConfig(product_item_id = productItemInstance , variation_option = productVariationInstance)
+                            try:
+                                productConfigInstance.save()
+                                print('-------------------------------------productConfig-----------------------------')
+                                print(ProductConfigSerializer(productConfigInstance).data)
+                                all_good_variable_check= all_good_variable_check and True
+                            except:
+                                all_good_variable_check= all_good_variable_check and False
+                                print('something went wrong in adding productConfig instance')
+                                return Response({
+                                    "status":False , 
+                                    "oops": "something went wrong in adding productConfig instance"
+                                } , status = status.HTTP_200_OK)
+                        else:
+                            all_good_variable_check= all_good_variable_check and False
+                            return Response({
+                                "status":False ,
+                                "oops":"looks like something went wrong with productConfigSerializerInstance.isValid() "
+                            })
+        else:
+            all_good_variable_check= all_good_variable_check and False
+            print("ProductSerializerInstance.isValid() failed")
+            return Response({
+                "status":False , 
+                "oops" : "ProductSerializerInstance.isValid() failed"
+            })
 
+        print('---------------------------add-product-item-end--------------------------------------')
         if all_good_variable_check:
             return Response({
                 'status': True ,
