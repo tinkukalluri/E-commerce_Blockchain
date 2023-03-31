@@ -37,6 +37,29 @@ export function getPaymentStatusTXT(payment_status) {
     }
 }
 
+export async function handlePaymentVerification(e, order_id, fetchOrders) {
+    console.log('clicked on payment verification')
+    const requestOptions = {
+        method: 'post',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            'order_id': order_id
+        })
+    }
+    const path = '/blockchain/verify_payment'
+    return await fetch(path, requestOptions).then(response => response.json()).then(data => {
+        console.log(data)
+        fetchOrders()
+        if (data.status) {
+            return data
+        } else {
+            return data
+        }
+    }
+    )
+}
+
+
 export default function ViewOrders(props) {
 
     const [orders, setOrders] = useState(-1)
@@ -107,24 +130,6 @@ export default function ViewOrders(props) {
 
 
 
-    function handlePaymentVerification(e, order_id) {
-        console.log('clicked on payment verification')
-        const requestOptions = {
-            method: 'post',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                'order_id': order_id
-            })
-        }
-        const path = '/blockchain/verify_payment'
-        fetch(path, requestOptions).then(response => response.json()).then(data => {
-            console.log(data)
-            fetchOrders()
-        }
-        )
-
-    }
-
     function handleOrderClick(e, order_id) {
         console.log('handleOrderClick')
         console.log(order_id, e)
@@ -160,7 +165,7 @@ export default function ViewOrders(props) {
                                                     {/* <div className="">{order.payment_status}</div> */}
                                                     <div className="">{order.order_date}</div>
                                                 </span>
-                                                {order.payment_status == 1 ? <div className="text-success" >Payment Verified</div> : (order.payment_status == 2 ? <button onClick={(e) => { handlePaymentVerification(e, order.id) }} className="btn-outline-warning text-warning">Verify Payment</button> : <div className="text-danger" >Payment Failed</div>)}
+                                                {order.payment_status == 1 ? <div className="text-success" >Payment Verified</div> : (order.payment_status == 2 ? <button onClick={(e) => { handlePaymentVerification(e, order.id, fetchOrders) }} className="btn-outline-warning text-warning">Verify Payment</button> : <div className="text-danger" >Payment Failed</div>)}
                                             </div>
                                         </div>
                                     </div>

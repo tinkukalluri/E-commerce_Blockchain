@@ -1,7 +1,9 @@
+import base64
+
+
 DEBUG = True
 
 
-# import base64
 
 # file = 'api\iphone.jpg'
 # image = open(file, 'rb')
@@ -10,6 +12,15 @@ DEBUG = True
 
 # print('This is the image in base64: ' + str(image_64_encode))
 
-# image_64_decode = base64.decodebytes(image_64_encode) 
-# image_result = open(r'api\temp_images\temp.jpg', 'wb') # create a writable image and write the decoding result
-# image_result.write(image_64_decode)
+
+
+def base64_to_image(base64_img):
+    image_64_decode = base64.decodebytes(base64_img) 
+    image_result = open(r'api\temp_images\temp.jpg', 'wb') # create a writable image and write the decoding result
+    image_result.write(image_64_decode)
+
+def send_base64_to_firebase_storage(base64_img):
+    image_64_decode = base64.decodebytes(base64_img) 
+    image_result = open(r'api\temp_images\temp.jpg', 'wb') # create a writable image and write the decoding result
+    image_result.write(image_64_decode)
+    

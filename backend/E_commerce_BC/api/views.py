@@ -15,7 +15,9 @@ from .serializer import ProductSerializer_add , ProductItemSerializer_add , Prod
 from .serializer import ProductCategorySerializer
 import collections
 from django.db.models import Q
-from .utils import DEBUG
+
+# utils.py
+from .utils import DEBUG , base64_to_image
 
 # Create your views here.
 
@@ -97,7 +99,7 @@ def getProductCategoryWithKwargs( filter_by=False ,order_by=[] , offset=0  , lim
 
 
 
-def getProductItemsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=10000):
+def getProductItemsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=10000 , instance =False):
     print("getProductItemsWithKwargs")
     print(filter_by , order_by , offset , limit)
     productConfig_=[]
@@ -113,7 +115,10 @@ def getProductItemsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=
             querySet_items = ProductItem.objects.all()[offset:limit]
     print(len(querySet_items))
     for row in querySet_items:
-        temp_ProductItem = dict(ProductItemSerializer(row).data)
+        if instance:
+            temp_ProductItem = row
+        else:
+            temp_ProductItem = dict(ProductItemSerializer(row).data)
         productConfig_.append(temp_ProductItem)
     print(productConfig_)
     return productConfig_
@@ -230,22 +235,22 @@ class getProductCategory(APIView):
             })
         
 
-
+# url- empty_cart
 class EmptyCart(APIView):
     def get(self, request):
         user_id = self.request.session["user_id"]
         shoppingCart = getShoppingCartWithKwargs(filter_by={
             "user_id":int(user_id)
-        }  , order_by='-id')
+        }  , order_by=['-id'])
         if len(shoppingCart):
             shoppingCartItems = getShoppingCartItemWithKwargs(filter_by={
                 "cart_id" : int(shoppingCart[0]['id'])
             })
             if len(shoppingCartItems):
                 for shoppingcartitem in shoppingCartItems:
-                    temp_shoppingCartInstance = ShoppingCartItem.objects.filter({
-                        "id":shoppingcartitem['id']
-                    })
+                    temp_shoppingCartInstance = ShoppingCartItem.objects.get(
+                        id=shoppingcartitem['id']
+                    )
                     temp_shoppingCartInstance.delete()
             else:
                 return Response({
@@ -845,6 +850,7 @@ class AddProductItem(APIView):
         product_name = post_data['product']['product_name']
         product_desc = post_data['product']['product_desc']
         product_img_base64= post_data['product']['product_img_base64']
+        base64_to_image(product_img_base64)
         # ('category_id' , 'name' , 'description', 'product_image' )
         ProductSerializerInstance = ProductSerializer_add(data={"name" : product_name ,'description':product_desc  , "product_image":product_img_base64 ,  'category_id' : product_cat_id})
         # ('product_id' , 'SKU' , 'qty_in_stock' , 'product_image' , 'prize' , 'IPFS_hash' ,'img_url')
