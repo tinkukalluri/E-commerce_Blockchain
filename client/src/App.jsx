@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react';
 import TinWallet from './components/screens/TinWallet';
 import ViewOrders from './components/screens/ViewOrders';
 import ViewOrderItems from './components/screens/ViewOrderItems';
+import LoadingNew from './components/Loading-new';
 // const bootstrap = require("bootstrap");
 
 function App(props) {
@@ -74,6 +75,8 @@ function App(props) {
               </Route>
               <Route exact path="/order_items"
                 component={ViewOrderItems}/>
+              <Route exact path="/test_component"
+                component={LoadingNew}/>
             </div>
           </Switch>
           <Footer />

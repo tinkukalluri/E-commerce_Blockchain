@@ -15,4 +15,5 @@ urlpatterns = [
     path('tin_wallet/' , views.index),
     path('orders/' , views.index),
     path('order_items/' , views.index),
+    path('test_component/' , views.index),
 ]

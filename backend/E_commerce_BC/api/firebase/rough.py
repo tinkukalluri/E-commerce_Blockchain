@@ -2,5 +2,11 @@
 
 
 
-firebase_cred = open(r'api\firebase\ecommerce-blockchain-1fb3d-firebase-adminsdk-69msy-cd7435503d.json')
-print(firebase_cred)
+import uuid
+
+print(uuid.uuid4())
+
+random_str= uuid.uuid4()
+image_path = r'api\temp_images'+'\{}'.format(random_str)
+print('image path' ,image_path)
+

@@ -17,7 +17,7 @@ import collections
 from django.db.models import Q
 
 # utils.py
-from .utils import DEBUG , base64_to_image
+from .utils import DEBUG , base64_to_image , send_base64_to_firebase_storage
 
 # Create your views here.
 
@@ -856,7 +856,10 @@ class AddProductItem(APIView):
         product_name = post_data['product']['product_name']
         product_desc = post_data['product']['product_desc']
         product_img_base64= post_data['product']['product_img_base64']
-        base64_to_image(product_img_base64)
+        # uploading file to firebase storage
+        product_img_base64 = send_base64_to_firebase_storage(product_img_base64)
+        print('=============================product-image====================')
+        print(product_img_base64) # this will now hold the link to the image hosted in firebase
         # ('category_id' , 'name' , 'description', 'product_image' )
         ProductSerializerInstance = ProductSerializer_add(data={"name" : product_name ,'description':product_desc  , "product_image":product_img_base64 ,  'category_id' : product_cat_id})
         # ('product_id' , 'SKU' , 'qty_in_stock' , 'product_image' , 'prize' , 'IPFS_hash' ,'img_url')
@@ -884,12 +887,14 @@ class AddProductItem(APIView):
                 'product_id': productInstance.id,
                 'SKU' : productItem_['sku'],
                 'qty_in_stock' :int(productItem_['qty']) ,
-                'product_image': productItem_['image_base64'],
+                'product_image':send_base64_to_firebase_storage(productItem_['image_base64']) or 'https://storage.googleapis.com/ecommerce-blockchain-1fb3d.appspot.com/6e4db12a-8a3c-45f3-9210-fb3a6faaaf49',
                 'IPFS_hash': productItem_.get('IPFS_hash'),
                 'img_url' : productItem_.get('img_url'),
                 'prize' : int(productItem_['price']),
                 })
+                
                 product_variation_option_ids = [int(productItem_['variations_'][i]['variation_val']) for i in range(len(productItem_['variations_'])) ]
+                # each productItem can have more than one variation so we are looking through the variations and adding them to productConfig file
                 for product_variation in product_variation_option_ids:
                     productVariationInstance = getVariationOptionsWithKwargs(filter_by={
                         "id":product_variation
@@ -944,6 +949,13 @@ class AddProductItem(APIView):
                                 "status":False ,
                                 "oops":"looks like something went wrong with productConfigSerializerInstance.isValid() "
                             })
+                    else:
+                        all_good_variable_check= all_good_variable_check and False
+                        return Response({
+                            "status":False , 
+                            "oops": "something went wrong in productItemSerializerInstance.is_valid()"
+                        } , status=status.HTTP_404_NOT_FOUND)
+                        
         else:
             all_good_variable_check= all_good_variable_check and False
             print("ProductSerializerInstance.isValid() failed")
