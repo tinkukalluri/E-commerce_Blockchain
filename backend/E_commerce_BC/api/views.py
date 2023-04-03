@@ -564,9 +564,15 @@ def getShoppingCartItemWithKwargs( filter_by=False ,order_by=[]):
 #     ],
 #     "cart_id": 1
 # }
+
 class CartProducts(APIView):
     def get(self , request):
-        user_id = self.request.session["user_id"]
+        user_id = self.request.session.get('user_id')
+        if not user_id:
+            return Response({
+                "status": False,
+                'oops':"looks like you have not signed in"
+            }  , status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
         shoppingCart = getShoppingCartWithKwargs(filter_by={
             "user_id":int(user_id)
         } )

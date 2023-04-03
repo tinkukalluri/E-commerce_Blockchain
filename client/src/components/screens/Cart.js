@@ -18,6 +18,7 @@ export default function () {
     const [ready_to_make_order, setMakeOrder] = useState(false)
 
     let fetchCartItemsTimeout = 0
+    var fetchCartItemsTimeoutCounter = 5
     let cart_total = 0
 
     // function makeid(length) {
@@ -237,6 +238,11 @@ export default function () {
     }
 
     function fetchCartItems() {
+        if(!fetchCartItemsTimeoutCounter){
+            return
+        }
+        console.log(fetchCartItemsTimeoutCounter)
+        fetchCartItemsTimeoutCounter--
         const requestOptions = {
             method: 'get',
             headers: { "Content-Type": "application/json" },

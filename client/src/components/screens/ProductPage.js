@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import { useHistory } from 'react-router-dom';
-import { setStorage, getStorage, pushStorage } from '../utils';
+import { setStorage, getStorage, pushStorage ,alert_user } from '../utils';
+
 
 export default function ProductPage({ match, ...props }) {
 
@@ -127,6 +128,11 @@ export default function ProductPage({ match, ...props }) {
   }
 
 
+  function checkForStock(){
+
+  }
+
+
   useEffect(() => {
     let var_opts = []
     for (let key of Object.keys(productVariation)) {
@@ -168,7 +174,11 @@ export default function ProductPage({ match, ...props }) {
     console.log('selected item')
     console.log(selectedProductItem)
     setProductPrice(selectedProductItem?.prize ? selectedProductItem.prize : "select a variation")
+    if(selectedProductItem?.qty_in_stock==0){
+      alert_user('sorry no stock')
+    }
   }, [selectedProductItem])
+
 
 
 
