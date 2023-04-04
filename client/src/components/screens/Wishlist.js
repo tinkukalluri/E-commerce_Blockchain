@@ -5,16 +5,16 @@ import { useHistory } from 'react-router-dom'
 
 export default function Wishlist() {
 
-    const [wishlistItem , setwishlistItem] = useState(-1)
-    
+    const [wishlistItem, setwishlistItem] = useState(-1)
+
     const history = useHistory()
 
     var fetchWishlistProductTImeout = 0
     var fetchWishlistProductTImeoutCounter = 5
 
 
-    function fetchWishlistProducts(){
-        if(!fetchWishlistProductTImeoutCounter){
+    function fetchWishlistProducts() {
+        if (!fetchWishlistProductTImeoutCounter) {
             clearTimeout(fetchWishlistProductTImeout)
             return
         }
@@ -24,22 +24,22 @@ export default function Wishlist() {
             headers: { "Content-Type": "application/json" },
         }
         const path = '/api/wishlist_product'
-        fetch(path , requestOptions).then(response => response.json()).then(data=>{
+        fetch(path, requestOptions).then(response => response.json()).then(data => {
             console.log('response data from fetching wishlist products from server')
             console.log(data)
-            if(data.status){
+            if (data.status) {
                 setwishlistItem(data.wishlist_items)
                 clearTimeout(fetchWishlistProductTImeout)
-            }else{
-                fetchWishlistProductTImeout = setTimeout(fetchWishlistProducts ,1000)
+            } else {
+                fetchWishlistProductTImeout = setTimeout(fetchWishlistProducts, 1000)
             }
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err)
-            fetchWishlistProductTImeout = setTimeout(fetchWishlistProducts , 1000)
+            fetchWishlistProductTImeout = setTimeout(fetchWishlistProducts, 1000)
         })
     }
 
-    function handleRemoveItem(wishlistItem_id){
+    function handleRemoveItem(wishlistItem_id) {
         console.log(wishlistItem_id)
         const requestOptions = {
             method: 'post',
@@ -49,9 +49,9 @@ export default function Wishlist() {
             })
         }
         const path = '/api/remove_from_wishlist'
-        fetch(path , requestOptions).then(response=> response.json()).then(data=>{
+        fetch(path, requestOptions).then(response => response.json()).then(data => {
             console.log(data)
-            if(data.status){
+            if (data.status) {
                 // var temp_wishlistItems = wishlistItem
                 // temp_wishlistItems.map(wishlistItem_ =>{
                 //     if(wishlistItem_.id == wishlistItem_id){
@@ -65,31 +65,31 @@ export default function Wishlist() {
         })
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         console.log(wishlistItem)
-    } , [wishlistItem])
+    }, [wishlistItem])
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchWishlistProducts()
-    } , [])
+    }, [])
 
-  return (
+    return (
 
-            <div className="my-5">
-                <div className="container">
-                    <div className="row">
+        <div className="my-5">
+            <div className="container">
+                <div className="row">
 
-                        <div className="col-lg-12">
-                            <div className="card border shadow-0">
-                                <div className="m-4">
-                                    <h4 className="card-title mb-4">Your wishlist</h4>
-                                    {/* cart item -1 */}
+                    <div className="col-lg-12">
+                        <div className="card border shadow-0">
+                            <div className="m-4">
+                                <h4 className="card-title mb-4">Your wishlist</h4>
+                                {/* cart item -1 */}
 
-                                    {
-                                        wishlistItem == -1 ? <Loading /> : (
-                                            wishlistItem.map(item => {
-                                                {/* item!=null ?
-                                                ( */}
+                                {
+                                    wishlistItem == -1 ? <Loading /> : (
+                                        wishlistItem.map(item => {
+                                            return item != null ?
+                                                (
                                                     <div className="row gy-3 mb-4">
                                                         <div className="col-lg-5">
                                                             <div className="me-lg-5">
@@ -97,7 +97,7 @@ export default function Wishlist() {
                                                                     <img src={item.product.product_image}
                                                                         className="border rounded me-3" style={{ "width": "96px", "height": "96px" }} />
                                                                     <div className="">
-                                                                        <a href="#" onClick={()=>{
+                                                                        <a onClick={() => {
                                                                             history.push(`/product/${item.product.id}`)
                                                                         }} className="nav-link">{item.product.name}</a>
                                                                         <p className="p-muted">{item.product.description}</p>
@@ -113,18 +113,19 @@ export default function Wishlist() {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                {/* ): null */}
-                                            })
-                                        )
-                                    }
-                                </div>
+                                                ) : null
+                                        })
+                                    )
+                                }
+
                             </div>
                         </div>
-                                    
                     </div>
+
                 </div>
             </div>
+        </div>
 
-    
-  )
+
+    )
 }

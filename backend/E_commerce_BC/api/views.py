@@ -618,7 +618,7 @@ class WishListProducts(APIView):
         for index , wishlisttItem in enumerate(wishlist_items):
             wishlist_product= getProductsWithKwargs({"id":wishlisttItem['product_id']})[0]
             wishlist_items[index]={
-                **wishlisttItem,
+                **wishlisttItem,        
                 "product": wishlist_product
             }
         return Response(
