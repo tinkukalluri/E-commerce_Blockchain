@@ -5,8 +5,8 @@ from rest_framework import generics, status
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response    
-from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory , ShoppingCart , ShoppingCartItem , ProductConfig
-from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer, ProductConfigSerializer , ShoppingCartSerializer , ShoppingCartItemSerializer
+from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory , ShoppingCart , ShoppingCartItem , ProductConfig , WishList , WishListItem
+from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer, ProductConfigSerializer , ShoppingCartSerializer , ShoppingCartItemSerializer , WishListSerializer , WishListItemSerializer
 
 # _add serializers 
 
@@ -17,7 +17,7 @@ import collections
 from django.db.models import Q
 
 # utils.py
-from .utils import DEBUG , base64_to_image , send_base64_to_firebase_storage
+from .utils import DEBUG , base64_to_image , send_base64_to_firebase_storage , send_success_json_response , send_failed_json_response
 
 # Create your views here.
 
@@ -49,7 +49,7 @@ def getVariationValuesFromVariationID(variation_id):
         result_.append(VariationOptionSerializer(row).data)
     return result_
 
-def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100 , all=False):
+def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100 , all=False , instance = False):
     products_=[]
     if all:
         querySet_items = Product.objects.all()
@@ -65,7 +65,10 @@ def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100 
             querySet_items = Product.objects.all()[offset:limit]
     print(len(querySet_items))
     for row in querySet_items:
-        temp_Product = dict(ProductSerializer(row).data)
+        if instance:
+            temp_Product =  row
+        else:
+            temp_Product = dict(ProductSerializer(row).data)
         products_.append(temp_Product)
     print(products_)
     return products_
@@ -370,7 +373,7 @@ class RemoveFromCart(APIView):
         else:
             return Response({
                 "status" : "Item doesnt exists in cart"
-            } , status=status.HTTP)
+            } , status=status.HTTP_304_NOT_MODIFIED)
             
 
 
@@ -529,6 +532,149 @@ def getShoppingCartItemWithKwargs( filter_by=False ,order_by=[]):
         ShoppingCartItem_.append(temp_ProductItem)
     print(ShoppingCartItem_)
     return ShoppingCartItem_
+
+
+
+# url - add_to_wishlist
+class AddToWishList(APIView):
+    def post(self , request):
+        post_data = request.data
+        print(post_data)
+        user_id = self.request.session.get('user_id') or DEBUG
+        userInstance = Users.objects.get(id = user_id)
+        product_id = post_data.get('product_id')
+        productInstance = getProductsWithKwargs(filter_by={
+            "id": int(product_id)
+        } , instance=True)
+        print(user_id)
+        if len(productInstance):
+            productInstance=productInstance[0]
+        else:
+            return send_failed_json_response(msg="couldn't find the product with product_id"+str(product_id) , status_obj=status.HTTP_304_NOT_MODIFIED)
+        userWishListInstance = getWishListWithKwargs(filter_by={
+            "id": int(user_id) 
+        } ,instance=True)
+        if len(userWishListInstance):
+            userWishListInstance = userWishListInstance[0]
+        else:
+            # creating new wishlist
+            userWishListInstance = WishList(user_id = userInstance)
+            userWishListInstance.save()
+        wishlistItemInstance = WishListItem(wishlist_id = userWishListInstance , product_id = productInstance)
+        try:
+            wishlistItemInstance.save()
+            return send_success_json_response({
+                "wishlist_item_id" : wishlistItemInstance.id
+            })
+        except:
+            return send_failed_json_response("something went wrong adding to the database wishListItem" , status = status.HTTP_304_NOT_MODIFIED)
+        
+# url - remove_from_wishlist
+class RemoveFromWishlist(APIView):
+    def post(self , request):
+        post_data = request.data
+        wishlistItemInstance =   WishListItem.objects.filter(id = post_data['wishlist_item_id'])
+        if wishlistItemInstance.exists():
+            wishlistItemInstance=wishlistItemInstance[0]
+            wishlistItemInstance.delete()
+            return Response(
+                {
+                "status" : True
+                } , status=status.HTTP_200_OK
+            )
+        else:
+            return Response({
+                "status" : "Item doesnt exists in cart"
+            } , status=status.HTTP_304_NOT_MODIFIED)            
+            
+
+# url - wishlist_product
+class WishListProducts(APIView):
+    def get(self , request):
+        user_id = self.request.session.get('user_id') or DEBUG
+        if not user_id:
+            return Response({
+                "status": False,
+                'oops':"looks like you have not signed in"
+            }  , status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+        wishlist = getWishListWithKwargs(filter_by={
+            "user_id":int(user_id)
+        } )
+        wishlist_id = 0
+        if(len(wishlist)):
+            wishlist_id=wishlist[0]['id']
+        else:
+            return Response(
+                {
+                    'oops': 'cannot find the shopping cart of the user'
+                } , status=status.HTTP_204_NO_CONTENT
+            )
+        wishlist_items = getWishListItemWithKwargs(
+            filter_by={
+                "wishlist_id":int(wishlist_id)
+            } , order_by=['-added_on']
+        )
+        # wishlist_cart_productItems_ids = [cartItem['product_item_id'] for cartItem in wishlist_cart_items]
+        for index , wishlisttItem in enumerate(wishlist_items):
+            wishlist_product= getProductsWithKwargs({"id":wishlisttItem['product_id']})[0]
+            wishlist_items[index]={
+                **wishlisttItem,
+                "product": wishlist_product
+            }
+        return Response(
+            {
+                "status": True,
+                'wishlist_items':wishlist_items , 
+                'wishlist_id': wishlist_id
+            }
+            , status=status.HTTP_200_OK)
+
+
+def getWishListWithKwargs( filter_by=False ,order_by=[] , instance = False):
+    print("getProductConfigWithKwargs")
+    print(filter_by , order_by)
+    WishList_=[]
+    if len(order_by):
+        if filter_by:
+            querySet_items = WishList.objects.filter(**filter_by).order_by(*order_by)
+        else:
+            querySet_items = WishList.objects.all().order_by(*order_by)
+    else:
+        if filter_by:
+            querySet_items = WishList.objects.filter(**filter_by)
+        else:
+            querySet_items = WishList.objects.all()
+    print(len(querySet_items))
+    for row in querySet_items:
+        if instance:
+            temp_ProductItem = row
+        else:
+            temp_ProductItem = dict(WishListSerializer(row).data)
+        WishList_.append(temp_ProductItem)
+    print(WishList_)
+    return WishList_
+
+
+def getWishListItemWithKwargs( filter_by=False ,order_by=[]):
+    print("getProductConfigWithKwargs")
+    print(filter_by , order_by)
+    WishListItem_=[]
+    if len(order_by):
+        if filter_by:
+            querySet_items = WishListItem.objects.filter(**filter_by).order_by(*order_by)
+        else:
+            querySet_items = WishListItem.objects.all().order_by(*order_by)
+    else:
+        if filter_by:
+            querySet_items = WishListItem.objects.filter(**filter_by)
+        else:
+            querySet_items = WishListItem.objects.all()
+    print(len(querySet_items))
+    for row in querySet_items:
+        temp_ProductItem = dict(WishListItemSerializer(row).data)
+        WishListItem_.append(temp_ProductItem)
+    print(WishListItem_)
+    return WishListItem_
 
 
 # url - cart_products  

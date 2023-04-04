@@ -19,7 +19,8 @@ import { useEffect, useState } from 'react';
 import TinWallet from './components/screens/TinWallet';
 import ViewOrders from './components/screens/ViewOrders';
 import ViewOrderItems from './components/screens/ViewOrderItems';
-import LoadingNew from './components/Loading-new';
+import LoadingFullScreen from './components/LoadingFullScreen';
+import Wishlist from './components/screens/Wishlist';
 // const bootstrap = require("bootstrap");
 
 function App(props) {
@@ -46,7 +47,7 @@ function App(props) {
         <Router>
           <Header search_query={search} setAppSearch={setSearchCallback} authResultApp={authResultApp} setAuthResultApp={setAuthResultApp} />
           <Switch>
-            <div style={{ 'minHeight': "50vh" }}>
+            <div style={{ 'minHeight': "70vh" }} >
               <Route exact path="/">
                 <HomePage  {...props} />
               </Route>
@@ -56,6 +57,8 @@ function App(props) {
               <Route exact path="/cart">
                 <Cart  {...props} />
               </Route>
+              <Route exact path="/wishlist"
+                component={Wishlist}/>
               <Route exact path="/checkout">
                 <Checkout  {...props} />
               </Route>
@@ -76,7 +79,7 @@ function App(props) {
               <Route exact path="/order_items"
                 component={ViewOrderItems}/>
               <Route exact path="/test_component"
-                component={LoadingNew}/>
+                component={LoadingFullScreen}/>
             </div>
           </Switch>
           <Footer />

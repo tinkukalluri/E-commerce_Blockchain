@@ -291,7 +291,7 @@ export default function () {
         <>
             <Navigator navbar cart page='cart' />
             {/* <!-- cart + summary --> */}
-            <div className="bg-light my-5">
+            <div className="my-5">
                 <div className="container">
                     <div className="row">
                         {/* <!-- cart --> */}

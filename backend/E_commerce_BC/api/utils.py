@@ -1,7 +1,9 @@
 import base64
 import uuid
+from rest_framework import generics, status
+from rest_framework.response import Response    
 
-DEBUG = True
+DEBUG = 1
 
 import re
 
@@ -36,6 +38,19 @@ def send_base64_to_firebase_storage(base64_img):
         file_to_save.write(image_64_decode)
         return uploadFileToFirebase(image_path ,str(random_str ))
     return "couldn't open the file"
+
+def send_success_json_response(data , status_obj=status.HTTP_200_OK):
+    return Response({
+        "status":True , 
+        **data
+    } , status= status_obj)
+    
+
+def send_failed_json_response(msg , status_obj=status.HTTP_400_BAD_REQUEST):
+    return Response({
+        "status":False , 
+        "oops": msg
+    } , status=status_obj)
         
     
     

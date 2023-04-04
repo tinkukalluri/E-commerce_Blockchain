@@ -108,6 +108,24 @@ class ShoppingCartItem(models.Model):
         #     self.created = timezone.now()
         # self.modified = timezone.now()
         return super(ShoppingCartItem , self).save(*args, **kwargs)
+    
+
+# --------------------------------Wishlist---------------------------------------
+class WishList(models.Model):
+    user_id = models.ForeignKey(Users , on_delete=models.CASCADE)
+
+class WishListItem(models.Model):
+    wishlist_id = models.ForeignKey(WishList , on_delete=models.CASCADE)
+    product_id = models.ForeignKey(Product , on_delete=models.CASCADE)
+    added_on = models.DateTimeField(null=True)
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        # converting utc to itc , the gap is 5.5 hours
+        self.added_on=timezone.now() + timezone.timedelta(hours=5.5)
+        #print("timezome.now()::", self.send_on)
+        #     self.created = timezone.now()
+        # self.modified = timezone.now()
+        return super(WishListItem , self).save(*args, **kwargs)
 
 
 # ---------------------------------address----------------------------------------
