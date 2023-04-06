@@ -1,6 +1,6 @@
 
 # path for my gaming pc
-TINTOKEN_path = r"C:\Users\sintin\Desktop\Major_project\e_commerce\react-box-master\client\src\contracts\TinToken.json"
+# TINTOKEN_path = r"C:\Users\sintin\Desktop\Major_project\e_commerce\react-box-master\client\src\contracts\TinToken.json"
 
 
 # path for salman computer
@@ -8,4 +8,4 @@ TINTOKEN_path = r"C:\Users\sintin\Desktop\Major_project\e_commerce\react-box-mas
 
 
 # path for my asus computer
-# TINTOKEN_path =  r"C:\Users\tinku\Desktop\major_project\E-commerce_Blockchain\client\src\contracts\TinToken.json"
+TINTOKEN_path =  r"C:\Users\tinku\Desktop\major_project\E-commerce_Blockchain\client\src\contracts\TinToken.json"

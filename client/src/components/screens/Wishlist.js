@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom'
 
 export default function Wishlist() {
 
+    // the wishlistitem array may contain null([{} , null , {}]) because we set null when we remove item from wishlist
     const [wishlistItem, setwishlistItem] = useState(-1)
 
     const history = useHistory()
@@ -52,15 +53,19 @@ export default function Wishlist() {
         fetch(path, requestOptions).then(response => response.json()).then(data => {
             console.log(data)
             if (data.status) {
-                // var temp_wishlistItems = wishlistItem
-                // temp_wishlistItems.map(wishlistItem_ =>{
-                //     if(wishlistItem_.id == wishlistItem_id){
-                //         return null
-                //     }else{
-                //         return wishlistItem_
-                //     }
-                // })
-                // setwishlistItem(temp_wishlistItems)
+                var temp_wishlistItems = [...wishlistItem]
+                temp_wishlistItems = temp_wishlistItems.map(wishlistItem_ =>{
+                    console.log(wishlistItem_)
+                    if(wishlistItem_==null){
+                        return null
+                    }
+                    if(wishlistItem_?.id == wishlistItem_id){
+                        return null
+                    }else{
+                        return wishlistItem_
+                    }
+                })
+                setwishlistItem(temp_wishlistItems)
             }
         })
     }

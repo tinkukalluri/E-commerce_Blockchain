@@ -171,14 +171,37 @@ def getProductAndProductItemsWithProductItem(productItem_id_list):
             }
             result_.append(temp)
     return result_
-        
 
+  
+
+def getUserWishlistItemFromProduct(product_id , user_id):
+    wishlist_id = getWishListWithKwargs(filter_by={
+        "user_id" : user_id
+    })
+    userInstance = Users.objects.get(id=user_id)
+    if len(wishlist_id):
+        wishlist_id = wishlist_id[0]['id']
+    else:
+        userWishListInstance = WishList(user_id = userInstance)
+        userWishListInstance.save()
+        wishlist_id = userWishListInstance.id
+    
+    wishlist_item_id = getWishListItemWithKwargs(filter_by={
+        "wishlist_id" : wishlist_id , "product_id" : product_id
+    })
+    
+    if(len(wishlist_item_id)):
+        return wishlist_item_id[0]
+    else:
+        return -1
 
 
 class getNewProducts(APIView):
     def get(self, request, format=None):
         offset = int(request.GET.get('offset'))-1 if request.GET.get('offset') else 0
         limit = int(request.GET.get('limit')) if request.GET.get('limit') else 10
+        user_id = self.request.session.get('user_id')
+
         products_ = getProductsWithKwargs(offset=offset, limit=limit , order_by=['-added_on'])
         for product in products_:  
             min_prize=float('inf')
@@ -186,11 +209,14 @@ class getNewProducts(APIView):
                 "product_id":product["id"]
             })
             print(productConfig_)
+            # this code is just to calculate the min price
             for productItem in productConfig_:
                 min_prize= min(min_prize , int(productItem['prize']))
             if min_prize==float('inf'):
                 min_prize=0 
+            # ------------------------------------------------
             product['min_prize'] = min_prize
+            product['wishlistItem']=getUserWishlistItemFromProduct(product["id"] , user_id)
         print('for loop exit')
         return Response(products_,status=status.HTTP_200_OK)
 
@@ -417,6 +443,7 @@ class AddToCart(APIView):
             qty =post_data.get('quantity')
             product_id = int(post_data.get('product_id'))
             user_id = self.request.session["user_id"]
+            userInstance = Users.objects.get(id = int(user_id))
             shoppingCart = getShoppingCartWithKwargs(filter_by={
                 "user_id":int(user_id)
             }  , order_by=['-id'])
@@ -424,7 +451,7 @@ class AddToCart(APIView):
             if(len(shoppingCart)):
                 cart_id=shoppingCart[len(shoppingCart)-1]['id']
             else:
-                cartInstance = ShoppingCart(user_id=int(user_id))
+                cartInstance = ShoppingCart(user_id=userInstance)
                 cartInstance.save()
                 cart_id=cartInstance.id
             productItem_querySet = getProductItemsWithKwargs(filter_by={
@@ -784,7 +811,14 @@ class LoginWithGoogle(APIView):
         else:
             self.user=Users(google_uid=uid , email_uid=email , username=displayName , password="" , photoURL=photoURL)
             self.user.save()
+            # creating wishlist
+            userWishListInstance = WishList(user_id = self.user)
+            userWishListInstance.save()
             self.request.session.create()
+            #  creating cart
+            cartInstance = ShoppingCart(user_id=self.user)
+            cartInstance.save()
+            # ------------------------------------
             self.request.session["key"]=self.request.session.session_key
             self.request.session["user_id"]=self.user.id
             return Response({"result":True} , status=status.HTTP_200_OK )

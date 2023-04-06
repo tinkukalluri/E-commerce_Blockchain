@@ -47,7 +47,7 @@ function App(props) {
         <Router>
           <Header search_query={search} setAppSearch={setSearchCallback} authResultApp={authResultApp} setAuthResultApp={setAuthResultApp} />
           <Switch>
-            <div style={{ 'minHeight': "70vh" }} >
+            <div className='root' style={{ 'minHeight': "70vh" }} >
               <Route exact path="/">
                 <HomePage  {...props} />
               </Route>

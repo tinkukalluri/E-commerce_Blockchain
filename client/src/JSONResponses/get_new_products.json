@@ -1,56 +1,107 @@
 [
     {
-        "id": 7,
-        "category_id": 2,
-        "name": "cool pants",
-        "description": "cools shirts",
-        "product_image": "https://m.media-amazon.com/images/I/71DBklVte9L._UX569_.jpg",
-        "added_on": "2023-03-10T19:35:20Z",
-        "min_prize": 300
-    },
-    {
-        "id": 6,
-        "category_id": null,
-        "name": "entity relationship diagram",
-        "description": "erd diagram for Ecommerce Web application",
-        "product_image": "https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fhuiiipzu1.png?alt=media&token=12817ab2-cc89-41d4-a07c-cd146cb0db03",
-        "added_on": "2023-03-10T09:38:42Z",
-        "min_prize": 0
-    },
-    {
-        "id": 5,
-        "category_id": null,
-        "name": "erd-2",
-        "description": "ER diagram for Ecommerce Web application",
-        "product_image": "https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fhuiiipzu1.png?alt=media&token=12817ab2-cc89-41d4-a07c-cd146cb0db03",
-        "added_on": "2023-03-10T07:18:54Z",
-        "min_prize": 0
-    },
-    {
-        "id": 4,
+        "id": 30,
         "category_id": 1,
-        "name": "shirt",
-        "description": "cools shirts",
-        "product_image": "https://m.media-amazon.com/images/I/71DBklVte9L._UX569_.jpg",
-        "added_on": "2023-03-09T07:54:21Z",
-        "min_prize": 0
+        "name": "bmw",
+        "description": "german car",
+        "product_image": "https://storage.googleapis.com/ecommerce-blockchain-1fb3d.appspot.com/2802a7f3-adba-4ca3-a25e-75e2645abc16",
+        "added_on": "2023-04-03T15:04:24.499750Z",
+        "min_prize": 200000000,
+        "wishlistItem": {
+            "id": 15,
+            "wishlist_id": 1,
+            "product_id": 30,
+            "added_on": "2023-04-06T14:04:32.903522Z"
+        }
     },
     {
-        "id": 3,
+        "id": 29,
+        "category_id": 7,
+        "name": "bmw",
+        "description": "german car",
+        "product_image": "https://storage.googleapis.com/ecommerce-blockchain-1fb3d.appspot.com/add385e3-6dd3-446a-91c8-7f6ec278c8da",
+        "added_on": "2023-04-03T15:04:11.790480Z",
+        "min_prize": 0,
+        "wishlistItem": -1
+    },
+    {
+        "id": 28,
         "category_id": 1,
-        "name": "shirt",
-        "description": "cools shirts",
-        "product_image": "https://m.media-amazon.com/images/I/71DBklVte9L._UX569_.jpg",
-        "added_on": "2023-03-09T07:54:19Z",
-        "min_prize": 333
+        "name": "dwa",
+        "description": "dawdawd",
+        "product_image": "https://storage.googleapis.com/ecommerce-blockchain-1fb3d.appspot.com/b46b88f3-16a4-474c-9a4e-a6b31d75b0b6",
+        "added_on": "2023-04-03T14:56:01.758276Z",
+        "min_prize": 2,
+        "wishlistItem": -1
     },
     {
-        "id": 1,
-        "category_id": null,
-        "name": "erd-2",
-        "description": "ER diagram for Ecommerce Web application",
-        "product_image": "https://firebasestorage.googleapis.com/v0/b/ecommerce-blockchain-1fb3d.appspot.com/o/files%2Fhuiiipzu1.png?alt=media&token=12817ab2-cc89-41d4-a07c-cd146cb0db03",
-        "added_on": "2023-03-09T07:54:16Z",
-        "min_prize": 1000
+        "id": 27,
+        "category_id": 1,
+        "name": "dwa",
+        "description": "dawdawd",
+        "product_image": "https://storage.googleapis.com/ecommerce-blockchain-1fb3d.appspot.com/5077fa66-25bb-47da-be31-d11d821c1543",
+        "added_on": "2023-04-03T14:52:34.206889Z",
+        "min_prize": 0,
+        "wishlistItem": -1
+    },
+    {
+        "id": 26,
+        "category_id": 1,
+        "name": "dwa",
+        "description": "dawdawd",
+        "product_image": "https://storage.googleapis.com/ecommerce-blockchain-1fb3d.appspot.com/6e4db12a-8a3c-45f3-9210-fb3a6faaaf49",
+        "added_on": "2023-04-03T14:44:47.398153Z",
+        "min_prize": 0,
+        "wishlistItem": -1
+    },
+    {
+        "id": 25,
+        "category_id": 1,
+        "name": "jeans",
+        "description": "torn jeans for women Calvin kein",
+        "product_image": "https://i.pinimg.com/736x/ab/fc/ca/abfcca2493de4a22cea0fdc4b61e3965.jpg",
+        "added_on": "2023-03-31T01:09:34.227989Z",
+        "min_prize": 2,
+        "wishlistItem": -1
+    },
+    {
+        "id": 24,
+        "category_id": 1,
+        "name": "tinku3",
+        "description": "tinku the dev",
+        "product_image": "https://scontent.fhyd11-2.fna.fbcdn.net/v/t1.18169-9/21105788_760434490831886_4333824704480604768_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=eGWD0a6GGJAAX_0KeNM&_nc_ht=scontent.fhyd11-2.fna&oh=00_AfBBc3h_wRgDrrBq1DQCw3GC6ApMF_yW36xorqp_6QrsIg&oe=644C1321",
+        "added_on": "2023-03-30T01:21:42.119325Z",
+        "min_prize": 23,
+        "wishlistItem": -1
+    },
+    {
+        "id": 23,
+        "category_id": 1,
+        "name": "tinku2",
+        "description": "tinku the dev",
+        "product_image": "https://scontent.fhyd11-2.fna.fbcdn.net/v/t1.18169-9/21105788_760434490831886_4333824704480604768_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=eGWD0a6GGJAAX_0KeNM&_nc_ht=scontent.fhyd11-2.fna&oh=00_AfBBc3h_wRgDrrBq1DQCw3GC6ApMF_yW36xorqp_6QrsIg&oe=644C1321",
+        "added_on": "2023-03-30T01:03:01.948921Z",
+        "min_prize": 23,
+        "wishlistItem": -1
+    },
+    {
+        "id": 22,
+        "category_id": 1,
+        "name": "tinku",
+        "description": "tinku the dev",
+        "product_image": "https://scontent.fhyd11-2.fna.fbcdn.net/v/t1.18169-9/21105788_760434490831886_4333824704480604768_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=eGWD0a6GGJAAX_0KeNM&_nc_ht=scontent.fhyd11-2.fna&oh=00_AfBBc3h_wRgDrrBq1DQCw3GC6ApMF_yW36xorqp_6QrsIg&oe=644C1321",
+        "added_on": "2023-03-30T01:02:17.894801Z",
+        "min_prize": 23,
+        "wishlistItem": -1
+    },
+    {
+        "id": 21,
+        "category_id": 1,
+        "name": "tinku",
+        "description": "tinku the dev",
+        "product_image": "https://scontent.fhyd11-2.fna.fbcdn.net/v/t1.18169-9/21105788_760434490831886_4333824704480604768_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=eGWD0a6GGJAAX_0KeNM&_nc_ht=scontent.fhyd11-2.fna&oh=00_AfBBc3h_wRgDrrBq1DQCw3GC6ApMF_yW36xorqp_6QrsIg&oe=644C1321",
+        "added_on": "2023-03-30T00:56:07.177014Z",
+        "min_prize": 23,
+        "wishlistItem": -1
     }
 ]
