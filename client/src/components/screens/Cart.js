@@ -16,6 +16,8 @@ export default function () {
     const [cartTax, setCartTax] = useState(0)
     const [cartDiscount, setCartDiscount] = useState(0)
     const [ready_to_make_order, setMakeOrder] = useState(false)
+    const [fullScreenLoading , setFullScreenLoading] = useState(true)
+
 
     let fetchCartItemsTimeout = 0
     var fetchCartItemsTimeoutCounter = 5
@@ -238,7 +240,9 @@ export default function () {
     }
 
     function fetchCartItems() {
+        setFullScreenLoading(true)
         if(!fetchCartItemsTimeoutCounter){
+            clearTimeout(fetchCartItemsTimeout)
             return
         }
         console.log(fetchCartItemsTimeoutCounter)
@@ -253,11 +257,15 @@ export default function () {
         }).then(data => {
             console.log('data from cartItems')
             console.log(data)
-            setCart(data)
-            setCartID(data.cart_id)
-            setCartItems(data.shopping_cart_items.length == 0 ? [] : data.shopping_cart_items)
-            clearTimeout(fetchCartItemsTimeout)
-            setCartTotal(0)
+            if(data.status){
+                setFullScreenLoading(false)
+                data = data.data
+                setCart(data)
+                setCartID(data.cart_id)
+                setCartItems(data.shopping_cart_items.length == 0 ? [] : data.shopping_cart_items)
+                clearTimeout(fetchCartItemsTimeout)
+                setCartTotal(0)
+            }
         }).catch(e => {
             console.log("error in cartItems")
             fetchCartItemsTimeout = setTimeout(fetchCartItems, 1000)

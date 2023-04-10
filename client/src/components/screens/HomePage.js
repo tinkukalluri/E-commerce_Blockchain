@@ -29,7 +29,7 @@ export async function handleWishList(e , product_id , wishlist_item_id=-1 , refr
             }
         })
     }
-    refresh_page()
+        refresh_page(false)
 }
 
 export async function removeWishList(e , wishlist_item_id){
@@ -49,9 +49,28 @@ export async function removeWishList(e , wishlist_item_id){
         }else{
             console.log(data.oops)
         }
-    })
+    })    
+}
 
-    
+export async function addToWishlist(e , product_id){
+    console.log(product_id)
+    const requestOptions = {
+        method: 'post',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            "product_id" : product_id
+            })
+    }
+    let path = `/api/add_to_wishlist`
+    await fetch(path , requestOptions).then(response=> response.json()).then(data=>{
+        if(data.status){
+            console.log(e.target)
+            console.log('data added successfully')
+            e.target.classList.toggle("text-danger");
+        }else{
+            console.log(data.oops)
+        }
+    })
 }
 
 export default function HomePage() {
@@ -62,6 +81,18 @@ export default function HomePage() {
     const history = useHistory()
     const fetchNewProductsTimeout = 0
     const [FullScreenLoading , setFullScreenLoading] = useState(true)
+    const [offset , setOffset] = useState(1)
+    const [limit , setLimit] =  useState(10)
+
+
+    async function handleWishList(e , product_id , wishlist_item_id=-1 , refresh_page=()=>{}){
+        if(e.target.classList.value.search('text-danger')!=-1){
+            await removeWishList(e , wishlist_item_id )
+        }else{
+            await addToWishlist(e , product_id)
+        }
+            refresh_page(offset , limit , false)
+    }
 
     function handleBuy(e) {
         console.log(e.target.value)
@@ -76,8 +107,8 @@ export default function HomePage() {
     }, [])
 
 
-    function get_new_products(offset = 1, limit = 10) {
-        setFullScreenLoading(true)
+    function get_new_products(offset = 1, limit = 10 , FullScreenLoading = true) {
+        setFullScreenLoading(FullScreenLoading)
         const requestOptions = {
             method: 'get',
             headers: { "Content-Type": "application/json" },

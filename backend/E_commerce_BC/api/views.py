@@ -245,7 +245,11 @@ class ProductSearch(APIView):
                 min_prize=0 
             product['min_prize'] = min_prize
         print('for loop exit')
-        return Response(products_ , status=status.HTTP_200_OK)
+        return Response(
+            {
+                "status" : True , 
+                "data" : products_ 
+            }, status=status.HTTP_200_OK)
     
 
 
@@ -338,7 +342,12 @@ class getProductDetails(APIView):
                         "category": product_category.category_name
                         })
         print(result_)
-        return Response(result_ , status=status.HTTP_200_OK)
+        return Response(
+            {
+                "status": True , 
+                'data': result_
+             
+            } , status=status.HTTP_200_OK)
 
 
 def getProductIdsFromProductConfig(productItem_ids , **kwargs):
@@ -772,8 +781,11 @@ class CartProducts(APIView):
             }
         return Response(
             {
+                "status" : True , 
+                "data":{
                 'shopping_cart_items':shopping_cart_items , 
                 'cart_id': cart_id
+                }
             }
             , status=status.HTTP_200_OK)
     

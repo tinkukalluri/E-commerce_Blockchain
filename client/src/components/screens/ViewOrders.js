@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom';
 
 
+// full screen loading
+import LoadingFullScreen from '../LoadingFullScreen';
+
 // custom components
 import Loading from '../Loading'
 
@@ -64,7 +67,10 @@ export default function ViewOrders(props) {
 
     const [orders, setOrders] = useState(-1)
     const history = useHistory()
+    const [fullScreenLoading , setFullScreenLoading] = useState(true)
+
     var fetchOrdersTimeInterval = 0
+    var fetchOrdersTimeIntervalCount = 5
 
     // component did mount
 
@@ -84,7 +90,12 @@ export default function ViewOrders(props) {
     //         "status": true
     // }
 
-    function fetchOrders() {
+    function fetchOrders(FullScreenLoading = true) {
+        setFullScreenLoading(FullScreenLoading)
+        if (!fetchOrdersTimeIntervalCount) {
+            clearTimeout(fetchOrdersTimeInterval)
+            return
+        }
         const requestOptions = {
             method: 'GET',
             headers: { "Content-Type": "application/json" },
@@ -96,6 +107,7 @@ export default function ViewOrders(props) {
             if (data.status == true) {
                 setOrders(data.orders)
                 clearTimeout(fetchOrdersTimeInterval)
+                setFullScreenLoading(false)
             } else {
                 if (data.oops != undefined) {
                     console.log('oops encountered in fetching orders')
@@ -146,7 +158,8 @@ export default function ViewOrders(props) {
 
     return (
         <>
-            {orders == -1 ? <Loading /> : (
+            {fullScreenLoading ? <LoadingFullScreen/> :(
+            orders == -1 ? <Loading /> : (
                 <div className="user-orders">
                     <div className="text-primary text-center font-monospace">Your orders</div>
                     <div className="container">
@@ -174,6 +187,7 @@ export default function ViewOrders(props) {
                         }
                     </div>
                 </div>
+            )
             )}
         </>
     )

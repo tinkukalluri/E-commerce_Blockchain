@@ -3,20 +3,29 @@ import Loading from '../Loading';
 import '../viewOrderItems/orderitems.css'
 import {getPaymentStatusTXT , getOrderStatusTXT } from './ViewOrders.js'
 import { useHistory } from 'react-router-dom';
+import LoadingFullScreen from '../LoadingFullScreen';
 
 export default function ViewOrderItems(props) {
 
     const {order_id} = (props.location && props.location.state) || -1;
     const [userOrderItems , setUserOrderItems] = useState(-1)
     const [userOrderDetails , setUserOrderDetails]= useState(-1)
+    const [fullScreenLoading , setFullScreenLoading] = useState(true)
     const history = useHistory()
     var userOrderTimeout = 0
+    var userOrderTimeoutCounter = 5
 
     console.log(order_id)
     console.log(props.location)
     console.log(props)
 
     function fetchOrderItems(){
+        setFullScreenLoading(true)
+        if (!userOrderTimeoutCounter) {
+            clearTimeout(userOrderTimeout)
+            return
+        }
+        userOrderTimeoutCounter--
         const requestOptions = {
             method: 'get',
             headers: { "Content-Type": "application/json" },
@@ -71,6 +80,7 @@ export default function ViewOrderItems(props) {
                 setUserOrderItems(data.order_items)
                 setUserOrderDetails(data.order)
                 clearInterval(userOrderTimeout)
+                setFullScreenLoading(false)
             }else{
                 console.log(data.oops)
                 userOrderTimeout = setTimeout(fetchOrderItems , 1000)
@@ -101,13 +111,11 @@ export default function ViewOrderItems(props) {
 
     return (
         <>
-        <div>ViewOrderItems</div>
-        {order_id}
         <div className="user-orders">
         <div className="text-primary text-center font-monospace">Your order</div>
+        {fullScreenLoading ? <LoadingFullScreen/> :(
 
-                {
-                    userOrderDetails==-1 ? <Loading/>  : (
+                    [userOrderDetails==-1 ? <Loading/>  : (
                     <div className="col-lg-12 order-details p-3">
                         <div className="text-danger"><i>order-details </i> </div>
                         <h4 className="text-success">orderid: {userOrderDetails.id}</h4>
@@ -116,12 +124,9 @@ export default function ViewOrderItems(props) {
                         <h5 className="text-success"><i>transaction hash</i>: {userOrderDetails.transaction_hash}</h5> 
                         <h5 className="text-success"><i>order date</i>: {userOrderDetails.order_date}</h5> 
                     </div>
-                    )
-                }
-
-                {
+                    ) , 
                     userOrderItems==-1 ? <Loading/> : (
-                                <>
+                    
                                 <div className="card border shadow-0">
                                     <div className="m-4">
                                         <h4 className="card-title mb-4">Your order items</h4>
@@ -167,9 +172,8 @@ export default function ViewOrderItems(props) {
                                     }
                                     </div>
                                 </div>
-                                </>
-                                )
-                }
+                                )]
+        )}
                 
                 
         </div>
