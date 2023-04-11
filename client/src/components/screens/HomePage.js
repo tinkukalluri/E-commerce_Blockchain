@@ -3,6 +3,75 @@ import { useEth } from '../../contexts/EthContext'
 import Footer from '../footer';
 import Navigator from '../Navigator';
 import { useHistory } from 'react-router-dom';
+import LoadingFullScreen from '../LoadingFullScreen';
+
+
+export async function handleWishList(e , product_id , wishlist_item_id=-1 , refresh_page=()=>{}){
+    if(e.target.classList.value.search('text-danger')!=-1){
+        await removeWishList(e , wishlist_item_id )
+    }else{
+        console.log(product_id)
+        const requestOptions = {
+            method: 'post',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                "product_id" : product_id
+              })
+        }
+        let path = `/api/add_to_wishlist`
+        await fetch(path , requestOptions).then(response=> response.json()).then(data=>{
+            if(data.status){
+                console.log(e.target)
+                console.log('data added successfully')
+                e.target.classList.toggle("text-danger");
+            }else{
+                console.log(data.oops)
+            }
+        })
+    }
+        refresh_page(false)
+}
+
+export async function removeWishList(e , wishlist_item_id){
+    console.log(wishlist_item_id)
+    const requestOptions = {
+        method: 'post',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            "wishlist_item_id": wishlist_item_id
+          })
+    }
+    let path = `/api/remove_from_wishlist`
+    fetch(path , requestOptions).then(response=> response.json()).then(data=>{
+        if(data.status){
+            console.log('removed from wishlist')
+            e.target.classList.toggle("text-danger");
+        }else{
+            console.log(data.oops)
+        }
+    })    
+}
+
+export async function addToWishlist(e , product_id){
+    console.log(product_id)
+    const requestOptions = {
+        method: 'post',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            "product_id" : product_id
+            })
+    }
+    let path = `/api/add_to_wishlist`
+    await fetch(path , requestOptions).then(response=> response.json()).then(data=>{
+        if(data.status){
+            console.log(e.target)
+            console.log('data added successfully')
+            e.target.classList.toggle("text-danger");
+        }else{
+            console.log(data.oops)
+        }
+    })
+}
 
 export default function HomePage() {
 
@@ -11,6 +80,19 @@ export default function HomePage() {
     const [NewProductsJSX, setNewProductsJSX] = useState(null)
     const history = useHistory()
     const fetchNewProductsTimeout = 0
+    const [FullScreenLoading , setFullScreenLoading] = useState(true)
+    const [offset , setOffset] = useState(1)
+    const [limit , setLimit] =  useState(10)
+
+
+    async function handleWishList(e , product_id , wishlist_item_id=-1 , refresh_page=()=>{}){
+        if(e.target.classList.value.search('text-danger')!=-1){
+            await removeWishList(e , wishlist_item_id )
+        }else{
+            await addToWishlist(e , product_id)
+        }
+            refresh_page(offset , limit , false)
+    }
 
     function handleBuy(e) {
         console.log(e.target.value)
@@ -25,7 +107,8 @@ export default function HomePage() {
     }, [])
 
 
-    function get_new_products(offset = 1, limit = 10) {
+    function get_new_products(offset = 1, limit = 10 , FullScreenLoading = true) {
+        setFullScreenLoading(FullScreenLoading)
         const requestOptions = {
             method: 'get',
             headers: { "Content-Type": "application/json" },
@@ -64,14 +147,23 @@ export default function HomePage() {
                             <p className="card-text">rs{product.min_prize}</p>
                             <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
                                 <a onClick={() => handleProductClick(product['id'])} className="btn btn-primary shadow-0 me-1">Add to cart</a>
-                                <a href="#!" className="btn btn-light border px-2 pt-2 icon-hover"><i
-                                    className="fas fa-heart fa-lg text-secondary px-1"></i></a>
+                                {product?.wishlistItem==-1 ? (<a onClick={(e)=>{
+                                    handleWishList(e ,product['id'] ,product?.wishlistItem?.id , get_new_products )
+                                }} className="btn btn-light border px-2 pt-2 icon-hover"><i
+                                    className="fas fa-heart fa-lg text-secondary px-1"></i></a>):
+                                (
+                                    <a onClick={(e)=>{
+                                    handleWishList(e ,product['id'] ,product?.wishlistItem?.id , get_new_products)
+                                }} className="btn btn-light border px-2 pt-2 icon-hover"><i
+                                    className="fas fa-heart fa-lg text-secondary px-1 text-danger"></i></a>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>);
             })
             setNewProductsJSX(li)
+            setFullScreenLoading(false)
         }
     }, [NewProducts])
 
@@ -83,8 +175,8 @@ export default function HomePage() {
             <Navigator navbar page="homepage" homepage />
 
             {/* Products */}
-
-            < div >
+            {FullScreenLoading ? <LoadingFullScreen/> :(
+            <div>
                 <div className="container my-5">
                     <header className="mb-4">
                         <h3>New products</h3>
@@ -102,7 +194,7 @@ export default function HomePage() {
                                     <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
                                         <a href="#!" className="btn btn-primary shadow-0 me-1">Add to cart</a>
                                         <a href="#!" className="btn btn-light border px-2 pt-2 icon-hover"><i
-                                            className="fas fa-heart fa-lg text-secondary px-1"></i></a>
+                                            className="fas fa-heart fa-lg text-secondary px-1 btn-secondary"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -214,7 +306,8 @@ export default function HomePage() {
                         </div>
                     </div>
                 </div>
-            </div >
+            </div>
+            )}
             {/* Products */}
 
             {/* footer */}

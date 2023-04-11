@@ -5,8 +5,8 @@ from rest_framework import generics, status
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response    
-from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory , ShoppingCart , ShoppingCartItem , ProductConfig
-from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer, ProductConfigSerializer , ShoppingCartSerializer , ShoppingCartItemSerializer
+from .models import ProductItem , Product , Users , Variation , VariationOption , ProductCategory , ShoppingCart , ShoppingCartItem , ProductConfig , WishList , WishListItem
+from .serializer import ProductItemSerializer , ProductSerializer ,VariationSerializer , VariationOptionSerializer, ProductConfigSerializer , ShoppingCartSerializer , ShoppingCartItemSerializer , WishListSerializer , WishListItemSerializer
 
 # _add serializers 
 
@@ -15,7 +15,9 @@ from .serializer import ProductSerializer_add , ProductItemSerializer_add , Prod
 from .serializer import ProductCategorySerializer
 import collections
 from django.db.models import Q
-from .utils import DEBUG
+
+# utils.py
+from .utils import DEBUG , base64_to_image , send_base64_to_firebase_storage , send_success_json_response , send_failed_json_response
 
 # Create your views here.
 
@@ -47,7 +49,7 @@ def getVariationValuesFromVariationID(variation_id):
         result_.append(VariationOptionSerializer(row).data)
     return result_
 
-def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100 , all=False):
+def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100 , all=False , instance = False):
     products_=[]
     if all:
         querySet_items = Product.objects.all()
@@ -63,7 +65,10 @@ def getProductsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100 
             querySet_items = Product.objects.all()[offset:limit]
     print(len(querySet_items))
     for row in querySet_items:
-        temp_Product = dict(ProductSerializer(row).data)
+        if instance:
+            temp_Product =  row
+        else:
+            temp_Product = dict(ProductSerializer(row).data)
         products_.append(temp_Product)
     print(products_)
     return products_
@@ -97,7 +102,7 @@ def getProductCategoryWithKwargs( filter_by=False ,order_by=[] , offset=0  , lim
 
 
 
-def getProductItemsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=10000):
+def getProductItemsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=10000 , instance =False):
     print("getProductItemsWithKwargs")
     print(filter_by , order_by , offset , limit)
     productConfig_=[]
@@ -113,7 +118,10 @@ def getProductItemsWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=
             querySet_items = ProductItem.objects.all()[offset:limit]
     print(len(querySet_items))
     for row in querySet_items:
-        temp_ProductItem = dict(ProductItemSerializer(row).data)
+        if instance:
+            temp_ProductItem = row
+        else:
+            temp_ProductItem = dict(ProductItemSerializer(row).data)
         productConfig_.append(temp_ProductItem)
     print(productConfig_)
     return productConfig_
@@ -163,14 +171,37 @@ def getProductAndProductItemsWithProductItem(productItem_id_list):
             }
             result_.append(temp)
     return result_
-        
 
+  
+
+def getUserWishlistItemFromProduct(product_id , user_id):
+    wishlist_id = getWishListWithKwargs(filter_by={
+        "user_id" : user_id
+    })
+    userInstance = Users.objects.get(id=user_id)
+    if len(wishlist_id):
+        wishlist_id = wishlist_id[0]['id']
+    else:
+        userWishListInstance = WishList(user_id = userInstance)
+        userWishListInstance.save()
+        wishlist_id = userWishListInstance.id
+    
+    wishlist_item_id = getWishListItemWithKwargs(filter_by={
+        "wishlist_id" : wishlist_id , "product_id" : product_id
+    })
+    
+    if(len(wishlist_item_id)):
+        return wishlist_item_id[0]
+    else:
+        return -1
 
 
 class getNewProducts(APIView):
     def get(self, request, format=None):
         offset = int(request.GET.get('offset'))-1 if request.GET.get('offset') else 0
         limit = int(request.GET.get('limit')) if request.GET.get('limit') else 10
+        user_id = self.request.session.get('user_id')
+
         products_ = getProductsWithKwargs(offset=offset, limit=limit , order_by=['-added_on'])
         for product in products_:  
             min_prize=float('inf')
@@ -178,11 +209,14 @@ class getNewProducts(APIView):
                 "product_id":product["id"]
             })
             print(productConfig_)
+            # this code is just to calculate the min price
             for productItem in productConfig_:
                 min_prize= min(min_prize , int(productItem['prize']))
             if min_prize==float('inf'):
                 min_prize=0 
+            # ------------------------------------------------
             product['min_prize'] = min_prize
+            product['wishlistItem']=getUserWishlistItemFromProduct(product["id"] , user_id)
         print('for loop exit')
         return Response(products_,status=status.HTTP_200_OK)
 
@@ -211,7 +245,11 @@ class ProductSearch(APIView):
                 min_prize=0 
             product['min_prize'] = min_prize
         print('for loop exit')
-        return Response(products_ , status=status.HTTP_200_OK)
+        return Response(
+            {
+                "status" : True , 
+                "data" : products_ 
+            }, status=status.HTTP_200_OK)
     
 
 
@@ -230,22 +268,22 @@ class getProductCategory(APIView):
             })
         
 
-
+# url- empty_cart
 class EmptyCart(APIView):
     def get(self, request):
         user_id = self.request.session["user_id"]
         shoppingCart = getShoppingCartWithKwargs(filter_by={
             "user_id":int(user_id)
-        }  , order_by='-id')
+        }  , order_by=['-id'])
         if len(shoppingCart):
             shoppingCartItems = getShoppingCartItemWithKwargs(filter_by={
                 "cart_id" : int(shoppingCart[0]['id'])
             })
             if len(shoppingCartItems):
                 for shoppingcartitem in shoppingCartItems:
-                    temp_shoppingCartInstance = ShoppingCartItem.objects.filter({
-                        "id":shoppingcartitem['id']
-                    })
+                    temp_shoppingCartInstance = ShoppingCartItem.objects.get(
+                        id=shoppingcartitem['id']
+                    )
                     temp_shoppingCartInstance.delete()
             else:
                 return Response({
@@ -304,7 +342,12 @@ class getProductDetails(APIView):
                         "category": product_category.category_name
                         })
         print(result_)
-        return Response(result_ , status=status.HTTP_200_OK)
+        return Response(
+            {
+                "status": True , 
+                'data': result_
+             
+            } , status=status.HTTP_200_OK)
 
 
 def getProductIdsFromProductConfig(productItem_ids , **kwargs):
@@ -365,7 +408,7 @@ class RemoveFromCart(APIView):
         else:
             return Response({
                 "status" : "Item doesnt exists in cart"
-            } , status=status.HTTP)
+            } , status=status.HTTP_304_NOT_MODIFIED)
             
 
 
@@ -409,6 +452,7 @@ class AddToCart(APIView):
             qty =post_data.get('quantity')
             product_id = int(post_data.get('product_id'))
             user_id = self.request.session["user_id"]
+            userInstance = Users.objects.get(id = int(user_id))
             shoppingCart = getShoppingCartWithKwargs(filter_by={
                 "user_id":int(user_id)
             }  , order_by=['-id'])
@@ -416,7 +460,7 @@ class AddToCart(APIView):
             if(len(shoppingCart)):
                 cart_id=shoppingCart[len(shoppingCart)-1]['id']
             else:
-                cartInstance = ShoppingCart(user_id=int(user_id))
+                cartInstance = ShoppingCart(user_id=userInstance)
                 cartInstance.save()
                 cart_id=cartInstance.id
             productItem_querySet = getProductItemsWithKwargs(filter_by={
@@ -526,6 +570,149 @@ def getShoppingCartItemWithKwargs( filter_by=False ,order_by=[]):
     return ShoppingCartItem_
 
 
+
+# url - add_to_wishlist
+class AddToWishList(APIView):
+    def post(self , request):
+        post_data = request.data
+        print(post_data)
+        user_id = self.request.session.get('user_id') or DEBUG
+        userInstance = Users.objects.get(id = user_id)
+        product_id = post_data.get('product_id')
+        productInstance = getProductsWithKwargs(filter_by={
+            "id": int(product_id)
+        } , instance=True)
+        print(user_id)
+        if len(productInstance):
+            productInstance=productInstance[0]
+        else:
+            return send_failed_json_response(msg="couldn't find the product with product_id"+str(product_id) , status_obj=status.HTTP_304_NOT_MODIFIED)
+        userWishListInstance = getWishListWithKwargs(filter_by={
+            "id": int(user_id) 
+        } ,instance=True)
+        if len(userWishListInstance):
+            userWishListInstance = userWishListInstance[0]
+        else:
+            # creating new wishlist
+            userWishListInstance = WishList(user_id = userInstance)
+            userWishListInstance.save()
+        wishlistItemInstance = WishListItem(wishlist_id = userWishListInstance , product_id = productInstance)
+        try:
+            wishlistItemInstance.save()
+            return send_success_json_response({
+                "wishlist_item_id" : wishlistItemInstance.id
+            })
+        except:
+            return send_failed_json_response("something went wrong adding to the database wishListItem" , status = status.HTTP_304_NOT_MODIFIED)
+        
+# url - remove_from_wishlist
+class RemoveFromWishlist(APIView):
+    def post(self , request):
+        post_data = request.data
+        wishlistItemInstance =   WishListItem.objects.filter(id = post_data['wishlist_item_id'])
+        if wishlistItemInstance.exists():
+            wishlistItemInstance=wishlistItemInstance[0]
+            wishlistItemInstance.delete()
+            return Response(
+                {
+                "status" : True
+                } , status=status.HTTP_200_OK
+            )
+        else:
+            return Response({
+                "status" : "Item doesnt exists in cart"
+            } , status=status.HTTP_304_NOT_MODIFIED)            
+            
+
+# url - wishlist_product
+class WishListProducts(APIView):
+    def get(self , request):
+        user_id = self.request.session.get('user_id') or DEBUG
+        if not user_id:
+            return Response({
+                "status": False,
+                'oops':"looks like you have not signed in"
+            }  , status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+        wishlist = getWishListWithKwargs(filter_by={
+            "user_id":int(user_id)
+        } )
+        wishlist_id = 0
+        if(len(wishlist)):
+            wishlist_id=wishlist[0]['id']
+        else:
+            return Response(
+                {
+                    'oops': 'cannot find the shopping cart of the user'
+                } , status=status.HTTP_204_NO_CONTENT
+            )
+        wishlist_items = getWishListItemWithKwargs(
+            filter_by={
+                "wishlist_id":int(wishlist_id)
+            } , order_by=['-added_on']
+        )
+        # wishlist_cart_productItems_ids = [cartItem['product_item_id'] for cartItem in wishlist_cart_items]
+        for index , wishlisttItem in enumerate(wishlist_items):
+            wishlist_product= getProductsWithKwargs({"id":wishlisttItem['product_id']})[0]
+            wishlist_items[index]={
+                **wishlisttItem,        
+                "product": wishlist_product
+            }
+        return Response(
+            {
+                "status": True,
+                'wishlist_items':wishlist_items , 
+                'wishlist_id': wishlist_id
+            }
+            , status=status.HTTP_200_OK)
+
+
+def getWishListWithKwargs( filter_by=False ,order_by=[] , instance = False):
+    print("getProductConfigWithKwargs")
+    print(filter_by , order_by)
+    WishList_=[]
+    if len(order_by):
+        if filter_by:
+            querySet_items = WishList.objects.filter(**filter_by).order_by(*order_by)
+        else:
+            querySet_items = WishList.objects.all().order_by(*order_by)
+    else:
+        if filter_by:
+            querySet_items = WishList.objects.filter(**filter_by)
+        else:
+            querySet_items = WishList.objects.all()
+    print(len(querySet_items))
+    for row in querySet_items:
+        if instance:
+            temp_ProductItem = row
+        else:
+            temp_ProductItem = dict(WishListSerializer(row).data)
+        WishList_.append(temp_ProductItem)
+    print(WishList_)
+    return WishList_
+
+
+def getWishListItemWithKwargs( filter_by=False ,order_by=[]):
+    print("getProductConfigWithKwargs")
+    print(filter_by , order_by)
+    WishListItem_=[]
+    if len(order_by):
+        if filter_by:
+            querySet_items = WishListItem.objects.filter(**filter_by).order_by(*order_by)
+        else:
+            querySet_items = WishListItem.objects.all().order_by(*order_by)
+    else:
+        if filter_by:
+            querySet_items = WishListItem.objects.filter(**filter_by)
+        else:
+            querySet_items = WishListItem.objects.all()
+    print(len(querySet_items))
+    for row in querySet_items:
+        temp_ProductItem = dict(WishListItemSerializer(row).data)
+        WishListItem_.append(temp_ProductItem)
+    print(WishListItem_)
+    return WishListItem_
+
+
 # url - cart_products  
 # JSON Response :
 #     {
@@ -559,9 +746,15 @@ def getShoppingCartItemWithKwargs( filter_by=False ,order_by=[]):
 #     ],
 #     "cart_id": 1
 # }
+
 class CartProducts(APIView):
     def get(self , request):
-        user_id = self.request.session["user_id"]
+        user_id = self.request.session.get('user_id')
+        if not user_id:
+            return Response({
+                "status": False,
+                'oops':"looks like you have not signed in"
+            }  , status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
         shoppingCart = getShoppingCartWithKwargs(filter_by={
             "user_id":int(user_id)
         } )
@@ -588,8 +781,11 @@ class CartProducts(APIView):
             }
         return Response(
             {
+                "status" : True , 
+                "data":{
                 'shopping_cart_items':shopping_cart_items , 
                 'cart_id': cart_id
+                }
             }
             , status=status.HTTP_200_OK)
     
@@ -627,7 +823,14 @@ class LoginWithGoogle(APIView):
         else:
             self.user=Users(google_uid=uid , email_uid=email , username=displayName , password="" , photoURL=photoURL)
             self.user.save()
+            # creating wishlist
+            userWishListInstance = WishList(user_id = self.user)
+            userWishListInstance.save()
             self.request.session.create()
+            #  creating cart
+            cartInstance = ShoppingCart(user_id=self.user)
+            cartInstance.save()
+            # ------------------------------------
             self.request.session["key"]=self.request.session.session_key
             self.request.session["user_id"]=self.user.id
             return Response({"result":True} , status=status.HTTP_200_OK )
@@ -845,6 +1048,10 @@ class AddProductItem(APIView):
         product_name = post_data['product']['product_name']
         product_desc = post_data['product']['product_desc']
         product_img_base64= post_data['product']['product_img_base64']
+        # uploading file to firebase storage
+        product_img_base64 = send_base64_to_firebase_storage(product_img_base64)
+        print('=============================product-image====================')
+        print(product_img_base64) # this will now hold the link to the image hosted in firebase
         # ('category_id' , 'name' , 'description', 'product_image' )
         ProductSerializerInstance = ProductSerializer_add(data={"name" : product_name ,'description':product_desc  , "product_image":product_img_base64 ,  'category_id' : product_cat_id})
         # ('product_id' , 'SKU' , 'qty_in_stock' , 'product_image' , 'prize' , 'IPFS_hash' ,'img_url')
@@ -872,12 +1079,14 @@ class AddProductItem(APIView):
                 'product_id': productInstance.id,
                 'SKU' : productItem_['sku'],
                 'qty_in_stock' :int(productItem_['qty']) ,
-                'product_image': productItem_['image_base64'],
+                'product_image':send_base64_to_firebase_storage(productItem_['image_base64']) or 'https://storage.googleapis.com/ecommerce-blockchain-1fb3d.appspot.com/6e4db12a-8a3c-45f3-9210-fb3a6faaaf49',
                 'IPFS_hash': productItem_.get('IPFS_hash'),
                 'img_url' : productItem_.get('img_url'),
                 'prize' : int(productItem_['price']),
                 })
+                
                 product_variation_option_ids = [int(productItem_['variations_'][i]['variation_val']) for i in range(len(productItem_['variations_'])) ]
+                # each productItem can have more than one variation so we are looking through the variations and adding them to productConfig file
                 for product_variation in product_variation_option_ids:
                     productVariationInstance = getVariationOptionsWithKwargs(filter_by={
                         "id":product_variation
@@ -932,6 +1141,13 @@ class AddProductItem(APIView):
                                 "status":False ,
                                 "oops":"looks like something went wrong with productConfigSerializerInstance.isValid() "
                             })
+                    else:
+                        all_good_variable_check= all_good_variable_check and False
+                        return Response({
+                            "status":False , 
+                            "oops": "something went wrong in productItemSerializerInstance.is_valid()"
+                        } , status=status.HTTP_404_NOT_FOUND)
+                        
         else:
             all_good_variable_check= all_good_variable_check and False
             print("ProductSerializerInstance.isValid() failed")

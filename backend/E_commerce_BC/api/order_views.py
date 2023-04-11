@@ -128,13 +128,13 @@ def getOrdersWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=100):
     return orders_
 
 
-def getorderItemssWithKwargs( filter_by=False ,orderItems_by=[] , offset=0  , limit=100):
+def getorderLineWithKwargs( filter_by=False ,order_by=[] , offset=0  , limit=10000):  
     orderItemss_=[]
-    if len(orderItems_by):
+    if len(order_by):
         if filter_by:
-            querySet_items = OrderLine.objects.filter(**filter_by).orderItems_by(*orderItems_by)[offset:limit]
+            querySet_items = OrderLine.objects.filter(**filter_by).order_by(*order_by)[offset:limit]
         else:
-            querySet_items = OrderLine.objects.all().orderItems_by(*orderItems_by)[offset:limit]
+            querySet_items = OrderLine.objects.all().order_by(*order_by)[offset:limit]
     else:
         if filter_by:
             querySet_items = OrderLine.objects.filter(**filter_by)[offset:limit]
@@ -182,7 +182,7 @@ class UserOrderItems(APIView):
             if len(user_orders)==1:
                 user_order = user_orders[0]
                 if user_id ==user_order['user_id']:
-                    orderItems = getorderItemssWithKwargs(filter_by={
+                    orderItems = getorderLineWithKwargs(filter_by={
                         "order_id": order_id
                     })
                     for index , orderItem in enumerate(orderItems):

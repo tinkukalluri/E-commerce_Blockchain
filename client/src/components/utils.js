@@ -37,3 +37,7 @@ export function pushStorage(key, val) {
         return false
     }
 }
+
+export function alert_user(msg){
+    alert(msg)
+}
