@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product , ProductItem  , Variation , VariationOption , ProductConfig , ShoppingCart, ShoppingCartItem
+from .models import Product , ProductItem  , Variation , VariationOption , ProductConfig , ShoppingCart, ShoppingCartItem , WishList , WishListItem
 from .models import ShopOrder , OrderStatus , PaymentStatus , OrderLine , ProductCategory
 
 
@@ -59,6 +59,18 @@ class ShoppingCartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCartItem
         fields = ('id' ,'cart_id' ,'product_item_id' , 'qty' , 'added_on' )
+        
+        
+class WishListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=WishList
+        fields = ('id' , 'user_id')
+
+class WishListItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WishListItem
+        fields = ('id' ,'wishlist_id' ,'product_id','added_on' )
+
 
 
 class ShopOrderSerializer_add(serializers.ModelSerializer):

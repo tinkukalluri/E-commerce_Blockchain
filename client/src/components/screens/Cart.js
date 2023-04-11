@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Footer from '../footer'
 import Navigator from "../Navigator";
 import Loading from '../Loading';
+import { handlePaymentVerification } from './ViewOrders.js'
 
 // getting etherium provider
 import { useEth } from '../../contexts/EthContext'
@@ -15,8 +16,11 @@ export default function () {
     const [cartTax, setCartTax] = useState(0)
     const [cartDiscount, setCartDiscount] = useState(0)
     const [ready_to_make_order, setMakeOrder] = useState(false)
+    const [fullScreenLoading , setFullScreenLoading] = useState(true)
+
 
     let fetchCartItemsTimeout = 0
+    var fetchCartItemsTimeoutCounter = 5
     let cart_total = 0
 
     // function makeid(length) {
@@ -166,6 +170,7 @@ export default function () {
                             // }
                             if (receipt.status) {
                                 update_transaction_hash_in_shopOrder_db(receipt.transactionHash, data.order_id)
+
                             } else {
                                 console.log('something went wrong with payment')
                             }
@@ -176,7 +181,7 @@ export default function () {
         }
     }
 
-    function update_transaction_hash_in_shopOrder_db(transactionHash, orderId) {
+    async function update_transaction_hash_in_shopOrder_db(transactionHash, orderId) {
         const requestOptions = {
             method: 'post',
             headers: { "Content-Type": "application/json" },
@@ -186,12 +191,32 @@ export default function () {
             })
         }
         const path = '/api/update_tx_hash'
-        fetch(path, requestOptions).then(response => response.json()).then(data => {
+        fetch(path, requestOptions).then(response => response.json()).then(async data => {
             console.log('loged from update_tx')
             console.log(data)
             if (data.status) {
                 console.log('updated successfully tx_hash')
-                
+                let res = await handlePaymentVerification("e", orderId, () => { console.log('called by update_transaction_hash_in_shopOrder_db') }) //() => { } some dummy function for fetchOrders in ViewOrders.js
+                console.log(res)
+                if (res.status) {
+                    clearCart()
+                }
+            }
+        })
+    }
+
+    function clearCart() {
+        const requestOptions = {
+            method: 'get',
+            headers: { "Content-Type": "application/json" },
+        }
+
+        const path = `/api/empty_cart`
+        fetch(path, requestOptions).then(response => response.json()).then(data => {
+            console.log("empty cart")
+            console.log(data)
+            if (data.status) {
+                fetchCartItems()
             }
         })
     }
@@ -215,6 +240,13 @@ export default function () {
     }
 
     function fetchCartItems() {
+        setFullScreenLoading(true)
+        if(!fetchCartItemsTimeoutCounter){
+            clearTimeout(fetchCartItemsTimeout)
+            return
+        }
+        console.log(fetchCartItemsTimeoutCounter)
+        fetchCartItemsTimeoutCounter--
         const requestOptions = {
             method: 'get',
             headers: { "Content-Type": "application/json" },
@@ -225,11 +257,15 @@ export default function () {
         }).then(data => {
             console.log('data from cartItems')
             console.log(data)
-            setCart(data)
-            setCartID(data.cart_id)
-            setCartItems(data.shopping_cart_items.length==0 ? [] :data.shopping_cart_items)
-            clearTimeout(fetchCartItemsTimeout)
-            setCartTotal(0)
+            if(data.status){
+                setFullScreenLoading(false)
+                data = data.data
+                setCart(data)
+                setCartID(data.cart_id)
+                setCartItems(data.shopping_cart_items.length == 0 ? [] : data.shopping_cart_items)
+                clearTimeout(fetchCartItemsTimeout)
+                setCartTotal(0)
+            }
         }).catch(e => {
             console.log("error in cartItems")
             fetchCartItemsTimeout = setTimeout(fetchCartItems, 1000)
@@ -238,10 +274,10 @@ export default function () {
 
     useEffect(() => {
         let total_value = 0
-        cartItems==-1?  total_value = 0 :
-        cartItems.map(item => {
-            total_value += item.productItem.prize * item.qty
-        })
+        cartItems == -1 ? total_value = 0 :
+            cartItems.map(item => {
+                total_value += item.productItem.prize * item.qty
+            })
         setCartTotal(total_value)
     }, [cartItems])
 
@@ -263,7 +299,7 @@ export default function () {
         <>
             <Navigator navbar cart page='cart' />
             {/* <!-- cart + summary --> */}
-            <div className="bg-light my-5">
+            <div className="my-5">
                 <div className="container">
                     <div className="row">
                         {/* <!-- cart --> */}

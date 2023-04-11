@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import { useHistory } from 'react-router-dom';
-import { setStorage, getStorage, pushStorage } from '../utils';
+import { setStorage, getStorage, pushStorage ,alert_user } from '../utils';
+import LoadingFullScreen from '../LoadingFullScreen';
 
 export default function ProductPage({ match, ...props }) {
 
@@ -9,11 +10,24 @@ export default function ProductPage({ match, ...props }) {
   const [productVariation, setProductVariation] = useState({ quantity: 1 })
   const [productPrice, setProductPrice] = useState("select a variation")
   const [selectedProductItem, setSelectedProductItem] = useState(null)
+  const [fullScreenLoading , setFullScreenLoading] = useState(true)
 
   const { params: { productID } } = match;
   const history = useHistory()
+
+
   var fetchProductTimeout = 0
-  function fetchProductDetails() {
+  var fetchProductTimeoutCount = 5
+
+
+
+  function fetchProductDetails(fullScreenLoading=true) {
+    if (!fetchProductTimeoutCount) {
+      clearTimeout(fetchProductTimeout)
+      return
+  }
+  fetchProductTimeoutCount--
+    setFullScreenLoading(fullScreenLoading)
     const requestOptions = {
       method: 'get',
       headers: { "Content-Type": "application/json" },
@@ -24,7 +38,10 @@ export default function ProductPage({ match, ...props }) {
     }).then(data => {
       console.log('data from productpage')
       console.log(data)
-      setProductDetails(data)
+      if(data.status){
+        setProductDetails(data.data)
+        setFullScreenLoading(false)
+      }
     }).catch(e => {
       console.log("error in product oage")
       fetchProductTimeout = setTimeout(fetchProductDetails, 1000)
@@ -127,6 +144,11 @@ export default function ProductPage({ match, ...props }) {
   }
 
 
+  function checkForStock(){
+
+  }
+
+
   useEffect(() => {
     let var_opts = []
     for (let key of Object.keys(productVariation)) {
@@ -168,14 +190,18 @@ export default function ProductPage({ match, ...props }) {
     console.log('selected item')
     console.log(selectedProductItem)
     setProductPrice(selectedProductItem?.prize ? selectedProductItem.prize : "select a variation")
+    if(selectedProductItem?.qty_in_stock==0){
+      alert_user('sorry no stock')
+    }
   }, [selectedProductItem])
+
 
 
 
   function setproductDetailJSX_() {
     return (
       <>
-        {
+        {fullScreenLoading ? <LoadingFullScreen/> :(
           productDetails.map(product => {
             return (
               <>
@@ -321,6 +347,7 @@ export default function ProductPage({ match, ...props }) {
               </>
             )
           })
+          )
         }
       </>
     )

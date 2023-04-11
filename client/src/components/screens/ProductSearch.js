@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Navigator from "../Navigator";
 import { useHistory, useLocation, useParams, useRouteMatch } from 'react-router-dom';
+import LoadingFullScreen from '../LoadingFullScreen';
 var qs = require('qs');
 
 
@@ -8,6 +9,9 @@ export default function (props) {
 
   const [product, setProduct] = useState([])
   const [productJSX, setProductJSX] = useState(false)
+  const [fullScreenLoading , setFullScreenLoading] = useState(true)
+
+
   const history = useHistory()
 
   function getSearchParams() {
@@ -28,6 +32,7 @@ export default function (props) {
     return (
       <>
         {/* <!-- sidebar + content --> */}
+        {fullScreenLoading ? <LoadingFullScreen/> :(
         <div className="">
           <div className="container">
             <div className="row">
@@ -409,6 +414,7 @@ export default function (props) {
             </div>
           </div>
         </div>
+        )}
         {/* <!-- sidebar + content --> */}
       </>
     )
@@ -426,7 +432,16 @@ export default function (props) {
     return words;
   }
 
+  var fetchSearchProductTimeout = 0
+  var fetchSearchProductTimeoutCounter = 5
+
   function fetchProducts(query) {
+    setFullScreenLoading(true)
+    if (!fetchSearchProductTimeoutCounter) {
+      clearTimeout(fetchSearchProductTimeout)
+      return
+  }
+  fetchSearchProductTimeoutCounter--
     if (query == '') {
       return
     }
@@ -441,8 +456,16 @@ export default function (props) {
       return response.json()
     }).then((data) => {
       console.log(data);
-      setProduct(data);
+      if(data.status){
+        setProduct(data.data);
+        setFullScreenLoading(false)
+        clearTimeout(fetchSearchProductTimeout)
+      }else{
+        fetchSearchProductTimeout = setTimeout(fetchProducts )
+      }
 
+    }).catch(()=>{
+      fetchSearchProductTimeout = setTimeout(fetchProducts )
     })
   }
 

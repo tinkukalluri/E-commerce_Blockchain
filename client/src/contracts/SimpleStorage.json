@@ -12,8 +12,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -743,7 +742,7 @@
   "sourceMap": "69:197:1:-:0;;;;;;;;;;;;;;;;;;;",
   "deployedSourceMap": "69:197:1:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;194:69;;;;;;;;;;;;;:::i;:::-;;:::i;:::-;;117:71;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;194:69;249:8;241:5;:16;;;;194:69;:::o;117:71::-;154:7;177:5;;170:12;;117:71;:::o;88:117:7:-;197:1;194;187:12;334:77;371:7;400:5;389:16;;334:77;;;:::o;417:122::-;490:24;508:5;490:24;:::i;:::-;483:5;480:35;470:63;;529:1;526;519:12;470:63;417:122;:::o;545:139::-;591:5;629:6;616:20;607:29;;645:33;672:5;645:33;:::i;:::-;545:139;;;;:::o;690:329::-;749:6;798:2;786:9;777:7;773:23;769:32;766:119;;;804:79;;:::i;:::-;766:119;924:1;949:53;994:7;985:6;974:9;970:22;949:53;:::i;:::-;939:63;;895:117;690:329;;;;:::o;1025:118::-;1112:24;1130:5;1112:24;:::i;:::-;1107:3;1100:37;1025:118;;:::o;1149:222::-;1242:4;1280:2;1269:9;1265:18;1257:26;;1293:71;1361:1;1350:9;1346:17;1337:6;1293:71;:::i;:::-;1149:222;;;;:::o",
   "source": "// SPDX-License-Identifier: MIT\r\npragma solidity >=0.4.22 <0.9.0;\r\n\r\ncontract SimpleStorage {\r\n  uint256 value;\r\n\r\n  function read() public view returns (uint256) {\r\n    return value;\r\n  }\r\n\r\n  function write(uint256 newValue) public {\r\n    value = newValue;\r\n  }\r\n}\r\n",
-  "sourcePath": "C:\\Users\\SYED SALMAN\\OneDrive\\Desktop\\abhi\\E-commerce_blockchain-test\\E-commerce_Blockchain\\truffle\\contracts\\SimpleStorage.sol",
+  "sourcePath": "C:\\Users\\tinku\\Desktop\\major_project\\E-commerce_Blockchain\\truffle\\contracts\\SimpleStorage.sol",
   "ast": {
     "absolutePath": "project:/contracts/SimpleStorage.sol",
     "exportedSymbols": {
@@ -1012,13 +1011,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x729C14E632688c7cB91FA7544A44EC54Cd528D5c",
-      "transactionHash": "0xff434288406bec3b0ee19e8aeb8b35a24f270ef7e9c06ed988d01161771955ab"
+      "address": "0x0eDbC140e2aE8a4f0E3A9D6b6cd345F68617E1c9",
+      "transactionHash": "0x0d9ff2faa14e4d11161283f17cae9ec5863e11c2510fa6bfbb15ed0f42469e78"
     }
   },
-  "schemaVersion": "3.4.12",
-  "updatedAt": "2023-03-28T08:24:24.703Z",
-  "networkType": "ethereum",
+  "schemaVersion": "3.4.13",
+  "updatedAt": "2023-04-10T07:25:03.132Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

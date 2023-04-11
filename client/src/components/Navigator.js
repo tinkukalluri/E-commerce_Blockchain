@@ -173,7 +173,7 @@ export default function Navigator(props) {
   return (
     <>
         {props.navbar ? navbar(props) : null}
-        {props.homepage ? jumbotron_home_container() : null}
+        {/* {props.homepage ? jumbotron_home_container() : null}     */}
     </>
   )
 }
