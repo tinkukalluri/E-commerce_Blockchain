@@ -83,8 +83,8 @@ export default function HomePage() {
     const [offset , setOffset] = useState(1)
     const [limit , setLimit] =  useState(10)
     
-    const fetchNewProductsTimeout = 0
-    const fetchNewProductsTimeoutCount = 5
+    var fetchNewProductsTimeout = 0
+    var fetchNewProductsTimeoutCount = 5
 
     async function handleWishList(e , product_id , wishlist_item_id=-1 , refresh_page=()=>{}){
         if(e.target.classList.value.search('text-danger')!=-1){
