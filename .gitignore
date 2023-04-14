@@ -37,7 +37,8 @@ my_seed_words_meta_mask.txt
 admin.txt
 
 # confidential files
-ecommerce-blockchain-1fb3d-firebase-adminsdk-69msy-cd7435503d.json
+backend/E_commerce_BC/api/firebase/ecommerce-blockchain-1fb3d-firebase-adminsdk-69msy-cd7435503d.json
 
 # temp images
-temp_images
+backend/E_commerce_BC/api/temp_images
+
