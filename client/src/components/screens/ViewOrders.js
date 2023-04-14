@@ -96,6 +96,7 @@ export default function ViewOrders(props) {
             clearTimeout(fetchOrdersTimeInterval)
             return
         }
+        fetchOrdersTimeIntervalCount--
         const requestOptions = {
             method: 'GET',
             headers: { "Content-Type": "application/json" },

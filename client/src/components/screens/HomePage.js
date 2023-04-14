@@ -79,11 +79,12 @@ export default function HomePage() {
     const [NewProducts, setNewProducts] = useState('')
     const [NewProductsJSX, setNewProductsJSX] = useState(null)
     const history = useHistory()
-    const fetchNewProductsTimeout = 0
     const [FullScreenLoading , setFullScreenLoading] = useState(true)
     const [offset , setOffset] = useState(1)
     const [limit , setLimit] =  useState(10)
-
+    
+    var fetchNewProductsTimeout = 0
+    var fetchNewProductsTimeoutCount = 5
 
     async function handleWishList(e , product_id , wishlist_item_id=-1 , refresh_page=()=>{}){
         if(e.target.classList.value.search('text-danger')!=-1){
@@ -109,6 +110,11 @@ export default function HomePage() {
 
     function get_new_products(offset = 1, limit = 10 , FullScreenLoading = true) {
         setFullScreenLoading(FullScreenLoading)
+        if (!fetchNewProductsTimeoutCount) {
+            clearTimeout(fetchNewProductsTimeout)
+            return
+          }
+          fetchNewProductsTimeoutCount--
         const requestOptions = {
             method: 'get',
             headers: { "Content-Type": "application/json" },
