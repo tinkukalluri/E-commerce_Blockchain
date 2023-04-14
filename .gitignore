@@ -15,11 +15,11 @@ build
 coverage
 
 # Env
-# .env
-# .env.local
-# .env.development.local
-# .env.test.local
-# .env.production.local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Editor
 .vscode
@@ -35,3 +35,9 @@ yarn-error.log*
 .txt
 my_seed_words_meta_mask.txt
 admin.txt
+
+# confidential files
+ecommerce-blockchain-1fb3d-firebase-adminsdk-69msy-cd7435503d.json
+
+# temp images
+temp_images
