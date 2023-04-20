@@ -45,7 +45,7 @@ contract TinToken is ERC20 {
 
 
 // assuming we are using wei units for prizing i.e 1 eth = 10^18 wei units
-// this function is used to set new prize of the tokens
+// this function is used to set new prize of the tokens in wei units
     function setTokenPrize(uint newTokenPrize) payable external{
         if(msg.sender== address(0xDFeb088754c16A2657ee3a78F702016eBB5d1C15)){
             tokenPrize = newTokenPrize;

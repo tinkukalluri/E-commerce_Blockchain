@@ -62,7 +62,7 @@ class ProductItem(models.Model):
     product_image = models.CharField(null=True , max_length=1000)
     IPFS_hash = models.URLField(null= True , max_length=1000)
     img_url = models.URLField(null=True , max_length=1000)
-    prize = models.IntegerField()
+    prize = models.FloatField()
     added_on = models.DateTimeField(null=True)
 
     def save(self, *args, **kwargs):

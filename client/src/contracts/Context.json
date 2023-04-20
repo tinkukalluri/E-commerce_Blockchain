@@ -10,8 +10,248 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier: MIT\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\n\npragma solidity ^0.8.0;\n\n/**\n * @dev Provides information about the current execution context, including the\n * sender of the transaction and its data. While these are generally available\n * via msg.sender and msg.data, they should not be accessed in such a direct\n * manner, since when dealing with meta-transactions the account sending and\n * paying for execution may not be the actual sender (as far as an application\n * is concerned).\n *\n * This contract is only required for intermediate, library-like contracts.\n */\nabstract contract Context {\n    function _msgSender() internal view virtual returns (address) {\n        return msg.sender;\n    }\n\n    function _msgData() internal view virtual returns (bytes calldata) {\n        return msg.data;\n    }\n}\n",
-  "sourcePath": "C:\\Users\\tinku\\Desktop\\major_project\\E-commerce_Blockchain\\truffle\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol",
+  "sourcePath": "C:\\Users\\sintin\\Desktop\\Major_project\\e_commerce\\E_commerce_BL_Branch-test\\truffle\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol",
   "ast": {
+    "absolutePath": "project:/node_modules/@openzeppelin/contracts/utils/Context.sol",
+    "exportedSymbols": {
+      "Context": [
+        1407
+      ]
+    },
+    "id": 1408,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1387,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "86:23:6"
+      },
+      {
+        "abstract": true,
+        "baseContracts": [],
+        "canonicalName": "Context",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": {
+          "id": 1388,
+          "nodeType": "StructuredDocumentation",
+          "src": "111:496:6",
+          "text": " @dev Provides information about the current execution context, including the\n sender of the transaction and its data. While these are generally available\n via msg.sender and msg.data, they should not be accessed in such a direct\n manner, since when dealing with meta-transactions the account sending and\n paying for execution may not be the actual sender (as far as an application\n is concerned).\n This contract is only required for intermediate, library-like contracts."
+        },
+        "fullyImplemented": true,
+        "id": 1407,
+        "linearizedBaseContracts": [
+          1407
+        ],
+        "name": "Context",
+        "nameLocation": "626:7:6",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 1396,
+              "nodeType": "Block",
+              "src": "702:34:6",
+              "statements": [
+                {
+                  "expression": {
+                    "expression": {
+                      "id": 1393,
+                      "name": "msg",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4294967281,
+                      "src": "719:3:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_magic_message",
+                        "typeString": "msg"
+                      }
+                    },
+                    "id": 1394,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "memberLocation": "723:6:6",
+                    "memberName": "sender",
+                    "nodeType": "MemberAccess",
+                    "src": "719:10:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "functionReturnParameters": 1392,
+                  "id": 1395,
+                  "nodeType": "Return",
+                  "src": "712:17:6"
+                }
+              ]
+            },
+            "id": 1397,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "_msgSender",
+            "nameLocation": "649:10:6",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1389,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "659:2:6"
+            },
+            "returnParameters": {
+              "id": 1392,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1391,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1397,
+                  "src": "693:7:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1390,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "693:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "692:9:6"
+            },
+            "scope": 1407,
+            "src": "640:96:6",
+            "stateMutability": "view",
+            "virtual": true,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 1405,
+              "nodeType": "Block",
+              "src": "809:32:6",
+              "statements": [
+                {
+                  "expression": {
+                    "expression": {
+                      "id": 1402,
+                      "name": "msg",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4294967281,
+                      "src": "826:3:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_magic_message",
+                        "typeString": "msg"
+                      }
+                    },
+                    "id": 1403,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "memberLocation": "830:4:6",
+                    "memberName": "data",
+                    "nodeType": "MemberAccess",
+                    "src": "826:8:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_calldata_ptr",
+                      "typeString": "bytes calldata"
+                    }
+                  },
+                  "functionReturnParameters": 1401,
+                  "id": 1404,
+                  "nodeType": "Return",
+                  "src": "819:15:6"
+                }
+              ]
+            },
+            "id": 1406,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "_msgData",
+            "nameLocation": "751:8:6",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1398,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "759:2:6"
+            },
+            "returnParameters": {
+              "id": 1401,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1400,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1406,
+                  "src": "793:14:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 1399,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "793:5:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "792:16:6"
+            },
+            "scope": 1407,
+            "src": "742:99:6",
+            "stateMutability": "view",
+            "virtual": true,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 1408,
+        "src": "608:235:6",
+        "usedErrors": []
+      }
+    ],
+    "src": "86:758:6"
+  },
+  "legacyAST": {
     "absolutePath": "project:/node_modules/@openzeppelin/contracts/utils/Context.sol",
     "exportedSymbols": {
       "Context": [
@@ -256,8 +496,8 @@
     "version": "0.8.18+commit.87f61d96.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "3.4.13",
-  "updatedAt": "2023-04-15T07:08:55.278Z",
+  "schemaVersion": "3.4.4",
+  "updatedAt": "2023-04-19T19:18:32.454Z",
   "devdoc": {
     "details": "Provides information about the current execution context, including the sender of the transaction and its data. While these are generally available via msg.sender and msg.data, they should not be accessed in such a direct manner, since when dealing with meta-transactions the account sending and paying for execution may not be the actual sender (as far as an application is concerned). This contract is only required for intermediate, library-like contracts.",
     "kind": "dev",
