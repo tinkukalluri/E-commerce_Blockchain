@@ -1,7 +1,6 @@
 Django==3.2.3
 djangorestframework==3.14.0
 web3==6.0.0
-mysql==0.0.2
 mysql-connector-python==8.0.27
 mysqlclient==2.0.3
 firebase-admin==6.1.0
