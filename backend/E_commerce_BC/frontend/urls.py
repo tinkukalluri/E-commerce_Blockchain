@@ -17,4 +17,5 @@ urlpatterns = [
     path('orders/' , views.index),
     path('order_items/' , views.index),
     path('test_component/' , views.index),
+    path('oops/' , views.index),
 ]

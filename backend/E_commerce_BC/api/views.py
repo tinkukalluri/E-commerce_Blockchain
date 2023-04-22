@@ -201,7 +201,6 @@ class getNewProducts(APIView):
         offset = int(request.GET.get('offset'))-1 if request.GET.get('offset') else 0
         limit = int(request.GET.get('limit')) if request.GET.get('limit') else 10
         user_id = self.request.session.get('user_id')
-
         products_ = getProductsWithKwargs(offset=offset, limit=limit , order_by=['-added_on'])
         for product in products_:  
             min_prize=float('inf')
@@ -216,7 +215,7 @@ class getNewProducts(APIView):
                 min_prize=0 
             # ------------------------------------------------
             product['min_prize'] = min_prize
-            product['wishlistItem']=getUserWishlistItemFromProduct(product["id"] , user_id)
+            product['wishlistItem']=getUserWishlistItemFromProduct(product["id"] , user_id) if user_id!=None else -1
         print('for loop exit')
         return Response(products_,status=status.HTTP_200_OK)
 

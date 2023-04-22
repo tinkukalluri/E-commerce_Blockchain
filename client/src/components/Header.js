@@ -52,6 +52,10 @@ export default function Header(props) {
         history.push('/orders')
     }
 
+    function wishlistPressed() {
+        history.push('/wishlist')
+    }
+
     function jumbotron_maintop() {
         return (
             < div className="p-3 text-center bg-white border-bottom" >
@@ -88,35 +92,61 @@ export default function Header(props) {
                         {/* Right elements */}
                         <div className="order-lg-last col-lg-5 col-sm-8 col-8">
                             <div className="d-flex float-end">
-                                {authResult ? (<a onClick={logoutPressed}
-                                    className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center"> <i
-                                        className="fas fa-user-alt m-1 me-md-2"></i>
-                                    <p className="d-none d-md-block mb-0">Sign out</p>
-                                </a>) : (<a onClick={loginPressed}
-                                    className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
-                                        className="fas fa-user-alt m-1 me-md-2"></i>
-                                    <p className="d-none d-md-block mb-0">Sign in</p>
-                                </a>)}
+
                                 {/* <a onClick={wishlistPressed}
                                     className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
                                         className="fas fa-heart m-1 me-md-2"></i>
                                     <p className="d-none d-md-block mb-0">Wishlist</p>
                                 </a> */}
-                                <a onClick={walletPressed}
-                                    className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
-                                        className="fas fa-wallet m-1 me-md-2"></i>
-                                    <p className="d-none d-md-block mb-0">Wallet</p>
-                                </a>
-                                <a onClick={cartPressed}
+
+                                <div class="dropdown" style={{ marginRight: "3px" }}>
+                                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i
+                                            className="fas fa-user m-1 me-md-2"></i>
+                                    </a>
+
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <li>
+                                            <a onClick={wishlistPressed}
+                                                className="border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
+                                                    className="fas fa-heart m-1 me-md-2"></i>
+                                                <p className="d-none d-md-block mb-0">wishlist</p>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a onClick={walletPressed}
+                                                className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
+                                                    className="fas fa-wallet m-1 me-md-2"></i>
+                                                <p className="d-none d-md-block mb-0">Wallet</p>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            {authResult ? (<a onClick={logoutPressed}
+                                                className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center"> <i
+                                                    className="fas fa-user-alt m-1 me-md-2"></i>
+                                                <p className="d-none d-md-block mb-0">Sign out</p>
+                                            </a>) : (<a onClick={loginPressed}
+                                                className="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
+                                                    className="fas fa-user-alt m-1 me-md-2"></i>
+                                                <p className="d-none d-md-block mb-0">Sign in</p>
+                                            </a>)}
+                                        </li>
+
+                                    </ul>
+                                </div>
+
+                                <a onClick={ordersPressed} style={{ marginRight: "3px" }}
                                     className="border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
-                                        className="fas fa-heart m-1 me-md-2"></i>
-                                    <p className="d-none d-md-block mb-0">My cart</p>
-                                </a>
-                                <a onClick={ordersPressed}
-                                    className="border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
-                                        className="fas fa-shopping-cart m-1 me-md-2"></i>
+                                        className="fas fa-cart-plus m-1 me-md-2"></i>
                                     <p className="d-none d-md-block mb-0">My orders</p>
                                 </a>
+
+                                <a onClick={cartPressed}
+                                    className="border rounded py-1 px-3 nav-link d-flex align-items-center" > <i
+                                        className="fas fa-shopping-cart m-1 me-md-2"></i>
+                                    <p className="d-none d-md-block mb-0">My cart</p>
+                                </a>
+
                             </div>
                         </div>
                         {/* Right elements */}

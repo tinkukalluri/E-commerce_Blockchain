@@ -14,13 +14,14 @@ import AddProduct from './components/screens/AddProduct';
 import ProductSearch from './components/screens/ProductSearch';
 import ProductPage from './components/screens/ProductPage';
 import Header from './components/Header';
-import Footer from './components/footer';
+import Footer from './components/Footer';
 import { useEffect, useState } from 'react';
 import TinWallet from './components/screens/TinWallet';
 import ViewOrders from './components/screens/ViewOrders';
 import ViewOrderItems from './components/screens/ViewOrderItems';
 import LoadingFullScreen from './components/LoadingFullScreen';
 import Wishlist from './components/screens/Wishlist';
+import Oops from './components/Oops';
 // const bootstrap = require("bootstrap");
 
 function App(props) {
@@ -48,9 +49,11 @@ function App(props) {
           <Header search_query={search} setAppSearch={setSearchCallback} authResultApp={authResultApp} setAuthResultApp={setAuthResultApp} />
           <Switch>
             <div className='root' style={{ 'minHeight': "70vh" }} >
-              <Route exact path="/">
+              {/* <Route exact path="/">
                 <HomePage  {...props} />
-              </Route>
+              </Route> */}
+              <Route exact path="/"
+                component={HomePage}/>
               <Route exact path="/login">
                 <FirebaseLogin  {...props} setAuthResultApp={setAuthResultApp} />
               </Route>
@@ -78,8 +81,10 @@ function App(props) {
               </Route>
               <Route exact path="/order_items"
                 component={ViewOrderItems}/>
+              <Route exact path="/oops"
+                component={Oops}/>
               <Route exact path="/test_component"
-                component={LoadingFullScreen}/>
+                component={Oops}/>
             </div>
           </Switch>
           <Footer />

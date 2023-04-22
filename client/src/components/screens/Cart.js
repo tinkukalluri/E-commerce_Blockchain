@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import Footer from '../footer'
 import Navigator from "../Navigator";
 import Loading from '../Loading';
 import { handlePaymentVerification } from './ViewOrders.js'
-
+import { useHistory } from 'react-router-dom'
 // getting etherium provider
 import { useEth } from '../../contexts/EthContext'
 
@@ -16,8 +15,8 @@ export default function () {
     const [cartTax, setCartTax] = useState(0)
     const [cartDiscount, setCartDiscount] = useState(0)
     const [ready_to_make_order, setMakeOrder] = useState(false)
-    const [fullScreenLoading , setFullScreenLoading] = useState(true)
-
+    const [fullScreenLoading, setFullScreenLoading] = useState(true)
+    const history = useHistory()
 
     let fetchCartItemsTimeout = 0
     var fetchCartItemsTimeoutCounter = 5
@@ -241,7 +240,7 @@ export default function () {
 
     function fetchCartItems() {
         setFullScreenLoading(true)
-        if(!fetchCartItemsTimeoutCounter){
+        if (!fetchCartItemsTimeoutCounter) {
             clearTimeout(fetchCartItemsTimeout)
             return
         }
@@ -257,7 +256,7 @@ export default function () {
         }).then(data => {
             console.log('data from cartItems')
             console.log(data)
-            if(data.status){
+            if (data.status) {
                 setFullScreenLoading(false)
                 data = data.data
                 setCart(data)
@@ -265,6 +264,13 @@ export default function () {
                 setCartItems(data.shopping_cart_items.length == 0 ? [] : data.shopping_cart_items)
                 clearTimeout(fetchCartItemsTimeout)
                 setCartTotal(0)
+            } else {
+                history.push({
+                    pathname: '/oops',
+                    state: {
+                        oops_msg: data?.oops
+                    }
+                })
             }
         }).catch(e => {
             console.log("error in cartItems")

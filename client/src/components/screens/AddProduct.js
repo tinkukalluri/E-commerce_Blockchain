@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useState } from "react";
 import { storage } from "../Firebase/firebase_config";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { useHistory } from 'react-router-dom';
 
 
 import Loading from '../Loading';
@@ -14,7 +15,7 @@ export default function AddProduct() {
     const [productVariationOptions, setProductVariationOptions] = useState([])
     const [productItemNo, setProductItemNo] = useState([])
     const [selectedVariationOptions, setSelectedVariationOptions] = useState([])
-
+    const history = useHistory()
 
     var fetchProductCategoryTimeout = 5
     var fetchProductVariationTimeout = 5
@@ -79,7 +80,13 @@ export default function AddProduct() {
             if (data.status) {
                 setProductVariationOptions(data.variation_options)
                 clearTimeout(fetcProductVariationOptionTimeout)
-            } else {
+            } else {           
+                    history.push({
+                        pathname: '/oops',
+                        state: {
+                            oops_msg: data?.oops
+                        }
+                    })
                 console.log('something went wrong fetching the variations')
                 console.log(data.oops)
                 if (fetcProductVariationOptionTimeout) {
@@ -109,6 +116,12 @@ export default function AddProduct() {
                 setProductVariations(data.variations)
                 clearTimeout(fetchProductVariationTimeout)
             } else {
+                history.push({
+                    pathname: '/oops',
+                    state: {
+                        oops_msg: data?.oops
+                    }
+                })
                 console.log('something went wrong fetching the variations')
                 console.log(data.oops)
                 if (fetchProductVariationTimeout) {
@@ -135,6 +148,12 @@ export default function AddProduct() {
                 setProductCategories(data.product_category)
                 clearTimeout(fetchProductCategoryTimeout)
             } else {
+                history.push({
+                    pathname: '/oops',
+                    state: {
+                        oops_msg: data?.oops
+                    }
+                })
                 console.log('looks like somnething went wrong in fetching product categories')
                 console.log(data.oops)
                 if (fetchProductCategoryTimeout) {
@@ -233,6 +252,12 @@ export default function AddProduct() {
             if (data.status) {
                 console.log('products added to the server')
             } else {
+                history.push({
+                    pathname: '/oops',
+                    state: {
+                        oops_msg: data?.oops
+                    }
+                })
                 console.log('something went wrong adding products to the database')
                 console.log(data.oops)
             }

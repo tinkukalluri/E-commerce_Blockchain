@@ -1,4 +1,4 @@
-import React, { useReducer, useCallback, useEffect , useState } from "react";
+import React, { useReducer, useCallback, useEffect, useState } from "react";
 import Web3 from "web3";
 import EthContext from "./EthContext";
 import { reducer, actions, initialState } from "./state";
@@ -11,13 +11,13 @@ function EthProvider({ children }) {
     async artifact => {
       console.log('init function called')
       if (artifact) {
-        const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+        const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545" || `https://sepolia.infura.io/v3/7ff8b75ef686485aa693b5bc3d6f7f4c`);
         const accounts = await web3.eth.requestAccounts();
         const networkID = await web3.eth.net.getId();
         const { abi } = artifact;
         let address, contract;
         try {
-          address = artifact.networks[networkID].address;
+          address = artifact.networks[networkID.toString()].address;
           contract = new web3.eth.Contract(abi, address);
         } catch (err) {
           console.error(err);
