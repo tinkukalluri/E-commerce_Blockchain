@@ -44,10 +44,10 @@ function App(props) {
 
   return (
     <>
-      <EthProvider>
         <Router>
           <Header search_query={search} setAppSearch={setSearchCallback} authResultApp={authResultApp} setAuthResultApp={setAuthResultApp} />
           <Switch>
+            <EthProvider>
             <div className='root' style={{ 'minHeight': "70vh" }} >
               {/* <Route exact path="/">
                 <HomePage  {...props} />
@@ -86,10 +86,10 @@ function App(props) {
               <Route exact path="/test_component"
                 component={Oops}/>
             </div>
+            </EthProvider>
           </Switch>
           <Footer />
         </Router>
-      </EthProvider>
     </>
   );
 }

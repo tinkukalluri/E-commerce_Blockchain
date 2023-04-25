@@ -39,7 +39,9 @@ class VerifyPaymentRequest(APIView):
         contract = open(TINTOKEN_path)
         contract_dict = json.load(contract)
         network_id = web3.net.version
+        print(network_id)
         contract_address = contract_dict['networks'][network_id]['address']
+        print(contract_address)
         contract_abi = contract_dict['abi']
         contract = web3.eth.contract(
             address=contract_address, abi=contract_abi)

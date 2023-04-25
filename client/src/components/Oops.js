@@ -11,8 +11,11 @@ export default function Oops(props) {
 
     const {oops_msg} = (props.location && props.location.state) || "404 - THE PAGE CAN'T BE FOUND";
 
+    console.log(oops_msg)
+    
     return (
-        <>
+        <>  
+            oops_msg.length
             <div id="notfound">
                 <div className="notfound">
                     <div className="notfound-404">
