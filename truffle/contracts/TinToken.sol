@@ -119,6 +119,7 @@ contract TinToken is ERC20 {
             return true;
         }
         emit PaymentFailed(msg.sender, amount, paymendId, orderId , block.timestamp);
+        require(false , "Something went wrong with the payment");
         return false;
     }
 
