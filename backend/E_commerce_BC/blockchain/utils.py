@@ -1,9 +1,12 @@
 
+import os
+
 # path for my gaming pc
 # TINTOKEN_path = r"C:\Users\sintin\Desktop\Major_project\e_commerce\E_commerce_BL_Branch-test\client\src\contracts\TinToken.json"
 
 # path for relative path
-TINTOKEN_path = r'blockchain\contracts\TinToken.json'
+TINTOKEN_path = os.path.join(
+    os.getcwd(), r'blockchain/contracts/TinToken.json')
 
 
 # path for salman computer
