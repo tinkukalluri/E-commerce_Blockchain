@@ -3,8 +3,7 @@
 # print(uuid.uuid4())
 
 
-tin={
-    "tinku":"kalluri"
-}
+import os
 
-print({**tin , "tinku": "tintin"})
+print(os.getcwd())
+print(os.path.join(os.getcwd(), "tinku.txt"))

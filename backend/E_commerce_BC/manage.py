@@ -5,6 +5,7 @@ import sys
 
 
 def main():
+    print(os.getcwd())
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'E_commerce_BC.settings')
     try:
